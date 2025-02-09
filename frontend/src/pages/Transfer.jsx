@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import FundTransferABI from "../contracts/FundTransfer.json";
+import Navbar from "../components/Navbar";
 
 const contractAddress = "0xf5646e10B042567d23753D587DDa16dc6E4061Ab";
 
@@ -109,7 +110,11 @@ function Transfer() {
       if (!window.ethereum) return toast.error("🦊 Please install MetaMask!");
 
       const provider = new ethers.BrowserProvider(window.ethereum);
-      const contract = new ethers.Contract(contractAddress, FundTransferABI.abi, provider);
+      const contract = new ethers.Contract(
+        contractAddress,
+        FundTransferABI.abi,
+        provider
+      );
 
       const txs = await contract.getTransactions();
 
@@ -129,76 +134,90 @@ function Transfer() {
   };
 
   return (
-    <div className="p-6">
-      <ToastContainer position="top-right" autoClose={5000} />
-      <h2 className="text-2xl mb-4">Transfer Funds</h2>
-      <input
-        type="text"
-        placeholder="Recipient Address"
-        value={recipient}
-        onChange={(e) => setRecipient(e.target.value)}
-        className="border p-2 w-full mb-2"
-      />
-      <input
-        type="text"
-        placeholder="Amount (ETH)"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-        className="border p-2 w-full mb-2"
-      />
-      <input
-        type="text"
-        placeholder="Remark/Message"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        className="border p-2 w-full mb-2"
-      />
-      <button
-        onClick={sendFunds}
-        className={`px-4 py-2 rounded text-white ${
-          loading ? "bg-gray-500" : "bg-green-500 hover:bg-green-700"
-        }`}
-        disabled={loading}
-      >
-        {loading ? "Processing..." : "Send Funds"}
-      </button>
+    <>
+      <Navbar />
+      <div className="p-6">
+        <ToastContainer position="top-right" autoClose={5000} />
+        <h2 className="text-2xl mb-4">Transfer Funds</h2>
+        <input
+          type="text"
+          placeholder="Recipient Address"
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+          className="border p-2 w-full mb-2"
+        />
+        <input
+          type="text"
+          placeholder="Amount (ETH)"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          className="border p-2 w-full mb-2"
+        />
+        <input
+          type="text"
+          placeholder="Remark/Message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="border p-2 w-full mb-2"
+        />
+        <button
+          onClick={sendFunds}
+          className={`px-4 py-2 rounded text-white ${
+            loading ? "bg-gray-500" : "bg-green-500 hover:bg-green-700"
+          }`}
+          disabled={loading}
+        >
+          {loading ? "Processing..." : "Send Funds"}
+        </button>
 
-      <button
-        onClick={claimFunds}
-        className={`ml-2 px-4 py-2 rounded text-white ${
-          loading ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-700"
-        }`}
-        disabled={loading}
-      >
-        {loading ? "Processing..." : "Claim Funds"}
-      </button>
+        <button
+          onClick={claimFunds}
+          className={`ml-2 px-4 py-2 rounded text-white ${
+            loading ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-700"
+          }`}
+          disabled={loading}
+        >
+          {loading ? "Processing..." : "Claim Funds"}
+        </button>
 
-      <h3 className="text-xl mt-6">Recent Transactions</h3>
-      {transactions.length > 0 ? (
-        transactions.map((tx, index) => (
-          <div key={index} className="border p-2 mt-2">
-            <p><strong>Sender:</strong> {tx.sender}</p>
-            <p><strong>Receiver:</strong> {tx.receiver}</p>
-            <p><strong>Amount:</strong> {tx.amount} ETH</p>
-            <p><strong>Message:</strong> {tx.message}</p>
-            <p><strong>Timestamp:</strong> {tx.timestamp}</p>
-            {!tx.claimed && tx.sender.toLowerCase() === userAddress.toLowerCase() && (
-              <button
-                onClick={() => refund(tx.receiver)}
-                className={`bg-red-500 px-3 py-1 rounded hover:bg-red-700 mt-2 ${
-                  loading ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                disabled={loading}
-              >
-                {loading ? "Processing..." : "Refund"}
-              </button>
-            )}
-          </div>
-        ))
-      ) : (
-        <p>No recent transactions</p>
-      )}
-    </div>
+        <h3 className="text-xl mt-6">Recent Transactions</h3>
+        {transactions.length > 0 ? (
+          transactions.map((tx, index) => (
+            <div key={index} className="border p-2 mt-2">
+              <p>
+                <strong>Sender:</strong> {tx.sender}
+              </p>
+              <p>
+                <strong>Receiver:</strong> {tx.receiver}
+              </p>
+              <p>
+                <strong>Amount:</strong> {tx.amount} ETH
+              </p>
+              <p>
+                <strong>Message:</strong> {tx.message}
+              </p>
+              <p>
+                <strong>Timestamp:</strong> {tx.timestamp}
+              </p>
+              {!tx.claimed &&
+                tx.sender.toLowerCase() === userAddress.toLowerCase() && (
+                  <button
+                    onClick={() => refund(tx.receiver)}
+                    className={`bg-red-500 px-3 py-1 rounded hover:bg-red-700 mt-2 ${
+                      loading ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    disabled={loading}
+                  >
+                    {loading ? "Processing..." : "Refund"}
+                  </button>
+                )}
+            </div>
+          ))
+        ) : (
+          <p>No recent transactions</p>
+        )}
+      </div>
+    </>
   );
 }
 
