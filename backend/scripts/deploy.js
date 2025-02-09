@@ -1,15 +1,19 @@
 const hre = require("hardhat");
 
 async function main() {
-  const Investment = await hre.ethers.getContractFactory("Investment");
-  const investment = await Investment.deploy(); // ✅ Deploy the contract
+  console.log("🚀 Deploying FundTransfer contract...");
 
-  await investment.waitForDeployment(); // ✅ Wait for contract to be deployed
+  const FundTransfer = await hre.ethers.getContractFactory("FundTransfer"); // ✅ Change contract name
+  const fundTransfer = await FundTransfer.deploy(); // ✅ Deploy FundTransfer contract
 
-  console.log(`Investment contract deployed to: ${await investment.getAddress()}`);
+  await fundTransfer.waitForDeployment(); // ✅ Ensure deployment is completed
+
+  console.log(`✅ FundTransfer contract deployed to: ${await fundTransfer.getAddress()}`);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error("❌ Deployment failed:", error);
+    process.exit(1);
+  });
