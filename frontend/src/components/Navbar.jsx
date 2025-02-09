@@ -20,17 +20,30 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-800 p-4 text-white flex justify-between items-center">
-      <div className="flex gap-4">
-        <Link to="/" className="hover:text-blue-300">Home</Link>
-        <Link to="/transfer" className="hover:text-green-300">Transfer</Link>
+    <nav className="bg-customDarkpurple px-10 py-4 text-white flex justify-between items-center">
+      <div className="">
+        {" "}
+        <h1 className="font-bold text-xl">Web 3 Pay</h1>
       </div>
-      <button 
-        onClick={connectWallet} 
-        className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-700"
-      >
-        {walletAddress ? walletAddress.slice(0, 6) + "..." + walletAddress.slice(-4) : "Connect Wallet"}
-      </button>
+      <div className="flex gap-10 items-center text-base">
+        <Link to="/" className="hover:text-blue-300">
+          Home
+        </Link>
+        <Link to="/transfer" className="hover:text-green-300">
+          Transfer
+        </Link>
+        <Link to="/transfer" className="hover:text-green-300">
+        Group Payments
+        </Link>
+        <button
+          onClick={connectWallet}
+          className="bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple"
+        >
+          {walletAddress
+            ? walletAddress.slice(0, 6) + "..." + walletAddress.slice(-4)
+            : "Connect Wallet"}
+        </button>
+      </div>
     </nav>
   );
 }
