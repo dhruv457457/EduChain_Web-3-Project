@@ -2,7 +2,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-
+        customDarkpurple: "#0E0618",
       },
     },
   },
