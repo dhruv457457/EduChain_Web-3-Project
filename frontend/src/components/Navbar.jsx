@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ethers } from "ethers";
-import { FaBars, FaTimes } from "react-icons/fa"; // Icons for mobile menu
+import { FaBars, FaTimes, FaWallet, FaSignOutAlt } from "react-icons/fa"; // Icons
 
 function Navbar() {
   const [walletAddress, setWalletAddress] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const storedAddress = localStorage.getItem("walletAddress");
+    if (storedAddress) {
+      setWalletAddress(storedAddress);
+    }
+  }, []);
 
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -13,12 +20,20 @@ function Navbar() {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const accounts = await provider.send("eth_requestAccounts", []);
         setWalletAddress(accounts[0]);
+
+        // Store wallet address in localStorage
+        localStorage.setItem("walletAddress", accounts[0]);
       } catch (error) {
         console.error("Wallet connection failed", error);
       }
     } else {
       alert("Please install MetaMask to use this feature!");
     }
+  };
+
+  const disconnectWallet = () => {
+    setWalletAddress(null);
+    localStorage.removeItem("walletAddress");
   };
 
   return (
@@ -31,12 +46,27 @@ function Navbar() {
         <Link to="/" className="hover:text-blue-300 transition duration-300">Home</Link>
         <Link to="/transfer" className="hover:text-green-300 transition duration-300">Transfer</Link>
         <Link to="/group-payments" className="hover:text-green-300 transition duration-300">Group Payments</Link>
-        <button 
-          onClick={connectWallet} 
-          className="bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple transition duration-300 hover:bg-opacity-90"
-        >
-          {walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : "Connect Wallet"}
-        </button>
+
+        {/* Wallet Connection */}
+        <div className="relative">
+          {walletAddress ? (
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple transition duration-300 hover:bg-opacity-90">
+              <FaWallet className="text-customLightPurple" />
+              <span>{walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}</span>
+              <button onClick={disconnectWallet} className="ml-2 text-red-500 hover:text-red-700">
+                <FaSignOutAlt />
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={connectWallet} 
+              className="bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple transition duration-300 hover:bg-opacity-90 flex items-center gap-2"
+            >
+              <FaWallet />
+              Connect Wallet
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Mobile Menu Button */}
@@ -52,12 +82,25 @@ function Navbar() {
           <Link to="/" className="hover:text-blue-300 transition duration-300" onClick={() => setIsOpen(false)}>Home</Link>
           <Link to="/transfer" className="hover:text-green-300 transition duration-300" onClick={() => setIsOpen(false)}>Transfer</Link>
           <Link to="/group-payments" className="hover:text-green-300 transition duration-300" onClick={() => setIsOpen(false)}>Group Payments</Link>
-          <button 
-            onClick={connectWallet} 
-            className="bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple transition duration-300 hover:bg-opacity-90"
-          >
-            {walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : "Connect Wallet"}
-          </button>
+
+          {/* Wallet Connection for Mobile */}
+          {walletAddress ? (
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple transition duration-300 hover:bg-opacity-90">
+              <FaWallet className="text-customLightPurple" />
+              <span>{walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}</span>
+              <button onClick={disconnectWallet} className="ml-2 text-red-500 hover:text-red-700">
+                <FaSignOutAlt />
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={connectWallet} 
+              className="bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple transition duration-300 hover:bg-opacity-90 flex items-center gap-2"
+            >
+              <FaWallet />
+              Connect Wallet
+            </button>
+          )}
         </div>
       </div>
     </nav>
