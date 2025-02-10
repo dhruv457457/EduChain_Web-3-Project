@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import FundTransferABI from "../contracts/FundTransfer.json";
 import Navbar from "../components/Navbar";
 
-const contractAddress = "0xf5646e10B042567d23753D587DDa16dc6E4061Ab";
+const contractAddress = "0x8fB146232154f2456bCC9d0BD17353686b5F4864";
 
 function Transfer() {
   const [recipient, setRecipient] = useState("");
@@ -107,31 +107,33 @@ function Transfer() {
 
   const fetchTransactions = async () => {
     try {
-      if (!window.ethereum) return toast.error("🦊 Please install MetaMask!");
+        if (!window.ethereum) return alert("Please install MetaMask!");
 
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const contract = new ethers.Contract(
-        contractAddress,
-        FundTransferABI.abi,
-        provider
-      );
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const contract = new ethers.Contract(contractAddress, FundTransferABI.abi, provider);
 
-      const txs = await contract.getTransactions();
+        const txs = await contract.getAllTransactions(); // ✅ Use global function
+        console.log("Fetched Transactions:", txs);
 
-      const formattedTxs = txs.map((tx) => ({
-        sender: tx.sender,
-        receiver: tx.receiver,
-        amount: ethers.formatEther(tx.amount), // Convert from Wei to ETH
-        message: tx.message,
-        timestamp: new Date(Number(tx.timestamp) * 1000).toLocaleString(),
-        claimed: tx.claimed,
-      }));
+        if (txs.length === 0) console.log("No transactions found.");
 
-      setTransactions(formattedTxs);
+        setTransactions(
+            txs.map(tx => ({
+                sender: tx.sender,
+                receiver: tx.receiver,
+                amount: ethers.formatEther(tx.amount),
+                message: tx.message,
+                timestamp: new Date(Number(tx.timestamp) * 1000).toLocaleString(),
+                claimed: tx.claimed,
+                refunded: tx.refunded,
+            }))
+        );
     } catch (error) {
-      console.error("Error fetching transactions:", error);
+        console.error("Error fetching transactions:", error);
     }
-  };
+};
+
+
 
   return (
     <>
