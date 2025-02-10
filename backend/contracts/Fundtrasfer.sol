@@ -11,9 +11,11 @@ contract FundTransfer is Ownable {
         string message;
         uint256 timestamp;
         bool claimed;
+        bool refunded;
     }
 
-    mapping(address => Transaction[]) private transactions;
+    Transaction[] public allTransactions; // Store all transactions globally
+    mapping(address => Transaction[]) private transactions; // Per-user transactions
     mapping(address => uint256) public pendingBalances;
 
     event FundsSent(address indexed sender, address indexed receiver, uint256 amount, string message);
@@ -25,16 +27,20 @@ contract FundTransfer is Ownable {
     function sendFunds(address _receiver, string memory _message) external payable {
         require(msg.value > 0, "Amount must be greater than 0");
 
-        transactions[_receiver].push(Transaction({
+        Transaction memory newTx = Transaction({
             sender: msg.sender,
             receiver: _receiver,
             amount: msg.value,
             message: _message,
             timestamp: block.timestamp,
-            claimed: false
-        }));
+            claimed: false,
+            refunded: false
+        });
 
+        transactions[_receiver].push(newTx);
+        allTransactions.push(newTx); // Store globally
         pendingBalances[_receiver] += msg.value;
+
         emit FundsSent(msg.sender, _receiver, msg.value, _message);
     }
 
@@ -44,7 +50,7 @@ contract FundTransfer is Ownable {
 
         pendingBalances[msg.sender] = 0;
         for (uint i = 0; i < transactions[msg.sender].length; i++) {
-            if (!transactions[msg.sender][i].claimed) {
+            if (!transactions[msg.sender][i].claimed && !transactions[msg.sender][i].refunded) {
                 transactions[msg.sender][i].claimed = true;
             }
         }
@@ -58,19 +64,27 @@ contract FundTransfer is Ownable {
     function refund(address _receiver) external {
         uint256 amount = pendingBalances[_receiver];
         require(amount > 0, "No funds to refund");
-
-        // Only allow refund if 1 day has passed
-        require(block.timestamp >= transactions[_receiver][0].timestamp + 1 days, "Cannot refund yet");
-
+        
+        uint256 lastTransactionTime = transactions[_receiver][transactions[_receiver].length - 1].timestamp;
+        require(block.timestamp >= lastTransactionTime + 10 hours, "Cannot refund yet");
+        require(transactions[_receiver][transactions[_receiver].length - 1].sender == msg.sender, "Only sender can refund");
+        
         pendingBalances[_receiver] = 0;
-
+        transactions[_receiver][transactions[_receiver].length - 1].refunded = true;
+        
         (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "Refund failed");
 
         emit RefundIssued(msg.sender, amount);
     }
-    function getTransactions() external view returns (Transaction[] memory) {
-    return transactions[msg.sender];
-     }
 
+    // ✅ Get transactions for any user (for sender or receiver)
+    function getTransactionsFor(address user) external view returns (Transaction[] memory) {
+        return transactions[user];
+    }
+
+    // ✅ Get all transactions globally
+    function getAllTransactions() external view returns (Transaction[] memory) {
+        return allTransactions;
+    }
 }
