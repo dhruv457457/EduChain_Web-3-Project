@@ -15,7 +15,7 @@ export default function Footer() {
             Where Every Payment is Fortified—Shop with Peace of Mind!
             </p>
         </div>
-        <div className='flex flex-col md:flex-row gap-10 md:gap-36 text-center md:text-left'>
+        <div className='flex items md:flex-row justify-around md:gap-36 text-center md:text-left'>
             <div>
            <h1 className='text-2xl text-white font-bold'>
             Company
