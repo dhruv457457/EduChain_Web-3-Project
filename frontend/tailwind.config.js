@@ -13,6 +13,7 @@ module.exports = {
         customSemiPurple: "#1D0A2D",
         customPurple: "#AF34FF",
         customBlue: "#6496FF",
+        customBlue2: "#4C8FF5",
       },
     },
   },
