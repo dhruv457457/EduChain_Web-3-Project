@@ -39,30 +39,50 @@ function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full bg-customDarkpurple bg-opacity-90 backdrop-blur-sm shadow-lg transition-all duration-300 px-8 sm:px-10 py-4 text-white flex justify-between items-center z-50">
       {/* Logo */}
-      <h1 className='text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-600 to-purple-900 text-transparent bg-clip-text'>
-      FortressPay
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 via-purple-600 to-purple-900 text-transparent bg-clip-text">
+      Cryptify
       </h1>
 
       {/* Desktop Menu */}
       <div className="hidden md:flex gap-10 items-center text-base">
-        <Link to="/" className="hover:text-blue-300 transition duration-300">Home</Link>
-        <Link to="/transfer" className="hover:text-green-300 transition duration-300">Transfer</Link>
-        <Link to="/group-payments" className="hover:text-green-300 transition duration-300">Group Payments</Link>
+        <Link to="/" className="hover:text-blue-300 transition duration-300">
+          Home
+        </Link>
+        <Link
+          to="/transfer"
+          className="hover:text-green-300 transition duration-300"
+        >
+          Transfer
+        </Link>
+        <Link
+          to="/group-payments"
+          className="hover:text-green-300 transition duration-300"
+        >
+          Group Payments
+        </Link>
 
         {/* Wallet Connection */}
         <div className="relative">
           {walletAddress ? (
             <div className="flex items-center gap-2 bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple transition duration-300 hover:bg-opacity-90">
               <FaWallet className="text-customLightPurple" />
-              <span>{walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}</span>
-              <button onClick={disconnectWallet} className="ml-2 text-red-500 hover:text-red-700">
+              <span>
+                {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+              </span>
+              <button
+                onClick={disconnectWallet}
+                className="ml-2 text-red-500 hover:text-red-700"
+              >
                 <FaSignOutAlt />
               </button>
             </div>
           ) : (
-            <button 
-              onClick={connectWallet} 
-              className="bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple transition duration-300 hover:bg-opacity-90 flex items-center gap-2"
+            <button
+              onClick={connectWallet}
+              className="flex items-center gap-2 px-4 py-2 rounded font-semibold  
+    bg-white text-customLightPurple border-b-4 border-customLightPurple  
+    transition-all duration-300 ease-in-out shadow-md 
+    hover:bg-customLightPurple hover:text-white hover:border-white hover:shadow-lg active:scale-95"
             >
               <FaWallet />
               Connect Wallet
@@ -73,30 +93,60 @@ function Navbar() {
 
       {/* Mobile Menu Button */}
       <div className="md:hidden">
-        <button onClick={() => setIsOpen(!isOpen)} className="text-white text-2xl">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-white text-2xl"
+        >
           {isOpen ? <FaTimes /> : <FaBars />}
         </button>
       </div>
 
       {/* Mobile Dropdown Menu */}
-      <div className={`absolute top-full left-0 w-full bg-customDarkpurple bg-opacity-95 backdrop-blur-md transition-all duration-500 overflow-hidden ${isOpen ? "max-h-60" : "max-h-0"}`}>
+      <div
+        className={`absolute top-full left-0 w-full bg-customDarkpurple bg-opacity-95 backdrop-blur-md transition-all duration-500 overflow-hidden ${
+          isOpen ? "max-h-60" : "max-h-0"
+        }`}
+      >
         <div className="flex flex-col items-center py-4 space-y-4">
-          <Link to="/" className="hover:text-blue-300 transition duration-300" onClick={() => setIsOpen(false)}>Home</Link>
-          <Link to="/transfer" className="hover:text-green-300 transition duration-300" onClick={() => setIsOpen(false)}>Transfer</Link>
-          <Link to="/group-payments" className="hover:text-green-300 transition duration-300" onClick={() => setIsOpen(false)}>Group Payments</Link>
+          <Link
+            to="/"
+            className="hover:text-blue-300 transition duration-300"
+            onClick={() => setIsOpen(false)}
+          >
+            Home
+          </Link>
+          <Link
+            to="/transfer"
+            className="hover:text-green-300 transition duration-300"
+            onClick={() => setIsOpen(false)}
+          >
+            Transfer
+          </Link>
+          <Link
+            to="/group-payments"
+            className="hover:text-green-300 transition duration-300"
+            onClick={() => setIsOpen(false)}
+          >
+            Group Payments
+          </Link>
 
           {/* Wallet Connection for Mobile */}
           {walletAddress ? (
             <div className="flex items-center gap-2 bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple transition duration-300 hover:bg-opacity-90">
               <FaWallet className="text-customLightPurple" />
-              <span>{walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}</span>
-              <button onClick={disconnectWallet} className="ml-2 text-red-500 hover:text-red-700">
+              <span>
+                {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+              </span>
+              <button
+                onClick={disconnectWallet}
+                className="ml-2 text-red-500 hover:text-red-700"
+              >
                 <FaSignOutAlt />
               </button>
             </div>
           ) : (
-            <button 
-              onClick={connectWallet} 
+            <button
+              onClick={connectWallet}
               className="bg-white px-4 py-2 rounded text-customLightPurple font-semibold border-b-4 border-customLightPurple transition duration-300 hover:bg-opacity-90 flex items-center gap-2"
             >
               <FaWallet />
