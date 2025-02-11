@@ -3,7 +3,7 @@ import LoaderButton from "./LoaderButton";
 
 const TransactionItem = ({ tx, userAddress, refund, loading }) => {
   return (
-    <div className="border p-2 mt-2">
+    <div className=" p-2 mt-3 text-white bg-customInput border-2 border-customPurple rounded-md w-auto flex flex-col items-start">
       <p><strong>Sender:</strong> {tx.sender}</p>
       <p><strong>Receiver:</strong> {tx.receiver}</p>
       <p><strong>Amount:</strong> {tx.amount} ETH</p>

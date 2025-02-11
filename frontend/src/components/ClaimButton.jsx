@@ -25,8 +25,8 @@ const ClaimButton = () => {
   return (
     <button
       onClick={claimFunds}
-      className={`ml-2 px-4 py-2 rounded text-white ${
-        loading ? "bg-gray-500" : "bg-blue-500 hover:bg-blue-700"
+      className={` w-full px-4 py-2 rounded text-white ${
+        loading ? "bg-gray-500" : "bg-customPurple hover:bg-customLightPurple"
       }`}
       disabled={loading}
     >
