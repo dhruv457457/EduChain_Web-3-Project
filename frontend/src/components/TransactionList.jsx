@@ -16,7 +16,7 @@ const TransactionList = ({ transactions, userAddress, refund, loading }) => {
                 key={index}
                 tx={tx}
                 userAddress={userAddress}
-                refund={refund}
+                refund={refund || (() => {})} // ✅ Ensure refund has a default function
                 loading={loading}
               />
             ))
