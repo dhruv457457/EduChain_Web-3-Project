@@ -11,6 +11,7 @@ const TransferForm = ({
   setMessage,
   sendFunds,
   loading,
+  claimFunds, // ✅ Accept claimFunds as a prop
 }) => {
   return (
     <div className="px-4 sm:px-10 lg:pl-36 py-20 w-full flex justify-center">
@@ -19,10 +20,10 @@ const TransferForm = ({
 
         <input
           type="text"
-          placeholder="Recipient Address"
+          placeholder="Reciver UserName"
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
-          className="border border-customPurple p-2 rounded-md w-full bg-customInput"
+          className="border border-customPurple p-2 rounded-md w-full bg-customInput text-cyan-50 "
         />
 
         <input
@@ -48,7 +49,7 @@ const TransferForm = ({
           color="customPurple"
         />
 
-        <ClaimButton />
+        <ClaimButton claimFunds={claimFunds} /> {/* ✅ Pass claimFunds prop */}
       </div>
     </div>
   );
