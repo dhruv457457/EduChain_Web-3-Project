@@ -10,10 +10,10 @@ const ClaimButton = () => {
     try {
       setLoading(true);
       const contract = await getContract();
-      const tx = await contract.claimFunds();
+      const tx = await contract.claimFunds(); // ✅ Ensure contract method is correctly called
       await tx.wait();
       toast.success("✅ Claimed successfully!");
-      fetchTransactions();
+      fetchTransactions(); // ✅ Refresh transaction list after claim
     } catch (error) {
       console.error(error);
       toast.error("❌ Claim failed!");
@@ -25,8 +25,10 @@ const ClaimButton = () => {
   return (
     <button
       onClick={claimFunds}
-      className={` w-full px-4 py-2 rounded text-white ${
-        loading ? "bg-gray-500" : "bg-customPurple hover:bg-customLightPurple"
+      className={`w-full px-4 py-2 rounded text-white transition-all ${
+        loading
+          ? "bg-gray-500 cursor-not-allowed"
+          : "bg-customPurple hover:bg-customLightPurple"
       }`}
       disabled={loading}
     >
