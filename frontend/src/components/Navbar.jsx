@@ -55,10 +55,10 @@ function Navbar() {
           Transfer
         </Link>
         <Link
-          to="/group-payments"
+          to="/user"
           className="hover:text-customBlue transition duration-300"
         >
-          Group Payments
+          Profile
         </Link>
 
         {/* Wallet Connection */}
