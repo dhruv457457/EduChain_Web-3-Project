@@ -5,7 +5,7 @@ import "./customScrollbar.css"; // Import custom CSS for scrollbar
 const TransactionList = ({ transactions, userAddress, refund, loading }) => {
   return (
     <div className="px-4 sm:px-10 lg:pr-40">
-      <div className="flex flex-col border-2 border-customPurple rounded-md bg-customDark py-5 px-6 sm:px-10 mt-10 sm:mt-14 shadow-custom-purple">
+      <div className="flex flex-col border-2 border-customPurple rounded-md bg-customDark py-5 px-6 sm:px-10 mt-10 sm:mt-14 shadow-custom-purple md:min-h-96 md:min-w-96">
         <h3 className="text-xl text-white font-bold">Recent Transactions</h3>
 
         {/* Scrollable container with custom scrollbar */}

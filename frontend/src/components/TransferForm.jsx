@@ -31,7 +31,7 @@ const TransferForm = ({
           placeholder="Amount (ETH)"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="border border-customPurple p-2 rounded-md w-full bg-customInput"
+          className="border border-customPurple p-2 rounded-md w-full bg-customInput text-cyan-50 "
         />
 
         <input
@@ -39,7 +39,7 @@ const TransferForm = ({
           placeholder="Remark/Message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="border border-customPurple p-2 rounded-md w-full bg-customInput"
+         className="border border-customPurple p-2 rounded-md w-full bg-customInput text-cyan-50 "
         />
 
         <LoaderButton

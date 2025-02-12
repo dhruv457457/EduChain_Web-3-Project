@@ -73,6 +73,7 @@ const Transfer = () => {
 
   return (
     <>
+    
       <Navbar />
       <ToastContainer position="top-right" autoClose={5000} />
       <div className="flex flex-col bg-customSemiPurple justify-between md:flex-row py-20">
