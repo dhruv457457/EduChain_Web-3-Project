@@ -1,39 +1,71 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import { ToastContainer, toast } from "react-toastify";
 import useContract from "../hooks/useContract";
+import { ethers } from "ethers";
 import TransferForm from "../components/TransferForm";
 import TransactionList from "../components/TransactionList";
+import FundTransferWithRegistryABI from "../contracts/FundTransferWithRegistry.json";
 
-import { ethers } from "ethers";
+const fundTransferAddress = "0x9c2ed62ab722d8eEb6eDeab06f9464EdfCaf46Dd";
 
 const Transfer = () => {
-  const { transactions, fetchTransactions, getContract, userAddress } =
-    useContract();
+  const { transactions, fetchTransactions, getContract, userAddress } = useContract();
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (userAddress) {
+      fetchTransactions();
+    }
+  }, [userAddress]);
+
+  const validateInputs = () => {
+    if (!recipient || recipient.trim() === "") {
+      toast.error("❌ Enter a valid recipient username or address!");
+      return false;
+    }
+    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+      toast.error("❌ Please enter a valid amount!");
+      return false;
+    }
+    return true;
+  };
+
   const sendFunds = async () => {
-    if (!window.ethereum) return toast.error("🦊 Please install MetaMask!");
+    if (!window.ethereum) {
+      toast.error("🦊 Please install MetaMask!");
+      return;
+    }
+    if (!validateInputs()) return;
 
     try {
       setLoading(true);
-      const contract = await getContract();
-      const tx = await contract.sendFunds(recipient, message, {
-        value: ethers.parseEther(amount),
-      });
+      const contract = await getContract(fundTransferAddress, FundTransferWithRegistryABI.abi);
 
+      if (!contract) {
+        toast.error("❌ Contract instance not found!");
+        return;
+      }
+
+      const amountInWei = ethers.parseEther(amount);
+      console.log(`💰 Sending ${amount} ETH to ${recipient}...`);
+
+      const tx = await contract.sendFunds(recipient, message, { value: amountInWei });
+      console.log("🔄 Transaction sent. Waiting for confirmation...");
       await tx.wait();
+
       toast.success(`✅ Transfer successful! TX: ${tx.hash}`);
       setRecipient("");
       setAmount("");
       setMessage("");
+
       fetchTransactions();
     } catch (error) {
-      console.error(error);
-      toast.error("❌ Transaction failed!");
+      console.error("❌ Transaction error:", error);
+      toast.error(`❌ Transaction failed! ${error.reason || error.message || "Unknown error"}`);
     } finally {
       setLoading(false);
     }
@@ -43,21 +75,18 @@ const Transfer = () => {
     <>
       <Navbar />
       <ToastContainer position="top-right" autoClose={5000} />
-      <div className="flex flex-col bg-customSemiPurple justify-between md:flex-row py-20 ">
+      <div className="flex flex-col bg-customSemiPurple justify-between md:flex-row py-20">
         <TransferForm
-          {...{
-            recipient,
-            setRecipient,
-            amount,
-            setAmount,
-            message,
-            setMessage,
-            sendFunds,
-            loading,
-          }}
+          recipient={recipient}
+          setRecipient={setRecipient}
+          amount={amount}
+          setAmount={setAmount}
+          message={message}
+          setMessage={setMessage}
+          sendFunds={sendFunds}
+          loading={loading}
         />
-      
-        <TransactionList {...{ transactions, userAddress }} />
+        <TransactionList transactions={transactions} userAddress={userAddress} />
       </div>
     </>
   );
