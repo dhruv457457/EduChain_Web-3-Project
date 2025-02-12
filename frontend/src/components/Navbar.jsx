@@ -123,11 +123,11 @@ function Navbar() {
             Transfer
           </Link>
           <Link
-            to="/group-payments"
+            to="/user"
             className="hover:text-green-300 transition duration-300"
             onClick={() => setIsOpen(false)}
           >
-            Group Payments
+            Profile
           </Link>
 
           {/* Wallet Connection for Mobile */}
