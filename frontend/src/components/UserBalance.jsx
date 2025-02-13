@@ -6,8 +6,8 @@ const UserBalance = () => {
   const { userAddress, balance, fetchBalance } = useContract();
 
   return (
-    <div className="bg-customDark text-white p-4 rounded-lg shadow-custom-purple w-full max-w-md  border border-customPurple">
-      <h1 className="text-2xl font-bold text-white mb-4">User Dashboard</h1>
+    <div className="bg-customDark text-white p-4 rounded-lg shadow-custom-purple w-full max-w-md  border-y-4 border-customPurple">
+      <h1 className="text-2xl font-bold text-white mb-4">User Details</h1>
       <p className="text-lg font-semibold">Wallet Address:</p>
       <p className="text-sm break-all">{userAddress || "Not connected"}</p>
 

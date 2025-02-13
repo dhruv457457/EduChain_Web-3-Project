@@ -25,7 +25,7 @@ function LogoCloud() {
               key={index}
               src={logo.src}
               alt={logo.alt}
-              className="w-52 h-20 object-contain bg-white px-4 rounded-md shadow-custom-purple border-b-4 border-customPurple cursor-pointer hover:border-t-4 hover:border-b-0 transition-all duration-75"
+              className="w-52 h-20 object-contain bg-white px-4 rounded-md lg:shadow-custom-purple border-b-4 border-customPurple cursor-pointer lg:hover:border-t-4 lg:hover:border-b-0 transition-all duration-75"
             />
           ))}
         </div>
