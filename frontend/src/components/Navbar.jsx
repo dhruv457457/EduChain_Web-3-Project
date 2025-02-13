@@ -39,8 +39,8 @@ function Navbar() {
   return (
     <nav className="fixed top-0 left-0 w-full bg-customDarkpurple bg-opacity-90 backdrop-blur-sm shadow-lg transition-all duration-300 px-8 sm:px-10 py-4 text-white flex justify-between items-center z-50">
       {/* Logo */}
-      <h1 className="text-2xl font-bold text-customBlue text-shadow-custom">
-      Cryptify
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-customPurple via-customBlue to-customBlue2 text-transparent bg-clip-text">
+        Cryptify
       </h1>
 
       {/* Desktop Menu */}
