@@ -8,10 +8,10 @@ export default function Footer() {
     <div className="relative bg-customSemiPurple h-auto w-full py-7 px-4">
        <div className='flex flex-col md:flex-row py-7 px-4 md:px-14 gap-10 md:gap-96'>
         <div className='text-center md:text-left '>
-            <h1 className='text-4xl font-bold text-customBlue text-shadow-custom '>
+            <h1 className='text-4xl font-bold text-customBlue lg:text-shadow-custom '>
                 Cryptify
                 </h1>
-            <p className='py-6 text-lg text-white opacity-80 text-shadow-custom'>
+            <p className='py-6 text-lg text-white opacity-80 lg:text-shadow-custom'>
             Where Every Payment is Fortified—Shop with Peace of Mind!
             </p>
         </div>
@@ -37,7 +37,7 @@ export default function Footer() {
            </div>
         </div>
        </div>
-       <div className="border-t border-customPurple mt-2 pt-6 text-center text-lg text-white opacity-80 text-shadow-custom ">
+       <div className="border-t border-customPurple mt-2 pt-6 text-center text-lg text-white opacity-80 lg:text-shadow-custom ">
        &copy; 2025 Cryptify, Inc. All rights reserved. | Empowering the future of digital transactions.
        </div>
       </div>
