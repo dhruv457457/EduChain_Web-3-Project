@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Navbar from "../components/Navbar";
 import Header from "../components/Header";
 import Cards from "../components/Cards";
@@ -8,11 +8,17 @@ import LogoCloud from "../components/LogoCloud";
 import Problem from "../components/Problem";
 
 function Home() {
+  const featuresRef = useRef(null);
+
+  const scrollToFeatures = () => {
+    featuresRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <>
       <Navbar />
-      <Header />
-      <div className="bg-customSemiPurple w-full px-4">
+      <Header scrollToFeatures={scrollToFeatures} />
+      <div className="bg-customSemiPurple w-full px-4 " ref={featuresRef}>
         <div className="flex flex-col items-center text-center mx-4">
           <h1 className="text-customPurple text-3xl md:text-4xl lg:text-5xl font-bold">
             Revolutionary Features
