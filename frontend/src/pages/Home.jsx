@@ -6,6 +6,7 @@ import { FaShieldAlt, FaUsers, FaPiggyBank } from "react-icons/fa";
 import Footer from "../components/Footer";
 import LogoCloud from "../components/LogoCloud";
 import Problem from "../components/Problem";
+import CommitmentStepsSection from "../components/CommitmentStepsSection";
 
 function Home() {
   const featuresRef = useRef(null);
@@ -30,36 +31,36 @@ function Home() {
               title="Secure Transfers"
               description="Military-grade encryption and multi-signature protection for your assets with real-time transaction monitoring."
               icon={
-                <FaShieldAlt
-                  className="text-purple-500 bg-customSemiPurple px-2 rounded-md border-b-4 border-customPurple"
-                  size={50}
-                />
+                <div className=" p-3 rounded-md border-b-4 border-customPurple">
+                  <FaShieldAlt className="text-purple-500" size={30} />
+                </div>
               }
             />
+
             <Cards
               title="Group Payments"
               description="Seamlessly manage group transactions with smart contract-powered splitting and automated distribution."
               icon={
-                <FaUsers
-                  className="text-purple-500 bg-customSemiPurple px-2 rounded-md border-b-4 border-customPurple"
-                  size={50}
-                />
+                <div className="p-3 rounded-md border-b-4 border-customPurple">
+                  <FaUsers className="text-green-500" size={30} />
+                </div>
               }
             />
+
             <Cards
               title="Savings Pots"
               description="Create intelligent savings pools with AI-driven yield optimization and advanced security protocols."
               icon={
-                <FaPiggyBank
-                  className="text-purple-500 bg-customSemiPurple px-2 rounded-md border-b-4 border-customPurple"
-                  size={50}
-                />
+                <div className=" p-3 rounded-md border-b-4 border-customPurple">
+                  <FaPiggyBank className="text-yellow-500" size={30} />
+                </div>
               }
             />
           </div>
         </div>
       </div>
-      <Problem />
+      {/* <Problem /> */}
+      <CommitmentStepsSection />
       <LogoCloud />
       <Footer />
     </>

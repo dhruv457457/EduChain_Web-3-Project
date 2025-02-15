@@ -49,7 +49,7 @@ const RegisterName = () => {
   };
 
   return (
-    <div className="bg-customDark p-4 rounded-md w-full max-w-md text-white flex flex-col gap-3 shadow-custom-purple border-y-4 border-customPurple">
+    <div className="bg-customDark p-4 rounded-md w-full max-w-md text-white flex flex-col gap-3 shadow-custom-purple border-y-4 border-customPurple min-h-[220px]">
       <h2 className="text-lg font-semibold">Register Name</h2>
       <input
         type="text"
