@@ -10,10 +10,10 @@ const ClaimButton = () => {
     try {
       setLoading(true);
       const contract = await getContract();
-      const tx = await contract.claimFunds(); // ✅ Ensure contract method is correctly called
+      const tx = await contract.claimFunds(); 
       await tx.wait();
       toast.success("✅ Claimed successfully!");
-      fetchTransactions(); // ✅ Refresh transaction list after claim
+      fetchTransactions(); 
     } catch (error) {
       console.error(error);
       toast.error("❌ Claim failed!");
