@@ -142,4 +142,31 @@ contract FundTransferWithRegistry is Ownable {
     function getAllTransactions() external view returns (Transaction[] memory) {
         return allTransactions;
     }
+
+    function getUserTransactions(address user) external view returns (Transaction[] memory) {
+    uint256 count = 0;
+
+    for (uint256 i = 0; i < allTransactions.length; i++) {
+        if (allTransactions[i].sender == user || allTransactions[i].receiver == user) {
+            count++;
+        }
+    }
+
+    Transaction[] memory userTransactions = new Transaction[](count);
+    uint256 index = 0;
+
+    for (uint256 i = 0; i < allTransactions.length; i++) {
+        if (allTransactions[i].sender == user || allTransactions[i].receiver == user) {
+            userTransactions[index] = allTransactions[i];
+            index++;
+        }
+    }
+
+    return userTransactions;
+}
+
+
+
+
+
 }
