@@ -1,45 +1,41 @@
-// RegisterName.js
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import useContract from "../hooks/useContract";
-import UserRegistryABI from "../contracts/FundTransferWithRegistry.json";
 
-const userRegistryAddress = "0x9c2ed62ab722d8eEb6eDeab06f9464EdfCaf46Dd";
-
-const RegisterName = () => {
+const RegisterName = ({ setGlobalRegisteredName }) => {
   const { userAddress, getContract } = useContract();
   const [name, setName] = useState("");
-  const [registeredName, setRegisteredName] = useState("");
+  const [registeredName, setRegisteredName] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (userAddress) fetchRegisteredName();
   }, [userAddress]);
 
-  // Fetch registered username
   const fetchRegisteredName = async () => {
     try {
       const contract = await getContract();
       const userData = await contract.users(userAddress);
-      setRegisteredName(userData.username);
+      if (userData.username) {
+        setRegisteredName(userData.username);
+        setGlobalRegisteredName(userData.username);
+      }
     } catch (error) {
       console.error("Error fetching username:", error);
       toast.error("❌ Could not fetch username!");
     }
   };
 
-  // Register username
   const registerName = async () => {
     if (!name) return toast.error("❌ Please enter a name!");
-
     try {
       setLoading(true);
-      const contract = await getContract(userRegistryAddress, UserRegistryABI.abi);
+      const contract = await getContract();
       const tx = await contract.registerUsername(name);
       await tx.wait();
       toast.success("✅ Name registered successfully!");
       setRegisteredName(name);
-      setName("");
+      setGlobalRegisteredName(name);
     } catch (error) {
       console.error("Registration Error:", error);
       toast.error(`❌ Registration failed: ${error.reason || "Unknown error"}`);
@@ -49,23 +45,29 @@ const RegisterName = () => {
   };
 
   return (
-    <div className="bg-customDark p-4 rounded-md w-full max-w-md text-white flex flex-col gap-3 shadow-custom-purple border-y-4 border-customPurple min-h-[220px]">
-      <h2 className="text-lg font-semibold">Register Name</h2>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Enter your name"
-        className="border border-customPurple p-2 rounded-md w-full bg-customInput text-cyan-50 "
-      />
-      <button
-        onClick={registerName}
-        className="mt-2 px-4 py-2 bg-customPurple text-white rounded-lg w-full"
-        disabled={loading}
-      >
-        {loading ? "Registering..." : "Register"}
-      </button>
-      {registeredName && <p className="mt-2">✅ Registered Name: {registeredName}</p>}
+    <div className="bg-gray-900 p-5 rounded-lg shadow-lg border border-customPurple text-white">
+      <h2 className="text-xl font-semibold">User Name</h2>
+
+      {registeredName ? (
+        <p className="mt-3 text-green-400">✅ Registered Name: {registeredName}</p>
+      ) : (
+        <>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+            className="border border-gray-600 p-2 rounded-md w-full bg-gray-800 text-white mt-2"
+          />
+          <button
+            onClick={registerName}
+            className="mt-4 px-4 py-2 bg-customPurple hover:bg-purple-600 transition text-white rounded-lg w-full"
+            disabled={loading}
+          >
+            {loading ? "Registering..." : "Register"}
+          </button>
+        </>
+      )}
     </div>
   );
 };
