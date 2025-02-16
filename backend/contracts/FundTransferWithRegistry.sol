@@ -30,18 +30,26 @@ contract FundTransferWithRegistry is Ownable {
     event FundsSent(address indexed sender, address indexed receiver, uint256 amount, string message);
     event FundsClaimed(address indexed receiver, uint256 amount);
     event RefundIssued(address indexed sender, uint256 amount);
+    event FundsDeposited(address indexed user, uint256 amount);
+    event EscrowReleased(address indexed recipient, uint256 amount);
 
     constructor() Ownable(msg.sender) {}
 
     function registerUsername(string calldata _username) external {
         require(bytes(_username).length > 0, "Username cannot be empty");
         require(usernameToAddress[_username] == address(0), "Username already taken");
-        require(!users[msg.sender].registered, "You already have a username");
+        require(!users[msg.sender].registered, "User already registered");
 
         users[msg.sender] = User(_username, true);
         usernameToAddress[_username] = msg.sender;
 
         emit UserRegistered(msg.sender, _username);
+    }
+
+    function depositFunds() external payable {
+        require(msg.value > 0, "Amount must be greater than 0");
+        pendingBalances[msg.sender] += msg.value;
+        emit FundsDeposited(msg.sender, msg.value);
     }
 
     function sendFunds(string memory _receiverUsername, string memory _message) external payable {
@@ -51,22 +59,7 @@ contract FundTransferWithRegistry is Ownable {
         address receiver = usernameToAddress[_receiverUsername];
         require(receiver != address(0), "Receiver username not found");
 
-        Transaction memory newTx = Transaction({
-            sender: msg.sender,
-            receiver: receiver,
-            senderName: users[msg.sender].username,
-            receiverName: users[receiver].username,
-            amount: msg.value,
-            message: _message,
-            timestamp: block.timestamp,
-            claimed: false,
-            refunded: false
-        });
-
-        allTransactions.push(newTx);
-        pendingBalances[receiver] += msg.value;
-
-        emit FundsSent(msg.sender, receiver, msg.value, _message);
+        _processTransaction(msg.sender, receiver, msg.value, _message);
     }
 
     function sendFundsToAddress(address _receiver, string memory _message) external payable {
@@ -74,22 +67,24 @@ contract FundTransferWithRegistry is Ownable {
         require(users[msg.sender].registered, "Sender must be registered");
         require(users[_receiver].registered, "Receiver must be registered");
 
-        Transaction memory newTx = Transaction({
-            sender: msg.sender,
+        _processTransaction(msg.sender, _receiver, msg.value, _message);
+    }
+
+    function _processTransaction(address _sender, address _receiver, uint256 _amount, string memory _message) internal {
+        allTransactions.push(Transaction({
+            sender: _sender,
             receiver: _receiver,
-            senderName: users[msg.sender].username,
+            senderName: users[_sender].username,
             receiverName: users[_receiver].username,
-            amount: msg.value,
+            amount: _amount,
             message: _message,
             timestamp: block.timestamp,
             claimed: false,
             refunded: false
-        });
+        }));
 
-        allTransactions.push(newTx);
-        pendingBalances[_receiver] += msg.value;
-
-        emit FundsSent(msg.sender, _receiver, msg.value, _message);
+        pendingBalances[_receiver] += _amount;
+        emit FundsSent(_sender, _receiver, _amount, _message);
     }
 
     function claimFunds() external {
@@ -111,32 +106,14 @@ contract FundTransferWithRegistry is Ownable {
         emit FundsClaimed(msg.sender, amount);
     }
 
-    function refund(address _receiver) external {
-        uint256 amount = pendingBalances[_receiver];
-        require(amount > 0, "No funds to refund");
+    function releaseEscrow(address _recipient, uint256 _amount) external onlyOwner {
+        require(pendingBalances[_recipient] >= _amount, "Insufficient escrow funds");
 
-        bool isSender = false;
-        for (uint256 i = 0; i < allTransactions.length; i++) {
-            if (
-                allTransactions[i].receiver == _receiver &&
-                allTransactions[i].sender == msg.sender &&
-                !allTransactions[i].claimed &&
-                !allTransactions[i].refunded &&
-                block.timestamp >= allTransactions[i].timestamp + 5 minutes
-            ) {
-                isSender = true;
-                allTransactions[i].refunded = true;
-                break;
-            }
-        }
-        require(isSender, "Only sender can refund after 5 minutes");
+        pendingBalances[_recipient] -= _amount;
+        (bool success, ) = _recipient.call{value: _amount}("");
+        require(success, "Escrow release failed");
 
-        pendingBalances[_receiver] = 0;
-
-        (bool success, ) = msg.sender.call{value: amount}("");
-        require(success, "Refund failed");
-
-        emit RefundIssued(msg.sender, amount);
+        emit EscrowReleased(_recipient, _amount);
     }
 
     function getAllTransactions() external view returns (Transaction[] memory) {
@@ -144,29 +121,21 @@ contract FundTransferWithRegistry is Ownable {
     }
 
     function getUserTransactions(address user) external view returns (Transaction[] memory) {
-    uint256 count = 0;
-
-    for (uint256 i = 0; i < allTransactions.length; i++) {
-        if (allTransactions[i].sender == user || allTransactions[i].receiver == user) {
-            count++;
+        uint256 count = 0;
+        for (uint256 i = 0; i < allTransactions.length; i++) {
+            if (allTransactions[i].sender == user || allTransactions[i].receiver == user) {
+                count++;
+            }
         }
-    }
 
-    Transaction[] memory userTransactions = new Transaction[](count);
-    uint256 index = 0;
-
-    for (uint256 i = 0; i < allTransactions.length; i++) {
-        if (allTransactions[i].sender == user || allTransactions[i].receiver == user) {
-            userTransactions[index] = allTransactions[i];
-            index++;
+        Transaction[] memory userTransactions = new Transaction[](count);
+        uint256 index = 0;
+        for (uint256 i = 0; i < allTransactions.length; i++) {
+            if (allTransactions[i].sender == user || allTransactions[i].receiver == user) {
+                userTransactions[index] = allTransactions[i];
+                index++;
+            }
         }
+        return userTransactions;
     }
-
-    return userTransactions;
-}
-
-
-
-
-
 }
