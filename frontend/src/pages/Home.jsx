@@ -5,7 +5,6 @@ import Cards from "../components/Cards";
 import { FaShieldAlt, FaUsers, FaPiggyBank } from "react-icons/fa";
 import Footer from "../components/Footer";
 import LogoCloud from "../components/LogoCloud";
-import Problem from "../components/Problem";
 import CommitmentStepsSection from "../components/CommitmentStepsSection";
 
 function Home() {
@@ -31,8 +30,8 @@ function Home() {
               title="Secure Transfers"
               description="Military-grade encryption and multi-signature protection for your assets with real-time transaction monitoring."
               icon={
-                <div className=" p-3 rounded-md border-b-4 border-customPurple">
-                  <FaShieldAlt className="text-purple-500" size={30} />
+                <div className=" p-3 rounded-md border-b-4 border-customBlue">
+                  <FaShieldAlt className="text-customBlue" size={30} />
                 </div>
               }
             />
@@ -41,7 +40,7 @@ function Home() {
               title="Group Payments"
               description="Seamlessly manage group transactions with smart contract-powered splitting and automated distribution."
               icon={
-                <div className="p-3 rounded-md border-b-4 border-customPurple">
+                <div className="p-3 rounded-md border-b-4 border-green-500">
                   <FaUsers className="text-green-500" size={30} />
                 </div>
               }
@@ -51,7 +50,7 @@ function Home() {
               title="Savings Pots"
               description="Create intelligent savings pools with AI-driven yield optimization and advanced security protocols."
               icon={
-                <div className=" p-3 rounded-md border-b-4 border-customPurple">
+                <div className=" p-3 rounded-md border-b-4 border-yellow-500">
                   <FaPiggyBank className="text-yellow-500" size={30} />
                 </div>
               }

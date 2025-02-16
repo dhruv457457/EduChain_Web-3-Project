@@ -49,6 +49,12 @@ function Navbar() {
           Home
         </Link>
         <Link
+          to="/freelancing"
+          className="hover:text-customBlue2 transition duration-300"
+        >
+          Freelancing
+        </Link>
+        <Link
           to="/transfer"
           className="hover:text-customBlue transition duration-300"
         >

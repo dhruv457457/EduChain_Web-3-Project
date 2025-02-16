@@ -21,7 +21,7 @@ function CommitmentStepsSection() {
               icon={
                 <Lock
                   size={50}
-                  className="text-purple-500 p-2 rounded-md border-b-4 border-customPurple"
+                  className="text-purple-500 p-2 rounded-md border-b-4 border-purple-500"
                 />
               }
               title="Secure Your Commitment"
@@ -48,7 +48,7 @@ function CommitmentStepsSection() {
               icon={
                 <Wallet
                   size={50}
-                  className="text-customBlue p-2 rounded-md border-b-4 border-blue-700"
+                  className="text-customBlue p-2 rounded-md border-b-4 border-customBlue"
                 />
               }
               title="Guaranteed Payouts"
