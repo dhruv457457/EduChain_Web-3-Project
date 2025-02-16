@@ -7,7 +7,7 @@ import TransferForm from "../components/TransferForm";
 import TransactionList from "../components/TransactionList";
 import FundTransferWithRegistryABI from "../contracts/FundTransferWithRegistry.json";
 
-const fundTransferAddress = "0x9c2ed62ab722d8eEb6eDeab06f9464EdfCaf46Dd";
+const fundTransferAddress = "0x20a4BEe5E72Cd0842bba1407230C7B2bFCaa0fe3";
 
 const Transfer = () => {
   const { transactions, fetchTransactions, getContract, userAddress } = useContract();

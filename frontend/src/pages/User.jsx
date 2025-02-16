@@ -1,4 +1,3 @@
-// User.js (Main Page)
 import React from "react";
 import Navbar from "../components/Navbar";
 import { ToastContainer } from "react-toastify";

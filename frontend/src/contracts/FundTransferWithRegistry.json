@@ -1,6 +1,5 @@
-{
-
-  "abi": [
+ {
+   "abi":[
     {
       "inputs": [],
       "stateMutability": "nonpayable",
@@ -34,6 +33,25 @@
         {
           "indexed": true,
           "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "EscrowReleased",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
           "name": "receiver",
           "type": "address"
         },
@@ -45,6 +63,25 @@
         }
       ],
       "name": "FundsClaimed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundsDeposited",
       "type": "event"
     },
     {
@@ -199,6 +236,13 @@
       "name": "claimFunds",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "depositFunds",
+      "outputs": [],
+      "stateMutability": "payable",
       "type": "function"
     },
     {
@@ -362,12 +406,12 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "_receiver",
-          "type": "address"
+          "internalType": "string",
+          "name": "_username",
+          "type": "string"
         }
       ],
-      "name": "refund",
+      "name": "registerUsername",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -375,12 +419,17 @@
     {
       "inputs": [
         {
-          "internalType": "string",
-          "name": "_username",
-          "type": "string"
+          "internalType": "address",
+          "name": "_recipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
         }
       ],
-      "name": "registerUsername",
+      "name": "releaseEscrow",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -485,4 +534,5 @@
       "type": "function"
     }
   ]
-}
+  
+ }
