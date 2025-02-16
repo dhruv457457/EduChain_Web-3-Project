@@ -23,7 +23,7 @@ const UserTransactions = () => {
   }, [userAddress, fetchUserTransactions]);
 
   return (
-    <div className="bg-gray-900 p-5 rounded-lg shadow-lg border border-customPurple text-white">
+    <div className="border-t-4 border-customPurple rounded-md bg-customDark p-5 shadow-custom-purple text-white">
       <h2 className="text-xl font-semibold mb-4">Your Transactions</h2>
       {loading ? (
         <p className="text-gray-400">Loading transactions...</p>

@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/poppins": "^5.1.1",
+    "@fontsource/roboto": "^5.1.1",
     "@openzeppelin/contracts": "^5.2.0",
     "@tailwindcss/vite": "^4.0.5",
     "autoprefixer": "^10.4.20",

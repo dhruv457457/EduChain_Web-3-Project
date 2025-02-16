@@ -5,7 +5,7 @@ const UserBalance = ({ registeredName }) => {
   const { userAddress, balance, fetchBalance } = useContract();
 
   return (
-    <div className="bg-gray-900 text-white p-5 rounded-lg shadow-lg border border-customPurple">
+    <div className="bg-customDark border-y-4 border-customPurple rounded-md text-white p-5 shadow-custom-purple">
       <h2 className="text-xl font-bold mb-4">User Details</h2>
       {registeredName && (
         <>

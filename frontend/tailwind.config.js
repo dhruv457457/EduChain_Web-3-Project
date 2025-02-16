@@ -14,8 +14,11 @@ module.exports = {
         customPurple: "#AF34FF",
         customBlue: "#6496FF",
         customBlue2: "#4C8FF5",
-        customInput : "#23053B",
+        customInput: "#23053B",
         customDark: "#11021D",
+      },
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
       },
     },
   },

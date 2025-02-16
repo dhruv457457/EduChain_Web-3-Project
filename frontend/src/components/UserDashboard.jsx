@@ -7,15 +7,25 @@ const UserDashboard = () => {
   const [registeredName, setRegisteredName] = useState(null);
 
   return (
-    <div className="flex flex-col lg:flex-row items-center bg-customSemiPurple py-10 px-6 gap-6 min-h-screen justify-center">
-      <div className="w-full max-w-sm">
+    <div className="bg-customSemiPurple min-h-screen flex flex-col items-center justify-center px-6 py-12">
+      <div className="text-center max-w-2xl pt-10">
+        <h1 className="text-customPurple text-2xl md:text-4xl font-bold">
+          Welcome, {registeredName || "User"}
+        </h1>
+        <p className="text-slate-400 font-medium text-lg md:text-xl mt-4">
+          Manage your profile and view your activity across Cryptify
+        </p>
+      </div>
+
+      {/* Dashboard Content */}
+      <div className="mt-12 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10">
         <UserBalance registeredName={registeredName} />
-      </div>
-      <div className="w-full max-w-sm">
-        <RegisterName setGlobalRegisteredName={setRegisteredName} />
-      </div>
-      <div className="w-full max-w-md">
-        <UserTransactions />
+
+        <div className="flex flex-col gap-6">
+          <RegisterName setGlobalRegisteredName={setRegisteredName} />
+
+          <UserTransactions />
+        </div>
       </div>
     </div>
   );

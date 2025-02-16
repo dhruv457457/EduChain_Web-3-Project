@@ -45,7 +45,7 @@ const RegisterName = ({ setGlobalRegisteredName }) => {
   };
 
   return (
-    <div className="bg-gray-900 p-5 rounded-lg shadow-lg border border-customPurple text-white">
+    <div className="border-t-4 border-customPurple rounded-md px-6 sm:px-10 py-8 bg-customDark shadow-custom-purple text-white lg:min-h-52">
       <h2 className="text-xl font-semibold">User Name</h2>
 
       {registeredName ? (
