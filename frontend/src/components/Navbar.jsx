@@ -49,10 +49,10 @@ function Navbar() {
           Home
         </Link>
         <Link
-          to="/freelancing"
+          to="/contract"
           className="hover:text-customBlue2 transition duration-300"
         >
-          Freelancing
+          Contract
         </Link>
         <Link
           to="/transfer"
@@ -120,6 +120,12 @@ function Navbar() {
             onClick={() => setIsOpen(false)}
           >
             Home
+          </Link>
+          <Link
+            to="/contract"
+            className="hover:text-customBlue2 transition duration-300"
+          >
+            Contract
           </Link>
           <Link
             to="/transfer"
