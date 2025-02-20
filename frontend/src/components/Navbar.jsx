@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ethers } from "ethers";
-import { FaBars, FaTimes, FaWallet, FaSignOutAlt } from "react-icons/fa";
-import Web3Modal from "web3modal";
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import { FaBars, FaTimes, FaWallet, FaSignOutAlt } from "react-icons/fa"; // Icons
 
 function Navbar() {
   const [walletAddress, setWalletAddress] = useState(null);
@@ -37,8 +35,6 @@ function Navbar() {
     setWalletAddress(null);
     localStorage.removeItem("walletAddress");
   };
-
-  const providerOptions = {}; 
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-customDarkpurple bg-opacity-90 backdrop-blur-sm shadow-lg transition-all duration-300 px-8 sm:px-10 py-4 text-white flex justify-between items-center z-50">
