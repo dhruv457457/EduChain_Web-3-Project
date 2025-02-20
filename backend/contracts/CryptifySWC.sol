@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 contract CryptifySWC {
     enum ContractStatus { Pending, Approved, InProgress, Completed, Cancelled, Disputed }
-    enum ContractType { Simple, Milestone }
+    enum ContractType { Basic, Milestone }
 
     struct Milestone {
         string title;
@@ -33,8 +33,32 @@ contract CryptifySWC {
         Milestone[] milestones;
     }
 
+    struct WorkPost {
+        uint256 postId;
+        address payable creator;
+        string title;
+        string description;
+        uint256 budget;
+        uint256 duration;
+        bool isOpen;
+    }
+
+    struct Proposal {
+        uint256 proposalId;
+        uint256 postId;
+        address payable proposer;
+        string message;
+        uint256 timestamp;
+        bool accepted;
+    }
+
     uint256 public contractCounter;
+    uint256 public postCounter;
+    uint256 public proposalCounter;
+
     mapping(uint256 => SWCContract) public contracts;
+    mapping(uint256 => WorkPost) public workPosts;
+    mapping(uint256 => Proposal[]) public postProposals;
 
     bool private locked;
     bool public paused;
@@ -45,50 +69,18 @@ contract CryptifySWC {
     // Events
     event ContractFunded(uint256 indexed contractId, uint256 amount);
     event ContractApproved(uint256 indexed contractId);
-    event MilestoneAdded(uint256 indexed contractId, uint256 milestoneId);
-    event MilestoneCompleted(uint256 indexed contractId, uint256 milestoneId, uint256 timestamp);
-    event MilestoneApproved(uint256 indexed contractId, uint256 milestoneId, uint256 timestamp);
-    event FundsReleased(uint256 indexed contractId, uint256 milestoneId, uint256 amount);
     event ContractCompleted(uint256 indexed contractId, uint256 timestamp);
-    event ContractCancelled(uint256 indexed contractId, uint256 timestamp);
-    event ContractDisputed(uint256 indexed contractId, uint256 timestamp);
-    event EmergencyPause(bool isPaused);
+    event WorkPostCreated(uint256 indexed postId);
+    event ProposalSubmitted(uint256 indexed postId, uint256 indexed proposalId);
+    event ProposalAccepted(uint256 indexed postId, uint256 indexed proposalId);
+    event ContractCreated(uint256 indexed contractId, address indexed creator, address indexed receiver, string title);
+    event MilestoneAdded(uint256 indexed contractId, uint256 indexed milestoneId, string title, uint256 amount);
+    event MilestoneApproved(uint256 indexed contractId, uint256 indexed milestoneId);
+    event MilestoneCompleted(uint256 indexed contractId, uint256 indexed milestoneId);
 
     // Modifiers
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can call");
-        _;
-    }
-
-    modifier onlyCreator(uint256 _contractId) {
-        require(msg.sender == contracts[_contractId].creator, "Only creator can perform this action");
-        _;
-    }
-
-    modifier onlyReceiver(uint256 _contractId) {
-        require(msg.sender == contracts[_contractId].receiver, "Only receiver can perform this action");
-        _;
-    }
-
-    modifier onlyParticipants(uint256 _contractId) {
-        require(
-            msg.sender == contracts[_contractId].creator || 
-            msg.sender == contracts[_contractId].receiver, 
-            "Only participants can perform this action"
-        );
-        _;
-    }
-
-    modifier withinDeadline(uint256 _contractId) {
-        require(
-            block.timestamp <= contracts[_contractId].createdAt + contracts[_contractId].duration,
-            "Contract deadline exceeded"
-        );
-        _;
-    }
-
-    modifier contractExists(uint256 _contractId) {
-        require(_contractId > 0 && _contractId <= contractCounter, "Contract does not exist");
         _;
     }
 
@@ -111,7 +103,7 @@ contract CryptifySWC {
 
     receive() external payable {}
 
-    // Contract Management Functions
+    // Option 1: Direct Contract Creation
     function createContract(
         address payable _receiver,
         string memory _title,
@@ -119,7 +111,7 @@ contract CryptifySWC {
         string memory _coinType,
         uint256 _duration,
         ContractType _contractType
-    ) external payable whenNotPaused {
+    ) public payable whenNotPaused {
         require(msg.value > 0, "Contract must be funded");
         require(_receiver != address(0), "Invalid receiver address");
         require(_duration > 0 && _duration <= MAX_DURATION, "Invalid duration");
@@ -140,56 +132,140 @@ contract CryptifySWC {
         newContract.status = ContractStatus.Pending;
         newContract.createdAt = block.timestamp;
 
+        emit ContractCreated(contractCounter, msg.sender, _receiver, _title);
         emit ContractFunded(contractCounter, msg.value);
     }
 
-    function approveContract(uint256 _contractId) 
-        external 
-        whenNotPaused 
-        contractExists(_contractId) 
-        withinDeadline(_contractId) 
-    {
-        SWCContract storage c = contracts[_contractId];
-        require(c.status == ContractStatus.Pending, "Contract not pending");
-        
-        if (msg.sender == c.creator) {
-            require(!c.creatorApproved, "Creator already approved");
-            c.creatorApproved = true;
-        } else if (msg.sender == c.receiver) {
-            require(!c.receiverApproved, "Receiver already approved");
-            c.receiverApproved = true;
-        } else {
-            revert("Unauthorized");
-        }
+    // Option 2: Worker Search & Proposal System
+    function createWorkPost(
+        string memory _title,
+        string memory _description,
+        uint256 _budget,
+        uint256 _duration
+    ) external whenNotPaused {
+        require(_budget > 0, "Budget must be greater than zero");
+        require(_duration > 0 && _duration <= MAX_DURATION, "Invalid duration");
 
-        if (c.creatorApproved && c.receiverApproved) {
-            c.status = ContractStatus.InProgress;
-            emit ContractApproved(_contractId);
-        }
+        postCounter++;
+        workPosts[postCounter] = WorkPost({
+            postId: postCounter,
+            creator: payable(msg.sender),
+            title: _title,
+            description: _description,
+            budget: _budget,
+            duration: _duration,
+            isOpen: true
+        });
+
+        emit WorkPostCreated(postCounter);
     }
 
+    function submitProposal(uint256 _postId, string memory _message) external whenNotPaused {
+        require(workPosts[_postId].isOpen, "Post is not open");
+        require(msg.sender != workPosts[_postId].creator, "Cannot propose on your own post");
+
+        proposalCounter++;
+        postProposals[_postId].push(Proposal({
+            proposalId: proposalCounter,
+            postId: _postId,
+            proposer: payable(msg.sender),
+            message: _message,
+            timestamp: block.timestamp,
+            accepted: false
+        }));
+
+        emit ProposalSubmitted(_postId, proposalCounter);
+    }
+
+    function acceptProposal(uint256 _postId, uint256 _proposalId) external payable whenNotPaused noReentrant {
+        WorkPost storage post = workPosts[_postId];
+        require(msg.sender == post.creator, "Only post creator can accept proposals");
+        require(post.isOpen, "Post already closed");
+
+        Proposal storage proposal = postProposals[_postId][_proposalId - 1];
+        require(!proposal.accepted, "Proposal already accepted");
+        require(msg.value == post.budget, "Funding must match budget");
+
+        proposal.accepted = true;
+        post.isOpen = false;
+
+        // Transition to direct contract flow
+        createContract(
+            proposal.proposer,
+            post.title,
+            post.description,
+            "EDU Coin",
+            post.duration,
+            ContractType.Basic
+        );
+
+        emit ProposalAccepted(_postId, _proposalId);
+    }
+
+    // Admin Functions
+    function pause() external onlyOwner {
+        paused = true;
+    }
+
+    function unpause() external onlyOwner {
+        paused = false;
+    }
+
+    function transferOwnership(address newOwner) external onlyOwner {
+        require(newOwner != address(0), "Invalid new owner address");
+        owner = newOwner;
+    }
+
+    // Contract Details
+    function getContractDetails(uint256 _contractId) public view returns (
+        address creator,
+        address receiver,
+        string memory title,
+        string memory description,
+        uint256 amount,
+        string memory coinType,
+        uint256 duration,
+        uint256 createdAt,
+        uint256 remainingBalance,
+        ContractType contractType,
+        ContractStatus status,
+        bool creatorApproved,
+        bool receiverApproved
+    ) {
+        SWCContract storage contractData = contracts[_contractId];
+        require(contractData.creator != address(0), "Contract does not exist");
+
+        return (
+            contractData.creator,
+            contractData.receiver,
+            contractData.title,
+            contractData.description,
+            contractData.amount,
+            contractData.coinType,
+            contractData.duration,
+            contractData.createdAt,
+            contractData.remainingBalance,
+            contractData.contractType,
+            contractData.status,
+            contractData.creatorApproved,
+            contractData.receiverApproved
+        );
+    }
+
+    // Milestone Management
     function addMilestone(
         uint256 _contractId,
         string memory _title,
         uint256 _amount,
         uint256 _deadline,
         string memory _deliverables
-    ) 
-        external 
-        whenNotPaused 
-        onlyCreator(_contractId) 
-        contractExists(_contractId)
-        withinDeadline(_contractId) 
-    {
-        SWCContract storage c = contracts[_contractId];
-        require(c.contractType == ContractType.Milestone, "Not a milestone contract");
-        require(c.status == ContractStatus.InProgress, "Contract not in progress");
-        require(c.milestones.length < MAX_MILESTONES, "Maximum milestones reached");
-        require(_deadline > block.timestamp, "Deadline must be future-dated");
-        require(_deadline <= c.createdAt + c.duration, "Deadline exceeds contract duration");
-        require(_amount <= c.remainingBalance, "Insufficient balance for milestone");
+    ) external {
+        SWCContract storage contractData = contracts[_contractId];
+        require(contractData.creator != address(0), "Contract does not exist");
+        require(msg.sender == contractData.creator, "Only creator can add milestones");
+        require(contractData.milestones.length < MAX_MILESTONES, "Maximum milestones reached");
 
-        c.milestones.push(Milestone({
+        contractData.milestones.push(Milestone({
             title: _title,
             amount: _amount,
             deadline: _deadline,
@@ -200,173 +276,32 @@ contract CryptifySWC {
             approvedTimestamp: 0
         }));
 
-        c.remainingBalance -= _amount;
-        emit MilestoneAdded(_contractId, c.milestones.length - 1);
+        emit MilestoneAdded(_contractId, contractData.milestones.length - 1, _title, _amount);
     }
 
-    function completeMilestone(uint256 _contractId, uint256 _milestoneId)
-        external
-        whenNotPaused
-        onlyReceiver(_contractId)
-        contractExists(_contractId)
-        withinDeadline(_contractId)
-    {
-        SWCContract storage c = contracts[_contractId];
-        require(_milestoneId < c.milestones.length, "Invalid milestone ID");
-        Milestone storage milestone = c.milestones[_milestoneId];
+    function approveMilestone(uint256 _contractId, uint256 _milestoneId) external {
+        SWCContract storage contractData = contracts[_contractId];
+        require(contractData.creator != address(0), "Contract does not exist");
+        require(_milestoneId < contractData.milestones.length, "Milestone does not exist");
+        require(msg.sender == contractData.receiver, "Only receiver can approve milestones");
 
-        require(c.status == ContractStatus.InProgress, "Contract not in progress");
-        require(!milestone.isCompleted, "Already completed");
-        require(block.timestamp <= milestone.deadline, "Deadline passed");
-
-        milestone.isCompleted = true;
-        milestone.completedTimestamp = block.timestamp;
-        emit MilestoneCompleted(_contractId, _milestoneId, block.timestamp);
-    }
-
-    function approveMilestone(uint256 _contractId, uint256 _milestoneId)
-        external
-        whenNotPaused
-        onlyCreator(_contractId)
-        contractExists(_contractId)
-        noReentrant
-    {
-        SWCContract storage c = contracts[_contractId];
-        require(_milestoneId < c.milestones.length, "Invalid milestone ID");
-        Milestone storage milestone = c.milestones[_milestoneId];
-
-        require(c.status == ContractStatus.InProgress, "Contract not in progress");
-        require(milestone.isCompleted, "Milestone not completed");
-        require(!milestone.isApproved, "Already approved");
-
+        Milestone storage milestone = contractData.milestones[_milestoneId];
         milestone.isApproved = true;
         milestone.approvedTimestamp = block.timestamp;
 
-        c.receiver.transfer(milestone.amount);
-        emit MilestoneApproved(_contractId, _milestoneId, block.timestamp);
-        emit FundsReleased(_contractId, _milestoneId, milestone.amount);
-
-        if (allMilestonesApproved(c)) {
-            c.status = ContractStatus.Completed;
-            emit ContractCompleted(_contractId, block.timestamp);
-        }
+        emit MilestoneApproved(_contractId, _milestoneId);
     }
 
-    function completeSimpleContract(uint256 _contractId)
-        external
-        whenNotPaused
-        onlyCreator(_contractId)
-        contractExists(_contractId)
-        withinDeadline(_contractId)
-        noReentrant
-    {
-        SWCContract storage c = contracts[_contractId];
-        require(c.contractType == ContractType.Simple, "Not a simple contract");
-        require(c.status == ContractStatus.InProgress, "Contract not in progress");
+    function completeMilestone(uint256 _contractId, uint256 _milestoneId) external {
+        SWCContract storage contractData = contracts[_contractId];
+        require(contractData.creator != address(0), "Contract does not exist");
+        require(_milestoneId < contractData.milestones.length, "Milestone does not exist");
+        require(msg.sender == contractData.creator, "Only creator can complete milestones");
 
-        c.status = ContractStatus.Completed;
-        c.receiver.transfer(c.amount);
-        emit ContractCompleted(_contractId, block.timestamp);
-    }
+        Milestone storage milestone = contractData.milestones[_milestoneId];
+        milestone.isCompleted = true;
+        milestone.completedTimestamp = block.timestamp;
 
-    function cancelContract(uint256 _contractId)
-        external
-        whenNotPaused
-        onlyParticipants(_contractId)
-        contractExists(_contractId)
-        noReentrant
-    {
-        SWCContract storage c = contracts[_contractId];
-        require(c.status == ContractStatus.Pending, "Can only cancel pending contracts");
-
-        c.status = ContractStatus.Cancelled;
-        c.creator.transfer(c.amount);
-        emit ContractCancelled(_contractId, block.timestamp);
-    }
-
-    function initiateDispute(uint256 _contractId)
-        external
-        whenNotPaused
-        onlyParticipants(_contractId)
-        contractExists(_contractId)
-    {
-        SWCContract storage c = contracts[_contractId];
-        require(c.status == ContractStatus.InProgress, "Contract not in progress");
-        
-        c.status = ContractStatus.Disputed;
-        emit ContractDisputed(_contractId, block.timestamp);
-    }
-
-    // View Functions
-    function allMilestonesApproved(SWCContract storage c) internal view returns (bool) {
-        if (c.milestones.length == 0) return false;
-        for (uint256 i = 0; i < c.milestones.length; i++) {
-            if (!c.milestones[i].isApproved) return false;
-        }
-        return true;
-    }
-
-    function getMilestoneDetails(uint256 _contractId, uint256 _milestoneId)
-        external
-        view
-        contractExists(_contractId)
-        returns (
-            string memory title,
-            uint256 amount,
-            uint256 deadline,
-            bool isCompleted,
-            bool isApproved,
-            string memory deliverables,
-            uint256 completedTimestamp,
-            uint256 approvedTimestamp
-        )
-    {
-        SWCContract storage c = contracts[_contractId];
-        require(_milestoneId < c.milestones.length, "Invalid milestone ID");
-        Milestone storage m = c.milestones[_milestoneId];
-        return (
-            m.title,
-            m.amount,
-            m.deadline,
-            m.isCompleted,
-            m.isApproved,
-            m.deliverables,
-            m.completedTimestamp,
-            m.approvedTimestamp
-        );
-    }
-
-    function getContractBalance(uint256 _contractId)
-        external
-        view
-        contractExists(_contractId)
-        returns (
-            uint256 totalAmount,
-            uint256 remainingBalance,
-            uint256 releasedAmount
-        )
-    {
-        SWCContract storage c = contracts[_contractId];
-        return (
-            c.amount,
-            c.remainingBalance,
-            c.amount - c.remainingBalance
-        );
-    }
-
-    // Admin Functions
-    function pause() external onlyOwner {
-        paused = true;
-        emit EmergencyPause(true);
-    }
-
-    function unpause() external onlyOwner {
-        paused = false;
-        emit EmergencyPause(false);
-    }
-
-    function transferOwnership(address newOwner) external onlyOwner {
-        require(newOwner != address(0), "Invalid new owner address");
-        owner = newOwner;
+        emit MilestoneCompleted(_contractId, _milestoneId);
     }
 }
