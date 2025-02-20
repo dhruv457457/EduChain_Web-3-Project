@@ -23,7 +23,7 @@ const UserTransactions = () => {
   }, [userAddress, fetchUserTransactions]);
 
   return (
-    <div className="border-t-4 border-customPurple rounded-md bg-customDark p-5 shadow-custom-purple text-white">
+    <div className="border-t-4 border-customPurple rounded-md bg-customDark p-5 shadow-custom-purple text-white max-h-64 overflow-y-auto custom-scrollbar">
       <h2 className="text-xl font-semibold mb-4">Your Transactions</h2>
       {loading ? (
         <p className="text-gray-400">Loading transactions...</p>
@@ -32,7 +32,7 @@ const UserTransactions = () => {
       ) : userTransactions.length === 0 ? (
         <p className="text-gray-400">No transactions found.</p>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-4 ">
           {userTransactions.map((tx, index) => (
             <li key={index} className="p-4 border border-gray-700 rounded-lg bg-gray-800">
               <p><strong>From:</strong> {tx.sender || "N/A"}</p>
