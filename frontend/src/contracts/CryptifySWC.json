@@ -1,5 +1,4 @@
 {
-  
   "abi": [
     {
       "inputs": [],
@@ -35,25 +34,6 @@
           "type": "uint256"
         }
       ],
-      "name": "ContractCancelled",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "contractId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
-        }
-      ],
       "name": "ContractCompleted",
       "type": "event"
     },
@@ -67,13 +47,25 @@
           "type": "uint256"
         },
         {
+          "indexed": true,
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "timestamp",
-          "type": "uint256"
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
         }
       ],
-      "name": "ContractDisputed",
+      "name": "ContractCreated",
       "type": "event"
     },
     {
@@ -99,53 +91,27 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
-          "internalType": "bool",
-          "name": "isPaused",
-          "type": "bool"
-        }
-      ],
-      "name": "EmergencyPause",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
           "indexed": true,
           "internalType": "uint256",
           "name": "contractId",
           "type": "uint256"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
           "name": "milestoneId",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
         },
         {
           "indexed": false,
           "internalType": "uint256",
           "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "FundsReleased",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "contractId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "milestoneId",
           "type": "uint256"
         }
       ],
@@ -162,15 +128,9 @@
           "type": "uint256"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
           "name": "milestoneId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "timestamp",
           "type": "uint256"
         }
       ],
@@ -187,19 +147,64 @@
           "type": "uint256"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
           "name": "milestoneId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "timestamp",
           "type": "uint256"
         }
       ],
       "name": "MilestoneCompleted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "proposalId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ProposalAccepted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "proposalId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ProposalSubmitted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        }
+      ],
+      "name": "WorkPostCreated",
       "type": "event"
     },
     {
@@ -226,6 +231,24 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_postId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_proposalId",
+          "type": "uint256"
+        }
+      ],
+      "name": "acceptProposal",
+      "outputs": [],
+      "stateMutability": "payable",
       "type": "function"
     },
     {
@@ -267,19 +290,6 @@
           "internalType": "uint256",
           "name": "_contractId",
           "type": "uint256"
-        }
-      ],
-      "name": "approveContract",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_contractId",
-          "type": "uint256"
         },
         {
           "internalType": "uint256",
@@ -298,19 +308,6 @@
           "internalType": "uint256",
           "name": "_contractId",
           "type": "uint256"
-        }
-      ],
-      "name": "cancelContract",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_contractId",
-          "type": "uint256"
         },
         {
           "internalType": "uint256",
@@ -319,19 +316,6 @@
         }
       ],
       "name": "completeMilestone",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_contractId",
-          "type": "uint256"
-        }
-      ],
-      "name": "completeSimpleContract",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -469,30 +453,29 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "_contractId",
-          "type": "uint256"
-        }
-      ],
-      "name": "getContractBalance",
-      "outputs": [
+          "internalType": "string",
+          "name": "_title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_description",
+          "type": "string"
+        },
         {
           "internalType": "uint256",
-          "name": "totalAmount",
+          "name": "_budget",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "remainingBalance",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "releasedAmount",
+          "name": "_duration",
           "type": "uint256"
         }
       ],
-      "stateMutability": "view",
+      "name": "createWorkPost",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -501,18 +484,28 @@
           "internalType": "uint256",
           "name": "_contractId",
           "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_milestoneId",
-          "type": "uint256"
         }
       ],
-      "name": "getMilestoneDetails",
+      "name": "getContractDetails",
       "outputs": [
+        {
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
         {
           "internalType": "string",
           "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
           "type": "string"
         },
         {
@@ -521,50 +514,47 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "deadline",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bool",
-          "name": "isCompleted",
-          "type": "bool"
-        },
-        {
-          "internalType": "bool",
-          "name": "isApproved",
-          "type": "bool"
-        },
-        {
           "internalType": "string",
-          "name": "deliverables",
+          "name": "coinType",
           "type": "string"
         },
         {
           "internalType": "uint256",
-          "name": "completedTimestamp",
+          "name": "duration",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "approvedTimestamp",
+          "name": "createdAt",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "remainingBalance",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum CryptifySWC.ContractType",
+          "name": "contractType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum CryptifySWC.ContractStatus",
+          "name": "status",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bool",
+          "name": "creatorApproved",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "receiverApproved",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_contractId",
-          "type": "uint256"
-        }
-      ],
-      "name": "initiateDispute",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -601,6 +591,99 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "postCounter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "postProposals",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "proposalId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address payable",
+          "name": "proposer",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "accepted",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "proposalCounter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_postId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_message",
+          "type": "string"
+        }
+      ],
+      "name": "submitProposal",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -618,6 +701,55 @@
       "name": "unpause",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "workPosts",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "postId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address payable",
+          "name": "creator",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "budget",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "duration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "isOpen",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {

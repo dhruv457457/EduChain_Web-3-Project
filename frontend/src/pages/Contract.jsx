@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import useContract from "../hooks/useContract2"; // Your custom hook
+import useContract from "../hooks/useContract2";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -23,159 +23,188 @@ const Contract = () => {
   });
   const [contractId, setContractId] = useState("");
   const [contractDetails, setContractDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Handle form changes
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // Handle contract creation
   const handleCreateContract = async (e) => {
     e.preventDefault();
-    await createContract(
-      formData.receiver,
-      formData.title,
-      formData.description,
-      formData.coinType,
-      formData.duration,
-      formData.contractType,
-      formData.amount
-    );
-    alert("Contract created successfully!");
+    setLoading(true);
+    setError("");
+    try {
+      const { receiver, title, description, coinType, duration, contractType, amount } = formData;
+  
+      // ✅ Validate fields
+      if (Object.values(formData).some((field) => !field)) {
+        throw new Error("All fields are required.");
+      }
+      if (isNaN(amount) || amount <= 0) {
+        throw new Error("Amount must be a valid positive number.");
+      }
+  
+      // 📝 Debug log
+      console.log("📝 Submitting contract with:", formData);
+  
+      // ⚡ Correct order of parameters
+      const id = await createContract(receiver, title, description, coinType, duration, contractType, amount);
+  
+      if (id) {
+        setContractId(id);
+        alert(`Contract created successfully! Contract ID: ${id}`);
+      } else {
+        throw new Error("Contract ID could not be retrieved.");
+      }
+    } catch (err) {
+      console.error("Error creating contract:", err);
+      setError(err.message || "Failed to create contract. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleGetContractDetails = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const details = await getContractDetails(contractId);
+      setContractDetails(details);
+    } catch (err) {
+      setError("Failed to fetch contract details. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Fetch contract details
-  const handleGetContractDetails = async () => {
-    const details = await getContractDetails(contractId);
-    setContractDetails(details);
+  const handleMilestoneAction = async (actionFn, successMessage) => {
+    setLoading(true);
+    setError("");
+    try {
+      await actionFn(contractId);
+      alert(successMessage);
+      handleGetContractDetails();
+    } catch (err) {
+      setError(`Failed to ${successMessage.toLowerCase()}. Please try again.`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit">
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="bg-gradient-to-r from-gray-900 to-gray-800 min-h-screen text-white"
+    >
       <Navbar />
       <div className="container mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold mb-8 text-center">Manage Your Smart Contracts</h1>
+        <h1 className="text-4xl font-extrabold mb-8 text-center">Smart Work Commitment Contracts</h1>
+        {error && <div className="bg-red-500 text-white p-4 mb-6 rounded-md shadow-md">{error}</div>}
+        <form
+          className="bg-gray-800 p-6 rounded-2xl shadow-lg backdrop-blur-md bg-opacity-30"
+          onSubmit={handleCreateContract}
+        >
+          <h2 className="text-2xl font-semibold mb-6">Create New Contract</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Object.entries(formData).map(([key, value]) => (
+              <div key={key}>
+                <label className="block text-sm font-medium capitalize mb-2">
+                  {key.replace(/([A-Z])/g, " $1").trim()}
+                </label>
+                {key === "description" ? (
+                  <textarea
+                    name={key}
+                    value={value}
+                    onChange={handleChange}
+                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-lg p-3"
+                    rows="3"
+                    required
+                  />
+                ) : key === "coinType" || key === "contractType" ? (
+                  <select
+                    name={key}
+                    value={value}
+                    onChange={handleChange}
+                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-lg p-3"
+                  >
+                    {key === "coinType" ? (
+                      <>
+                        <option value="ETH">ETH</option>
+                        <option value="BTC">BTC</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="Basic">Basic</option>
+                        <option value="Advanced">Advanced</option>
+                      </>
+                    )}
+                  </select>
+                ) : (
+                  <input
+                    type={key === "amount" || key === "duration" ? "number" : "text"}
+                    name={key}
+                    value={value}
+                    onChange={handleChange}
+                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-lg p-3"
+                    required
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+          <button
+            type="submit"
+            className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-lg font-semibold transition duration-300"
+            disabled={loading}
+          >
+            {loading ? "Creating Contract..." : "Create Contract"}
+          </button>
+        </form>
 
-        {/* Form for creating a new contract */}
-        <form className="bg-gray-100 p-6 rounded-md shadow-md" onSubmit={handleCreateContract}>
-  <h2 className="text-2xl font-semibold mb-4 text-gray-800">Create New Contract</h2>
-
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div>
-      <label className="block font-medium text-gray-700">Receiver Address</label>
-      <input
-        type="text"
-        name="receiver"
-        value={formData.receiver}
-        onChange={handleChange}
-        className="w-full bg-white border border-gray-300 rounded-md p-2 text-gray-800"
-        required
-      />
-    </div>
-    <div>
-      <label className="block font-medium text-gray-700">Title</label>
-      <input
-        type="text"
-        name="title"
-        value={formData.title}
-        onChange={handleChange}
-        className="w-full bg-white border border-gray-300 rounded-md p-2 text-gray-800"
-        required
-      />
-    </div>
-    <div>
-      <label className="block font-medium text-gray-700">Description</label>
-      <textarea
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        className="w-full bg-white border border-gray-300 rounded-md p-2 text-gray-800"
-        rows="3"
-        required
-      />
-    </div>
-    <div>
-      <label className="block font-medium text-gray-700">Coin Type</label>
-      <select
-        name="coinType"
-        value={formData.coinType}
-        onChange={handleChange}
-        className="w-full bg-white border border-gray-300 rounded-md p-2 text-gray-800"
-      >
-        <option value="ETH">ETH</option>
-        <option value="BTC">BTC</option>
-      </select>
-    </div>
-    <div>
-      <label className="block font-medium text-gray-700">Duration (days)</label>
-      <input
-        type="number"
-        name="duration"
-        value={formData.duration}
-        onChange={handleChange}
-        className="w-full bg-white border border-gray-300 rounded-md p-2 text-gray-800"
-        required
-      />
-    </div>
-    <div>
-      <label className="block font-medium text-gray-700">Contract Type</label>
-      <select
-        name="contractType"
-        value={formData.contractType}
-        onChange={handleChange}
-        className="w-full bg-white border border-gray-300 rounded-md p-2 text-gray-800"
-      >
-        <option value="Basic">Basic</option>
-        <option value="Advanced">Advanced</option>
-      </select>
-    </div>
-    <div>
-      <label className="block font-medium text-gray-700">Amount (ETH)</label>
-      <input
-        type="text"
-        name="amount"
-        value={formData.amount}
-        onChange={handleChange}
-        className="w-full bg-white border border-gray-300 rounded-md p-2 text-gray-800"
-        required
-      />
-    </div>
-  </div>
-
-  <button
-    type="submit"
-    className="mt-6 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-  >
-    Create Contract
-  </button>
-</form>
-
-
-        {/* Section to fetch and display contract details */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold mb-4">View Contract Details</h2>
-          <div className="flex gap-4">
+        <div className="mt-16 bg-gray-800 p-6 rounded-2xl shadow-lg backdrop-blur-md bg-opacity-30">
+          <h2 className="text-2xl font-semibold mb-6">View Contract Details</h2>
+          <div className="flex flex-col md:flex-row gap-4">
             <input
               type="text"
               placeholder="Enter Contract ID"
               value={contractId}
               onChange={(e) => setContractId(e.target.value)}
-              className="w-full border rounded-md p-2"
+              className="w-full bg-white text-gray-800 border border-gray-300 rounded-lg p-3"
             />
             <button
               onClick={handleGetContractDetails}
-              className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition duration-300"
+              disabled={loading}
             >
-              Fetch Details
+              {loading ? "Fetching Details..." : "Fetch Details"}
             </button>
           </div>
-
           {contractDetails && (
-            <div className="bg-gray-100 p-4 rounded-md mt-4">
-              <h3 className="text-xl font-bold">Contract Details</h3>
-              <p><strong>Title:</strong> {contractDetails.title}</p>
-              <p><strong>Description:</strong> {contractDetails.description}</p>
-              <p><strong>Status:</strong> {contractDetails.status}</p>
+            <div className="bg-gray-900 p-6 rounded-lg mt-6 shadow-md">
+              <h3 className="text-xl font-bold mb-4">Contract Details</h3>
+              {Object.entries(contractDetails).map(([key, value]) => (
+                <p key={key} className="text-gray-300">
+                  <strong>{key.replace(/([A-Z])/g, " $1").trim()}:</strong> {value}
+                </p>
+              ))}
+              <div className="flex flex-col md:flex-row gap-4 mt-6">
+                <button
+                  onClick={() => handleMilestoneAction(approveMilestone, "Milestone approved successfully!")}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold transition duration-300"
+                  disabled={loading}
+                >
+                  Approve Milestone
+                </button>
+                <button
+                  onClick={() => handleMilestoneAction(completeMilestone, "Milestone completed successfully!")}
+                  className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition duration-300"
+                  disabled={loading}
+                >
+                  Complete Milestone
+                </button>
+              </div>
             </div>
           )}
         </div>
