@@ -1,6 +1,6 @@
 import React from "react";
 import Cards from "./Cards";
-import { Lock, CheckCircle, Wallet, Star } from "lucide-react";
+import { Lock, Wallet, CheckCircle, Star } from "lucide-react";
 
 function CommitmentStepsSection() {
   return (
@@ -21,21 +21,21 @@ function CommitmentStepsSection() {
               icon={
                 <Lock
                   size={50}
-                  className="text-purple-500 p-2 rounded-md border-b-4 border-purple-500"
+                  className="text-green-500 p-2 rounded-md border-b-4 border-green-500"
                 />
               }
-              title="Secure Your Commitment"
-              description="Lock funds in a Smart Work Commitment (SWC) contract to ensure trust and fairness in freelance or business deals."
+              title="Initiate the Contract"
+              description="Start a Smart Work Commitment (SWC) by locking the total project amount on-chain. The contract begins once both users confirm the project details."
             />
             <Cards
               icon={
-                <CheckCircle
+                <Wallet
                   size={50}
-                  className="text-green-500 p-2 rounded-md border-b-4 border-green-700"
+                  className="text-amber-300 p-2 rounded-md border-b-4 border-amber-300"
                 />
               }
-              title="Work & Deliver"
-              description="Complete tasks, milestones, or projects while funds remain securely held in escrow."
+              title="Milestone-Based Progress"
+              description="Freelancers complete milestones to unlock partial payments. Each milestone approval releases a portion of the funds securely from escrow."
             />
           </div>
 
@@ -46,20 +46,20 @@ function CommitmentStepsSection() {
 
             <Cards
               icon={
-                <Wallet
+                <CheckCircle
                   size={50}
                   className="text-customBlue p-2 rounded-md border-b-4 border-customBlue"
                 />
               }
-              title="Guaranteed Payouts"
-              description="Once work is verified, payments are automatically released, ensuring no delays or disputes."
+              title="Final Confirmation & Payout"
+              description="At the end of the contract, both users confirm the project's completion and value. Upon agreement, the remaining funds are automatically released."
             />
 
             <Cards
               icon={
                 <Star
                   size={50}
-                  className="text-yellow-500 p-2 rounded-md border-b-4 border-yellow-700"
+                  className="text-yellow-500 p-2 rounded-md border-b-4 border-yellow-500"
                 />
               }
               title="Build Your Crypto Credit Score"

@@ -17,7 +17,7 @@ function LogoCloud() {
     <div className="bg-customSemiPurple text-slate-100 font-semibold py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
         <h2 className="text-2xl font-semibold">
-          Trusted by the world's best Web3 Chains
+        Powered by Leading Web3 Chain in Innovation
         </h2>
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 gap-8 place-items-center">
           {logos.map((logo, index) => (
