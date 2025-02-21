@@ -7,6 +7,7 @@ import { FaShieldAlt, FaHandshake, FaUserTag } from "react-icons/fa";
 import Footer from "../components/Footer";
 import LogoCloud from "../components/LogoCloud";
 import CommitmentStepsSection from "../components/CommitmentStepsSection";
+import Chatbot from "../components/Chatbot";
 
 const pageVariants = {
   initial: { opacity: 0, y: 50 },
@@ -117,6 +118,7 @@ function Home() {
       <CommitmentStepsSection />
       <LogoCloud />
       <Footer />
+      <Chatbot />
     </motion.div>
   );
 }

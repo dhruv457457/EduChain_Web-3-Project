@@ -116,7 +116,7 @@ function Navbar() {
       {/* Mobile Dropdown Menu */}
       <div
         className={`absolute top-full left-0 w-full bg-customDarkpurple bg-opacity-95 backdrop-blur-md transition-all duration-500 overflow-hidden ${
-          isOpen ? "max-h-60" : "max-h-0"
+          isOpen ? "max-h-72" : "max-h-0"
         }`}
       >
         <div className="flex flex-col items-center py-4 space-y-4">

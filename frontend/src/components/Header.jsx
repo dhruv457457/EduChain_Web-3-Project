@@ -1,5 +1,6 @@
 import React from "react";
-import ParticleBackground from "./ParticleBackground"; // Importing the new component
+import ParticleBackground from "./ParticleBackground";
+import { Link } from "react-router-dom";
 
 function Header({ scrollToFeatures }) {
   return (
@@ -25,7 +26,7 @@ function Header({ scrollToFeatures }) {
       {/* Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 md:gap-8 relative z-10">
         <button className="text-white bg-customPurple px-6 py-3 md:px-8 md:py-3 rounded-md font-semibold shadow-custom-purple">
-          Launch App
+          <Link to="/docs">View Docs</Link>
         </button>
         <button
           onClick={scrollToFeatures}

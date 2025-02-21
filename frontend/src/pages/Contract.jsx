@@ -96,14 +96,14 @@ const Contract = () => {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="bg-gradient-to-r from-gray-900 to-gray-800 min-h-screen text-white"
+      className="bg-customSemiPurple min-h-screen text-white"
     >
       <Navbar />
-      <div className="container mx-auto px-4 py-10">
+      <div className="container mx-auto px-4 py-10 pt-32">
         <h1 className="text-4xl font-extrabold mb-8 text-center">Smart Work Commitment Contracts</h1>
         {error && <div className="bg-red-500 text-white p-4 mb-6 rounded-md shadow-md">{error}</div>}
         <form
-          className="bg-gray-800 p-6 rounded-2xl shadow-lg backdrop-blur-md bg-opacity-30"
+          className="bg-customDark p-6 rounded-md "
           onSubmit={handleCreateContract}
         >
           <h2 className="text-2xl font-semibold mb-6">Create New Contract</h2>
@@ -118,7 +118,7 @@ const Contract = () => {
                     name={key}
                     value={value}
                     onChange={handleChange}
-                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-lg p-3"
+                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-md p-3"
                     rows="3"
                     required
                   />
@@ -127,7 +127,7 @@ const Contract = () => {
                     name={key}
                     value={value}
                     onChange={handleChange}
-                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-lg p-3"
+                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-md p-3"
                   >
                     {key === "coinType" ? (
                       <>
@@ -147,7 +147,7 @@ const Contract = () => {
                     name={key}
                     value={value}
                     onChange={handleChange}
-                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-lg p-3"
+                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-md p-3"
                     required
                   />
                 )}
@@ -156,14 +156,14 @@ const Contract = () => {
           </div>
           <button
             type="submit"
-            className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-lg font-semibold transition duration-300"
+            className="mt-8 w-full bg-customPurple text-white py-3 rounded-md text-lg font-semibold"
             disabled={loading}
           >
             {loading ? "Creating Contract..." : "Create Contract"}
           </button>
         </form>
 
-        <div className="mt-16 bg-gray-800 p-6 rounded-2xl shadow-lg backdrop-blur-md bg-opacity-30">
+        <div className="mt-16 bg-customDark p-6 rounded-md shadow-md ">
           <h2 className="text-2xl font-semibold mb-6">View Contract Details</h2>
           <div className="flex flex-col md:flex-row gap-4">
             <input
@@ -171,18 +171,18 @@ const Contract = () => {
               placeholder="Enter Contract ID"
               value={contractId}
               onChange={(e) => setContractId(e.target.value)}
-              className="w-full bg-white text-gray-800 border border-gray-300 rounded-lg p-3"
+              className="w-full bg-white text-gray-800 border border-gray-300 rounded-md p-3"
             />
             <button
               onClick={handleGetContractDetails}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition duration-300"
+              className="bg-customPurple text-white px-6 py-3 rounded-md text-lg font-semibold transition duration-300"
               disabled={loading}
             >
               {loading ? "Fetching Details..." : "Fetch Details"}
             </button>
           </div>
           {contractDetails && (
-            <div className="bg-gray-900 p-6 rounded-lg mt-6 shadow-md">
+            <div className="bg-customDark p-6 rounded-md mt-6 overflow-hidden ">
               <h3 className="text-xl font-bold mb-4">Contract Details</h3>
               {Object.entries(contractDetails).map(([key, value]) => (
                 <p key={key} className="text-gray-300">
@@ -192,14 +192,14 @@ const Contract = () => {
               <div className="flex flex-col md:flex-row gap-4 mt-6">
                 <button
                   onClick={() => handleMilestoneAction(approveMilestone, "Milestone approved successfully!")}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold transition duration-300"
+                  className="bg-customBlue hover:bg-customBlue2 text-white px-6 py-3 rounded-md font-semibold transition duration-300"
                   disabled={loading}
                 >
                   Approve Milestone
                 </button>
                 <button
                   onClick={() => handleMilestoneAction(completeMilestone, "Milestone completed successfully!")}
-                  className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition duration-300"
+                  className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-md font-semibold transition duration-300"
                   disabled={loading}
                 >
                   Complete Milestone
