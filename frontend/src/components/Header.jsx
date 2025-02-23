@@ -5,11 +5,7 @@ import { Link } from "react-router-dom";
 function Header({ scrollToFeatures }) {
   return (
     <div className="relative bg-customSemiPurple min-h-screen w-full flex flex-col items-center justify-center gap-6 px-4 md:px-8 lg:px-16">
-      <ParticleBackground /> {/* Background is now a reusable component */}
-      {/* Web3 Button */}
-      <div className="text-customPurple bg-customDarkpurple px-6 py-2 md:px-8 md:py-3 rounded-xl font-bold border-2 border-customPurple shadow-custom-purple relative z-10">
-        <button>Powered by EDU-CHAIN</button>
-      </div>
+      <ParticleBackground />
       {/* Heading */}
       <div className="flex flex-col items-center text-center text-shadow-custom relative z-10">
         <h1 className="text-customPurple text-5xl md:text-6xl lg:text-8xl font-bold">
