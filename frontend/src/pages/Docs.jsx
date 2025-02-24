@@ -6,6 +6,33 @@ import { ExternalLink } from "lucide-react";
 function Docs() {
   const [activeSection, setActiveSection] = useState("Installing MetaMask");
 
+  // Function to handle adding chain to MetaMask
+  const addChainToMetaMask = async () => {
+    if (typeof window.ethereum !== 'undefined') {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: '0xa045c', // Chain ID in hex format
+            chainName: 'OpenCampus Codex Sepolia',
+            nativeCurrency: {
+              name: 'EDU',
+              symbol: 'EDU',
+              decimals: 18
+            },
+            rpcUrls: ['https://open-campus-codex-sepolia.drpc.org'],
+            blockExplorerUrls: ['https://opencampus-codex.blockscout.com']
+          }]
+        });
+      } catch (error) {
+        console.error(error);
+        alert('Failed to add network to MetaMask. Please try again or add it manually.');
+      }
+    } else {
+      alert('MetaMask is not installed. Please install MetaMask first.');
+    }
+  };
+
   const renderContent = () => {
     switch (activeSection) {
       case "Installing MetaMask":
@@ -58,27 +85,36 @@ function Docs() {
               Adding EDU Chain
             </h1>
             <p className="text-gray-300 mb-8">
-              To add EDU Chain to your MetaMask wallet, follow these steps:
+              To add OpenCampus Codex Sepolia Testnet to your MetaMask wallet, follow these steps:
             </p>
+            <div className="border border-purple-500 rounded-lg p-4 md:p-6 mb-6 bg-purple-900 bg-opacity-30 w-full">
+              <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
+                Automatic Method
+              </h2>
+              <p className="text-gray-300 mb-4">
+                The easiest way to add the OpenCampus Codex Sepolia Testnet is by clicking the button below:
+              </p>
+              <button
+                onClick={addChainToMetaMask}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-semibold transition-colors duration-200 flex items-center gap-2"
+              >
+                <Wallet size={18} />
+                Add Chain to Your Wallet
+              </button>
+            </div>
             <div className="border border-purple-500 rounded-lg p-4 md:p-6 bg-purple-900 bg-opacity-30 w-full">
               <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
-                Step 1: Open MetaMask
+                Manual Method
               </h2>
               <p className="text-gray-300 mb-4">
-                Click the network dropdown at the top and select "Add Network".
-              </p>
-              <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
-                Step 2: Enter Network Details
-              </h2>
-              <p className="text-gray-300 mb-4">
-                Fill in the following details:
+                If the automatic method doesn't work, you can manually add the network with these details:
               </p>
               <ul className="list-disc pl-5 text-gray-300 space-y-1">
-                <li>Network Name: EDU Chain</li>
-                <li>New RPC URL: https://rpc.educhain.network</li>
-                <li>Chain ID: 12345</li>
+                <li>Network Name: OpenCampus Codex Sepolia</li>
+                <li>New RPC URL: https://open-campus-codex-sepolia.drpc.org</li>
+                <li>Chain ID: 656476 </li>
                 <li>Currency Symbol: EDU</li>
-                <li>Block Explorer URL: https://explorer.educhain.network</li>
+                <li>Block Explorer URL: https://opencampus-codex.blockscout.com</li>
               </ul>
             </div>
           </>
