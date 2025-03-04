@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import useContract from "../hooks/useContract2";
 import Navbar from "../components/Navbar";
@@ -11,7 +11,16 @@ const pageVariants = {
 };
 
 const Contract = () => {
-  const { createContract, getContractDetails, approveMilestone, completeMilestone } = useContract();
+  const {
+    createContract,
+    getContractDetails,
+    addMilestone,
+    approveMilestone,
+    completeMilestone,
+    releaseMilestonePayment,
+    getMilestones,
+  } = useContract();
+
   const [formData, setFormData] = useState({
     receiver: "",
     title: "",
@@ -21,73 +30,125 @@ const Contract = () => {
     contractType: "Basic",
     amount: "",
   });
+
   const [contractId, setContractId] = useState("");
   const [contractDetails, setContractDetails] = useState(null);
+  const [milestones, setMilestones] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [milestoneData, setMilestoneData] = useState({
+    title: "",
+    amount: "",
+    deadline: "",
+    deliverables: "",
+  });
+  const [currentAccount, setCurrentAccount] = useState("");
+
+  // Get current account
+  useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (window.ethereum) {
+        const accounts = await window.ethereum.request({ method: "eth_accounts" });
+        if (accounts.length > 0) {
+          setCurrentAccount(accounts[0]);
+        }
+      }
+    };
+    checkWalletConnection();
+  }, []);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // Create Contract
   const handleCreateContract = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
       const { receiver, title, description, coinType, duration, contractType, amount } = formData;
-  
-      // ✅ Validate fields
-      if (Object.values(formData).some((field) => !field)) {
-        throw new Error("All fields are required.");
-      }
+
       if (isNaN(amount) || amount <= 0) {
-        throw new Error("Amount must be a valid positive number.");
+        throw new Error("Amount must be a valid positive number");
       }
-  
-      // 📝 Debug log
-      console.log("📝 Submitting contract with:", formData);
-  
-      // ⚡ Correct order of parameters
+
       const id = await createContract(receiver, title, description, coinType, duration, contractType, amount);
-  
-      if (id) {
-        setContractId(id);
-        alert(`Contract created successfully! Contract ID: ${id}`);
-      } else {
-        throw new Error("Contract ID could not be retrieved.");
-      }
+      setContractId(id);
+      alert(`Contract created! ID: ${id}`);
     } catch (err) {
-      console.error("Error creating contract:", err);
-      setError(err.message || "Failed to create contract. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  const handleGetContractDetails = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const details = await getContractDetails(contractId);
-      setContractDetails(details);
-    } catch (err) {
-      setError("Failed to fetch contract details. Please try again.");
+      setError(err.message || "Contract creation failed");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleMilestoneAction = async (actionFn, successMessage) => {
+  // Fetch Contract Details
+  const handleGetContractDetails = async () => {
     setLoading(true);
     setError("");
     try {
-      await actionFn(contractId);
-      alert(successMessage);
-      handleGetContractDetails();
+      const details = await getContractDetails(contractId);
+      const milestones = await getMilestones(contractId);
+      setContractDetails(details);
+      setMilestones(milestones);
     } catch (err) {
-      setError(`Failed to ${successMessage.toLowerCase()}. Please try again.`);
+      setError("Failed to fetch details");
     } finally {
       setLoading(false);
     }
+  };
+
+  // Handle Milestone Actions
+  const handleMilestoneAction = async (actionFn, successMessage, milestoneId) => {
+    setLoading(true);
+    setError("");
+    try {
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
+      if (accounts.length === 0) throw new Error("Connect your wallet first");
+
+      if (actionFn === approveMilestone) {
+        if (accounts[0].toLowerCase() !== contractDetails?.receiver?.toLowerCase()) {
+          throw new Error("Only the receiver can approve milestones");
+        }
+      }
+
+      await actionFn(contractId, milestoneId);
+      
+      // Refresh data
+      const updatedDetails = await getContractDetails(contractId);
+      const updatedMilestones = await getMilestones(contractId);
+      setContractDetails(updatedDetails);
+      setMilestones(updatedMilestones);
+
+      alert(successMessage);
+    } catch (err) {
+      console.error("Action failed:", err);
+      setError(err.message || "Action failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Add Milestone
+  const handleAddMilestone = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const { title, amount, deadline, deliverables } = milestoneData;
+      await addMilestone(contractId, title, amount, deadline, deliverables);
+      alert("Milestone added!");
+      setMilestoneData({ title: "", amount: "", deadline: "", deliverables: "" });
+      handleGetContractDetails();
+    } catch (err) {
+      setError("Failed to add milestone");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper to display contract status
+  const getStatusLabel = (statusCode) => {
+    const statuses = ["Pending", "Approved", "InProgress", "Completed", "Cancelled", "Disputed"];
+    return statuses[statusCode] || "Unknown";
   };
 
   return (
@@ -100,55 +161,50 @@ const Contract = () => {
     >
       <Navbar />
       <div className="container mx-auto px-4 py-10 pt-32">
-        <h1 className="text-4xl font-extrabold mb-8 text-center">Smart Work Commitment Contracts</h1>
-        {error && <div className="bg-red-500 text-white p-4 mb-6 rounded-md shadow-md">{error}</div>}
-        <form
-          className="bg-customDark p-6 rounded-md "
-          onSubmit={handleCreateContract}
-        >
-          <h2 className="text-2xl font-semibold mb-6">Create New Contract</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <h1 className="text-4xl font-extrabold mb-8 text-center">Smart Work Contracts</h1>
+        {error && <div className="bg-red-500 text-white p-4 mb-6 rounded-md">{error}</div>}
+
+        {/* Contract Creation Form */}
+        <form onSubmit={handleCreateContract} className="bg-customDark p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-6">Create New Contract</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Object.entries(formData).map(([key, value]) => (
-              <div key={key}>
-                <label className="block text-sm font-medium capitalize mb-2">
-                  {key.replace(/([A-Z])/g, " $1").trim()}
-                </label>
+              <div key={key} className="mb-4">
+                <label className="block text-sm font-medium mb-2 capitalize">{key}</label>
                 {key === "description" ? (
                   <textarea
                     name={key}
                     value={value}
                     onChange={handleChange}
-                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-md p-3"
+                    className="w-full bg-gray-100 p-3 rounded-md text-gray-800"
                     rows="3"
-                    required
                   />
-                ) : key === "coinType" || key === "contractType" ? (
+                ) : key === "contractType" || key === "coinType" ? (
                   <select
                     name={key}
                     value={value}
                     onChange={handleChange}
-                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-md p-3"
+                    className="w-full bg-gray-100 p-3 rounded-md text-gray-800"
                   >
-                    {key === "coinType" ? (
+                    {key === "contractType" ? (
                       <>
-                        <option value="ETH">ETH</option>
-                        <option value="BTC">BTC</option>
+                        <option value="Basic">Basic</option>
+                        <option value="Milestone">Milestone</option>
                       </>
                     ) : (
                       <>
-                        <option value="Basic">Basic</option>
-                        <option value="Advanced">Advanced</option>
+                        <option value="ETH">ETH</option>
+                        <option value="BTC">BTC</option>
                       </>
                     )}
                   </select>
                 ) : (
                   <input
-                    type={key === "amount" || key === "duration" ? "number" : "text"}
+                    type={["amount", "duration"].includes(key) ? "number" : "text"}
                     name={key}
                     value={value}
                     onChange={handleChange}
-                    className="w-full bg-white text-gray-800 border border-gray-300 rounded-md p-3"
-                    required
+                    className="w-full bg-gray-100 p-3 rounded-md text-gray-800"
                   />
                 )}
               </div>
@@ -156,53 +212,156 @@ const Contract = () => {
           </div>
           <button
             type="submit"
-            className="mt-8 w-full bg-customPurple text-white py-3 rounded-md text-lg font-semibold"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-md mt-4"
             disabled={loading}
           >
-            {loading ? "Creating Contract..." : "Create Contract"}
+            {loading ? "Creating..." : "Create Contract"}
           </button>
         </form>
 
-        <div className="mt-16 bg-customDark p-6 rounded-md shadow-md ">
-          <h2 className="text-2xl font-semibold mb-6">View Contract Details</h2>
-          <div className="flex flex-col md:flex-row gap-4">
+        {/* Contract Details Section */}
+        <div className="bg-customDark p-6 rounded-lg mb-8">
+          <h2 className="text-2xl font-bold mb-6">Contract Details</h2>
+          <div className="flex gap-4 mb-4">
             <input
               type="text"
-              placeholder="Enter Contract ID"
               value={contractId}
               onChange={(e) => setContractId(e.target.value)}
-              className="w-full bg-white text-gray-800 border border-gray-300 rounded-md p-3"
+              placeholder="Enter Contract ID"
+              className="flex-1 bg-gray-100 p-3 rounded-md text-gray-800"
             />
             <button
               onClick={handleGetContractDetails}
-              className="bg-customPurple text-white px-6 py-3 rounded-md text-lg font-semibold transition duration-300"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-md"
               disabled={loading}
             >
-              {loading ? "Fetching Details..." : "Fetch Details"}
+              {loading ? "Loading..." : "Fetch Details"}
             </button>
           </div>
+
           {contractDetails && (
-            <div className="bg-customDark p-6 rounded-md mt-6 overflow-hidden ">
-              <h3 className="text-xl font-bold mb-4">Contract Details</h3>
-              {Object.entries(contractDetails).map(([key, value]) => (
-                <p key={key} className="text-gray-300">
-                  <strong>{key.replace(/([A-Z])/g, " $1").trim()}:</strong> {value}
-                </p>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-sm text-gray-400">Status</label>
+                  <p className="font-medium">{getStatusLabel(contractDetails.status)}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-400">Amount</label>
+                  <p className="font-medium">{contractDetails.amount} {contractDetails.coinType}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-400">Remaining Balance</label>
+                  <p className="font-medium">{contractDetails.remainingBalance} {contractDetails.coinType}</p>
+                </div>
+              </div>
+
+              {/* Milestones Section */}
+              {milestones.map((milestone, index) => (
+                <div key={index} className="bg-gray-800 p-4 rounded-md">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-medium">{milestone.title}</h4>
+                      <p className="text-sm text-gray-400">{milestone.amount} {contractDetails.coinType}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className={`px-2 py-1 rounded text-sm ${
+                        milestone.isPaid ? "bg-green-600" : 
+                        milestone.isApproved ? "bg-blue-600" : 
+                        "bg-gray-600"
+                      }`}>
+                        {milestone.isPaid ? "Paid" : milestone.isApproved ? "Approved" : "Pending"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                  {/* Complete Button */}
+<button
+  onClick={() => handleMilestoneAction(completeMilestone, "Milestone completed!", index)}
+  className={`text-sm px-3 py-1 rounded ${
+    milestone.isCompleted || 
+    currentAccount.toLowerCase() !== contractDetails.creator.toLowerCase()
+      ? "bg-gray-400 opacity-75 cursor-not-allowed"
+      : "bg-purple-600 hover:bg-purple-700 cursor-pointer"
+  }`}
+  disabled={
+    milestone.isCompleted || 
+    currentAccount.toLowerCase() !== contractDetails.creator.toLowerCase()
+  }
+>
+  Complete
+</button>
+
+{/* Approve Button */}
+<button
+  onClick={() => handleMilestoneAction(approveMilestone, "Milestone approved!", index)}
+  className={`text-sm px-3 py-1 rounded ${
+    !milestone.isCompleted || 
+    milestone.isApproved || 
+    currentAccount.toLowerCase() !== contractDetails.receiver.toLowerCase()
+      ? "bg-gray-400 opacity-75 cursor-not-allowed"
+      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+  }`}
+  disabled={
+    !milestone.isCompleted || 
+    milestone.isApproved || 
+    currentAccount.toLowerCase() !== contractDetails.receiver.toLowerCase()
+  }
+>
+  Approve
+</button>
+
+{/* Release Payment Button */}
+<button
+  onClick={() => handleMilestoneAction(releaseMilestonePayment, "Payment released!", index)}
+  className={`text-sm px-3 py-1 rounded ${
+    !milestone.isApproved || 
+    milestone.isPaid || 
+    !(
+      currentAccount.toLowerCase() === contractDetails.creator.toLowerCase() ||
+      currentAccount.toLowerCase() === contractDetails.receiver.toLowerCase()
+    )
+      ? "bg-gray-400 opacity-75 cursor-not-allowed"
+      : "bg-green-600 hover:bg-green-700 cursor-pointer"
+  }`}
+  disabled={
+    !milestone.isApproved || 
+    milestone.isPaid || 
+    !(
+      currentAccount.toLowerCase() === contractDetails.creator.toLowerCase() ||
+      currentAccount.toLowerCase() === contractDetails.receiver.toLowerCase()
+    )
+  }
+>
+  Release Payment
+</button>
+                  </div>
+                </div>
               ))}
-              <div className="flex flex-col md:flex-row gap-4 mt-6">
+
+              {/* Add Milestone Section */}
+              <div className="mt-8">
+                <h3 className="text-xl font-bold mb-4">Add New Milestone</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Object.entries(milestoneData).map(([key, value]) => (
+                    <div key={key}>
+                      <label className="block text-sm text-gray-400 mb-1 capitalize">{key}</label>
+                      <input
+                        type={["amount", "deadline"].includes(key) ? "number" : "text"}
+                        value={value}
+                        onChange={(e) => setMilestoneData(prev => ({ ...prev, [key]: e.target.value }))}
+                        className="w-full bg-gray-100 p-2 rounded-md text-gray-800"
+                        placeholder={`Enter ${key}`}
+                      />
+                    </div>
+                  ))}
+                </div>
                 <button
-                  onClick={() => handleMilestoneAction(approveMilestone, "Milestone approved successfully!")}
-                  className="bg-customBlue hover:bg-customBlue2 text-white px-6 py-3 rounded-md font-semibold transition duration-300"
+                  onClick={handleAddMilestone}
+                  className="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-md"
                   disabled={loading}
                 >
-                  Approve Milestone
-                </button>
-                <button
-                  onClick={() => handleMilestoneAction(completeMilestone, "Milestone completed successfully!")}
-                  className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-md font-semibold transition duration-300"
-                  disabled={loading}
-                >
-                  Complete Milestone
+                  Add Milestone
                 </button>
               </div>
             </div>

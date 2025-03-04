@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import CryptifySWC from "../contracts/CryptifySWC.json";
 
-const CONTRACT_ADDRESS = "0x5a23750a77aDFC40C16bb03454762e94f12Afa3F";
+const CONTRACT_ADDRESS = "0x2Dba04d7A7134Ab647652006A080a626ce978E7a";
 
 const useContract2 = () => {
   const [contract, setContract] = useState(null);
@@ -28,6 +28,8 @@ const useContract2 = () => {
           web3Signer
         );
         setContract(contractInstance);
+
+        console.log("Contract initialized:", contractInstance);
       } catch (error) {
         console.error("Contract Initialization Error:", error);
         throw new Error(`Failed to initialize contract: ${error.message}`);
@@ -41,36 +43,35 @@ const useContract2 = () => {
     if (!contract) throw new Error("Contract not initialized.");
     setIsLoading(true);
     try {
+      console.log("Executing transaction:", successMsg);
       const tx = await transactionFn();
+      console.log("Transaction sent:", tx);
       const receipt = await tx.wait();
-      console.log(`Transaction successful: ${successMsg}`, receipt);
+      console.log("Transaction successful:", successMsg, receipt);
       return receipt;
     } catch (error) {
       console.error("Transaction Error:", error);
-      throw error;
+      throw new Error(error.reason || error.message); 
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Contract Existence Checker
+  const contractExists = async (contractId) => {
+    try {
+      const details = await contract.getContractDetails(contractId);
+      return details.creator !== ethers.ZeroAddress;
+    } catch {
+      return false;
     }
   };
 
   // Create Contract
   const createContract = async (receiver, title, description, coinType, duration, contractType, amount) => {
     try {
-      console.log("Creating contract with params:", {
-        receiver,
-        title,
-        description,
-        coinType,
-        duration,
-        contractType,
-        amount
-      });
-
       if (!contract) throw new Error("Contract not initialized");
-      if (isNaN(amount) || amount <= 0) throw new Error("Amount must be a valid positive number");
-      if (isNaN(duration) || duration <= 0) throw new Error("Duration must be a valid positive number");
-
-      // Convert contractType string to enum (Basic: 0, Milestone: 1)
+      const amountInWei = ethers.parseEther(amount.toString());
       const contractTypeEnum = contractType === "Basic" ? 0 : 1;
 
       const tx = await contract.createContract(
@@ -80,26 +81,16 @@ const useContract2 = () => {
         coinType,
         Number(duration),
         contractTypeEnum,
-        { value: ethers.parseEther(amount.toString()) }
+        { value: amountInWei }
       );
 
       const receipt = await tx.wait();
-      
       const event = receipt.logs
-        .map(log => {
-          try {
-            return contract.interface.parseLog(log);
-          } catch (error) {
-            console.error("Error parsing log:", error);
-            return null;
-          }
-        })
-        .find(parsed => parsed && parsed.name === "ContractCreated");
+        .map(log => contract.interface.parseLog(log))
+        .find(parsed => parsed?.name === "ContractCreated");
 
-      if (!event) throw new Error("ContractCreated event not found in transaction logs");
-
-      const contractId = event.args.contractId.toString();
-      return contractId;
+      if (!event) throw new Error("Contract creation event not found");
+      return event.args.contractId.toString();
     } catch (error) {
       console.error("Create Contract Error:", error);
       throw error;
@@ -108,17 +99,21 @@ const useContract2 = () => {
 
   // Add Milestone
   const addMilestone = async (contractId, title, amount, deadline, deliverables) => {
+    const amountInWei = ethers.parseEther(amount.toString());
     return handleTransaction(
-      () => contract.addMilestone(contractId, title, amount, deadline, deliverables),
-      "Milestone added successfully"
+      () => contract.addMilestone(contractId, title, amountInWei, deadline, deliverables),
+      "Milestone added"
     );
   };
 
   // Approve Milestone
   const approveMilestone = async (contractId, milestoneId) => {
     return handleTransaction(
-      () => contract.approveMilestone(contractId, milestoneId),
-      "Milestone approved successfully"
+      async () => {
+        console.log("Approving milestone:", milestoneId);
+        return contract.approveMilestone(contractId, milestoneId);
+      },
+      "Milestone approved"
     );
   };
 
@@ -126,62 +121,57 @@ const useContract2 = () => {
   const completeMilestone = async (contractId, milestoneId) => {
     return handleTransaction(
       () => contract.completeMilestone(contractId, milestoneId),
-      "Milestone completed successfully"
+      "Milestone completed"
+    );
+  };
+
+  // Release Payment
+  const releaseMilestonePayment = async (contractId, milestoneId) => {
+    return handleTransaction(
+      () => contract.releaseMilestonePayment(contractId, milestoneId),
+      "Payment released"
     );
   };
 
   // Get Contract Details
   const getContractDetails = async (contractId) => {
     try {
-      if (!contract) throw new Error("Contract not initialized");
-      if (!contractId) throw new Error("Contract ID is required");
-
+      if (!(await contractExists(contractId))) throw new Error("Contract not found");
       const details = await contract.getContractDetails(contractId);
-      
-      // Format the returned data into a more usable structure
       return {
         creator: details[0],
         receiver: details[1],
         title: details[2],
         description: details[3],
-        amount: details[4],
+        amount: ethers.formatEther(details[4]),
         coinType: details[5],
         duration: details[6],
         createdAt: details[7],
-        remainingBalance: details[8],
-        contractType: details[9], // 0 for Basic, 1 for Milestone
-        status: details[10], // Maps to ContractStatus enum
+        remainingBalance: ethers.formatEther(details[8]),
+        contractType: details[9],
+        status: details[10],
         creatorApproved: details[11],
         receiverApproved: details[12]
       };
     } catch (error) {
-      console.error("Get Contract Details Error:", error);
+      console.error("Get Contract Error:", error);
       throw error;
     }
   };
 
-  // Create Work Post
-  const createWorkPost = async (title, description, budget, duration) => {
-    return handleTransaction(
-      () => contract.createWorkPost(title, description, budget, duration),
-      "Work post created successfully"
-    );
-  };
-
-  // Submit Proposal
-  const submitProposal = async (postId, message) => {
-    return handleTransaction(
-      () => contract.submitProposal(postId, message),
-      "Proposal submitted successfully"
-    );
-  };
-
-  // Accept Proposal
-  const acceptProposal = async (postId, proposalId, budget) => {
-    return handleTransaction(
-      () => contract.acceptProposal(postId, proposalId, { value: ethers.parseEther(budget.toString()) }),
-      "Proposal accepted successfully"
-    );
+  // Get Milestones
+  const getMilestones = async (contractId) => {
+    try {
+      if (!(await contractExists(contractId))) throw new Error("Contract not found");
+      const milestones = await contract.getMilestones(contractId);
+      return milestones.map(m => ({
+        ...m,
+        amount: ethers.formatEther(m.amount)
+      }));
+    } catch (error) {
+      console.error("Get Milestones Error:", error);
+      throw error;
+    }
   };
 
   return {
@@ -193,10 +183,9 @@ const useContract2 = () => {
     addMilestone,
     approveMilestone,
     completeMilestone,
+    releaseMilestonePayment,
     getContractDetails,
-    createWorkPost,
-    submitProposal,
-    acceptProposal
+    getMilestones
   };
 };
 

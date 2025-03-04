@@ -80,33 +80,7 @@ const useContract = () => {
     }
   };
 
-  // 🔹 Freelancer Registration
-  
-
-  // 🔹 Fetch Freelancer Details
-
-
-  // 🔹 Fetch All Freelancers
  
-
-  // 🔹 Update Freelancer Profile
-
-
-  // 🔹 Delete Freelancer Profile
- 
-
-
-
-  // 🔹 Approve Contract (Freelancer)
-
-
-  // 🔹 Start Work (Client)
- 
-
-  // 🔹 Complete Work (Freelancer)
-
-
-  // 🔹 Release Funds for Contract (Client)
  
 
   return { 
