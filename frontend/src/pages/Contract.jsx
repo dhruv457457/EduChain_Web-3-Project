@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import useContract from "../hooks/useContract2";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const pageVariants = {
   initial: { opacity: 0, y: 50 },
   animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
   exit: { opacity: 0, y: -50, transition: { duration: 0.3, ease: "easeIn" } },
 };
+
+const STATUS_LABELS = ["Pending", "Approved", "InProgress", "Completed", "Cancelled", "Disputed"];
 
 const Contract = () => {
   const {
@@ -18,6 +24,7 @@ const Contract = () => {
     approveMilestone,
     completeMilestone,
     releaseMilestonePayment,
+    approveContract,
     getMilestones,
   } = useContract();
 
@@ -27,7 +34,6 @@ const Contract = () => {
     description: "",
     coinType: "ETH",
     duration: "",
-    contractType: "Basic",
     amount: "",
   });
 
@@ -39,19 +45,25 @@ const Contract = () => {
   const [milestoneData, setMilestoneData] = useState({
     title: "",
     amount: "",
-    deadline: "",
+    deadline: null,
     deliverables: "",
   });
   const [currentAccount, setCurrentAccount] = useState("");
 
-  // Get current account
   useEffect(() => {
     const checkWalletConnection = async () => {
-      if (window.ethereum) {
+      try {
+        if (!window.ethereum) {
+          toast.error("Install MetaMask to continue.");
+          return;
+        }
+
         const accounts = await window.ethereum.request({ method: "eth_accounts" });
         if (accounts.length > 0) {
           setCurrentAccount(accounts[0]);
         }
+      } catch (error) {
+        toast.error("Wallet connection error: " + error.message);
       }
     };
     checkWalletConnection();
@@ -59,96 +71,118 @@ const Contract = () => {
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // Create Contract
-  const handleCreateContract = async (e) => {
-    e.preventDefault();
+  const handleContractApproval = async () => {
     setLoading(true);
-    setError("");
     try {
-      const { receiver, title, description, coinType, duration, contractType, amount } = formData;
+      const accounts = await window.ethereum.request({ method: "eth_accounts" });
+      if (accounts.length === 0) throw new Error("Connect your wallet first");
 
-      if (isNaN(amount) || amount <= 0) {
-        throw new Error("Amount must be a valid positive number");
+      const isCreator = accounts[0].toLowerCase() === contractDetails.creator.toLowerCase();
+      const isReceiver = accounts[0].toLowerCase() === contractDetails.receiver.toLowerCase();
+
+      if (!isCreator && !isReceiver) {
+        throw new Error("Only contract parties can approve");
       }
 
-      const id = await createContract(receiver, title, description, coinType, duration, contractType, amount);
-      setContractId(id);
-      alert(`Contract created! ID: ${id}`);
+      await approveContract(contractId);
+      toast.success("Contract approved!");
+      await handleGetContractDetails();
     } catch (err) {
-      setError(err.message || "Contract creation failed");
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch Contract Details
+  const handleCreateContract = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { receiver, title, description, coinType, duration, amount } = formData;
+
+      if (!receiver.match(/^0x[a-fA-F0-9]{40}$/)) {
+        throw new Error("Invalid Ethereum address");
+      }
+
+      if (isNaN(amount) || amount <= 0) {
+        throw new Error("Amount must be a valid positive number");
+      }
+
+      const id = await createContract(receiver, title, description, coinType, duration, "Milestone", amount);
+      setContractId(id);
+      toast.success(`Contract created! ID: ${id}`);
+    } catch (err) {
+      toast.error(err.message || "Contract creation failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleGetContractDetails = async () => {
     setLoading(true);
-    setError("");
     try {
       const details = await getContractDetails(contractId);
       const milestones = await getMilestones(contractId);
       setContractDetails(details);
       setMilestones(milestones);
     } catch (err) {
-      setError("Failed to fetch details");
+      toast.error("Failed to fetch details");
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle Milestone Actions
-  const handleMilestoneAction = async (actionFn, successMessage, milestoneId) => {
-    setLoading(true);
-    setError("");
-    try {
-      const accounts = await window.ethereum.request({ method: "eth_accounts" });
-      if (accounts.length === 0) throw new Error("Connect your wallet first");
+  // Update handleMilestoneAction
+const handleMilestoneAction = async (actionFn, successMessage, milestoneId) => {
+  setLoading(true);
+  try {
+    const accounts = await window.ethereum.request({ method: "eth_accounts" });
+    if (accounts.length === 0) throw new Error("Connect your wallet first");
 
-      if (actionFn === approveMilestone) {
-        if (accounts[0].toLowerCase() !== contractDetails?.receiver?.toLowerCase()) {
-          throw new Error("Only the receiver can approve milestones");
-        }
-      }
+    // Remove this check completely
+    // if (actionFn === releaseMilestonePayment && contractDetails.status !== 1) {
+    //   throw new Error("Approve the contract first");
+    // }
 
-      await actionFn(contractId, milestoneId);
-      
-      // Refresh data
-      const updatedDetails = await getContractDetails(contractId);
-      const updatedMilestones = await getMilestones(contractId);
-      setContractDetails(updatedDetails);
-      setMilestones(updatedMilestones);
-
-      alert(successMessage);
-    } catch (err) {
-      console.error("Action failed:", err);
-      setError(err.message || "Action failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Add Milestone
+    await actionFn(contractId, milestoneId);
+    await handleGetContractDetails();
+    toast.success(successMessage);
+  } catch (err) {
+    toast.error(err.message || "Action failed");
+  } finally {
+    setLoading(false);
+  }
+};
   const handleAddMilestone = async () => {
     setLoading(true);
-    setError("");
     try {
       const { title, amount, deadline, deliverables } = milestoneData;
-      await addMilestone(contractId, title, amount, deadline, deliverables);
-      alert("Milestone added!");
-      setMilestoneData({ title: "", amount: "", deadline: "", deliverables: "" });
-      handleGetContractDetails();
+      if (!title || !amount || !deadline) {
+        throw new Error("All fields are required");
+      }
+
+      const unixDeadline = Math.floor(deadline.getTime() / 1000);
+      await addMilestone(contractId, title, amount, unixDeadline, deliverables);
+      toast.success("Milestone added!");
+      setMilestoneData({ title: "", amount: "", deadline: null, deliverables: "" });
+      await handleGetContractDetails();
     } catch (err) {
-      setError("Failed to add milestone");
+      toast.error("Failed to add milestone");
     } finally {
       setLoading(false);
     }
   };
 
-  // Helper to display contract status
-  const getStatusLabel = (statusCode) => {
-    const statuses = ["Pending", "Approved", "InProgress", "Completed", "Cancelled", "Disputed"];
-    return statuses[statusCode] || "Unknown";
+  const getStatusLabel = (statusCode) => STATUS_LABELS[Number(statusCode)] || "Unknown";
+
+  const formatDate = (timestamp) => {
+    return new Date(timestamp * 1000).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
@@ -161,10 +195,8 @@ const Contract = () => {
     >
       <Navbar />
       <div className="container mx-auto px-4 py-10 pt-32">
-        <h1 className="text-4xl font-extrabold mb-8 text-center">Smart Work Contracts</h1>
-        {error && <div className="bg-red-500 text-white p-4 mb-6 rounded-md">{error}</div>}
+        <h1 className="text-4xl font-extrabold mb-8 text-center">Milestone-Based Contracts</h1>
 
-        {/* Contract Creation Form */}
         <form onSubmit={handleCreateContract} className="bg-customDark p-6 rounded-lg mb-8">
           <h2 className="text-2xl font-bold mb-6">Create New Contract</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -178,26 +210,8 @@ const Contract = () => {
                     onChange={handleChange}
                     className="w-full bg-gray-100 p-3 rounded-md text-gray-800"
                     rows="3"
+                    required
                   />
-                ) : key === "contractType" || key === "coinType" ? (
-                  <select
-                    name={key}
-                    value={value}
-                    onChange={handleChange}
-                    className="w-full bg-gray-100 p-3 rounded-md text-gray-800"
-                  >
-                    {key === "contractType" ? (
-                      <>
-                        <option value="Basic">Basic</option>
-                        <option value="Milestone">Milestone</option>
-                      </>
-                    ) : (
-                      <>
-                        <option value="ETH">ETH</option>
-                        <option value="BTC">BTC</option>
-                      </>
-                    )}
-                  </select>
                 ) : (
                   <input
                     type={["amount", "duration"].includes(key) ? "number" : "text"}
@@ -205,6 +219,7 @@ const Contract = () => {
                     value={value}
                     onChange={handleChange}
                     className="w-full bg-gray-100 p-3 rounded-md text-gray-800"
+                    required
                   />
                 )}
               </div>
@@ -219,7 +234,6 @@ const Contract = () => {
           </button>
         </form>
 
-        {/* Contract Details Section */}
         <div className="bg-customDark p-6 rounded-lg mb-8">
           <h2 className="text-2xl font-bold mb-6">Contract Details</h2>
           <div className="flex gap-4 mb-4">
@@ -244,8 +258,21 @@ const Contract = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div>
                   <label className="text-sm text-gray-400">Status</label>
-                  <p className="font-medium">{getStatusLabel(contractDetails.status)}</p>
+                  <p className={`font-medium ${
+                    contractDetails.status == 1 ? "text-green-400" : "text-yellow-400"
+                  }`}>
+                    {getStatusLabel(contractDetails.status)}
+                  </p>
                 </div>
+                {contractDetails.status == 0 && (
+                  <button
+                    onClick={handleContractApproval}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+                    disabled={loading}
+                  >
+                    {loading ? "Approving..." : "Approve Contract"}
+                  </button>
+                )}
                 <div>
                   <label className="text-sm text-gray-400">Amount</label>
                   <p className="font-medium">{contractDetails.amount} {contractDetails.coinType}</p>
@@ -256,13 +283,13 @@ const Contract = () => {
                 </div>
               </div>
 
-              {/* Milestones Section */}
               {milestones.map((milestone, index) => (
                 <div key={index} className="bg-gray-800 p-4 rounded-md">
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h4 className="font-medium">{milestone.title}</h4>
                       <p className="text-sm text-gray-400">{milestone.amount} {contractDetails.coinType}</p>
+                      <p className="text-sm text-gray-400">Deadline: {formatDate(milestone.deadline)}</p>
                     </div>
                     <div className="text-right">
                       <span className={`px-2 py-1 rounded text-sm ${
@@ -275,86 +302,93 @@ const Contract = () => {
                     </div>
                   </div>
                   <div className="flex gap-2 mt-2">
-                  {/* Complete Button */}
-<button
-  onClick={() => handleMilestoneAction(completeMilestone, "Milestone completed!", index)}
-  className={`text-sm px-3 py-1 rounded ${
-    milestone.isCompleted || 
-    currentAccount.toLowerCase() !== contractDetails.creator.toLowerCase()
-      ? "bg-gray-400 opacity-75 cursor-not-allowed"
-      : "bg-purple-600 hover:bg-purple-700 cursor-pointer"
-  }`}
-  disabled={
-    milestone.isCompleted || 
-    currentAccount.toLowerCase() !== contractDetails.creator.toLowerCase()
-  }
->
-  Complete
-</button>
-
-{/* Approve Button */}
-<button
-  onClick={() => handleMilestoneAction(approveMilestone, "Milestone approved!", index)}
-  className={`text-sm px-3 py-1 rounded ${
-    !milestone.isCompleted || 
-    milestone.isApproved || 
-    currentAccount.toLowerCase() !== contractDetails.receiver.toLowerCase()
-      ? "bg-gray-400 opacity-75 cursor-not-allowed"
-      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-  }`}
-  disabled={
-    !milestone.isCompleted || 
-    milestone.isApproved || 
-    currentAccount.toLowerCase() !== contractDetails.receiver.toLowerCase()
-  }
->
-  Approve
-</button>
-
-{/* Release Payment Button */}
+                    <button
+                      onClick={() => handleMilestoneAction(completeMilestone, "Milestone completed!", index)}
+                      className={`text-sm px-3 py-1 rounded ${
+                        milestone.isCompleted ||
+                        currentAccount.toLowerCase() !== contractDetails.creator.toLowerCase()
+                          ? "bg-gray-400 opacity-75 cursor-not-allowed"
+                          : "bg-purple-600 hover:bg-purple-700 cursor-pointer"
+                      }`}
+                     
+                    >
+                      Complete
+                    </button>
+                    <button
+                      onClick={() => handleMilestoneAction(approveMilestone, "Milestone approved!", index)}
+                      className={`text-sm px-3 py-1 rounded ${
+                        milestone.isApproved ||
+                        currentAccount.toLowerCase() !== contractDetails.receiver.toLowerCase()
+                          ? "bg-gray-400 opacity-75 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                      }`}
+                    
+                    >
+                      Approve
+                    </button>
+        {/* Update the Release Payment button JSX */}
 <button
   onClick={() => handleMilestoneAction(releaseMilestonePayment, "Payment released!", index)}
-  className={`text-sm px-3 py-1 rounded ${
-    !milestone.isApproved || 
-    milestone.isPaid || 
-    !(
-      currentAccount.toLowerCase() === contractDetails.creator.toLowerCase() ||
-      currentAccount.toLowerCase() === contractDetails.receiver.toLowerCase()
-    )
-      ? "bg-gray-400 opacity-75 cursor-not-allowed"
-      : "bg-green-600 hover:bg-green-700 cursor-pointer"
+  className={`text-sm px-3 py-1 rounded 
+      
+       "bg-green-600 bg-green-700 cursor-pointer"
   }`}
-  disabled={
-    !milestone.isApproved || 
-    milestone.isPaid || 
-    !(
-      currentAccount.toLowerCase() === contractDetails.creator.toLowerCase() ||
-      currentAccount.toLowerCase() === contractDetails.receiver.toLowerCase()
-    )
-  }
+
 >
   Release Payment
+  {contractDetails.status < 1 && (
+    <span className="text-xs block mt-1 text-red-300">Approve contract first</span>
+  )}
 </button>
                   </div>
                 </div>
               ))}
 
-              {/* Add Milestone Section */}
               <div className="mt-8">
                 <h3 className="text-xl font-bold mb-4">Add New Milestone</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {Object.entries(milestoneData).map(([key, value]) => (
-                    <div key={key}>
-                      <label className="block text-sm text-gray-400 mb-1 capitalize">{key}</label>
-                      <input
-                        type={["amount", "deadline"].includes(key) ? "number" : "text"}
-                        value={value}
-                        onChange={(e) => setMilestoneData(prev => ({ ...prev, [key]: e.target.value }))}
-                        className="w-full bg-gray-100 p-2 rounded-md text-gray-800"
-                        placeholder={`Enter ${key}`}
-                      />
-                    </div>
-                  ))}
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">Title</label>
+                    <input
+                      type="text"
+                      value={milestoneData.title}
+                      onChange={(e) => setMilestoneData({ ...milestoneData, title: e.target.value })}
+                      className="w-full bg-gray-100 p-2 rounded-md text-gray-800"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">Amount</label>
+                    <input
+                      type="number"
+                      value={milestoneData.amount}
+                      onChange={(e) => setMilestoneData({ ...milestoneData, amount: e.target.value })}
+                      className="w-full bg-gray-100 p-2 rounded-md text-gray-800"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">Deadline</label>
+                    <DatePicker
+                      selected={milestoneData.deadline}
+                      onChange={(date) => setMilestoneData({ ...milestoneData, deadline: date })}
+                      showTimeSelect
+                      dateFormat="Pp"
+                      minDate={new Date()}
+                      className="w-full bg-gray-100 p-2 rounded-md text-gray-800"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">Deliverables</label>
+                    <input
+                      type="text"
+                      value={milestoneData.deliverables}
+                      onChange={(e) => setMilestoneData({ ...milestoneData, deliverables: e.target.value })}
+                      className="w-full bg-gray-100 p-2 rounded-md text-gray-800"
+                      required
+                    />
+                  </div>
                 </div>
                 <button
                   onClick={handleAddMilestone}

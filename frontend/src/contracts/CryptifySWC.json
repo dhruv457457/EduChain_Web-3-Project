@@ -1,5 +1,5 @@
 {
- "abi": [
+  "abi": [
     {
       "inputs": [],
       "stateMutability": "nonpayable",
@@ -650,6 +650,11 @@
             {
               "internalType": "uint256",
               "name": "approvedTimestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "approvalCooldown",
               "type": "uint256"
             }
           ],
