@@ -15,6 +15,7 @@ contract CryptifySWC {
         string deliverables;
         uint256 completedTimestamp;
         uint256 approvedTimestamp;
+        uint256 approvalCooldown; // Added cooldown period
     }
 
     struct SWCContract {
@@ -76,9 +77,9 @@ contract CryptifySWC {
     event ProposalAccepted(uint256 indexed postId, uint256 indexed proposalId);
     event ContractCreated(uint256 indexed contractId, address indexed creator, address indexed receiver, string title);
     event MilestoneAdded(uint256 indexed contractId, uint256 indexed milestoneId, string title, uint256 amount);
-  event MilestoneCompleted(uint256 indexed contractId, uint256 indexed milestoneId);
-event MilestoneApproved(uint256 indexed contractId, uint256 indexed milestoneId);
-event MilestonePaid(uint256 indexed contractId, uint256 indexed milestoneId, uint256 amount);
+    event MilestoneCompleted(uint256 indexed contractId, uint256 indexed milestoneId);
+    event MilestoneApproved(uint256 indexed contractId, uint256 indexed milestoneId);
+    event MilestonePaid(uint256 indexed contractId, uint256 indexed milestoneId, uint256 amount);
 
     // Modifiers
     modifier onlyOwner() {
@@ -165,6 +166,7 @@ event MilestonePaid(uint256 indexed contractId, uint256 indexed milestoneId, uin
         require(c.creator != address(0), "Contract does not exist");
         require(msg.sender == c.creator, "Only creator can add milestones");
         require(c.milestones.length < MAX_MILESTONES, "Maximum milestones reached");
+        require(_deadline > block.timestamp, "Deadline must be in the future"); // Added check
 
         // Ensure milestone amount does not exceed remaining balance
         uint256 totalMilestones = c.amount;
@@ -183,58 +185,79 @@ event MilestonePaid(uint256 indexed contractId, uint256 indexed milestoneId, uin
             isPaid: false,
             deliverables: _deliverables,
             completedTimestamp: 0,
-            approvedTimestamp: 0
+            approvedTimestamp: 0,
+            approvalCooldown: 0 // Initialize cooldown
         }));
 
         emit MilestoneAdded(_contractId, c.milestones.length - 1, _title, _amount);
     }
 
     // Approve Milestone by Receiver
-function approveMilestone(uint256 _contractId, uint256 _milestoneId) external {
-    SWCContract storage c = contracts[_contractId];
-    require(c.creator != address(0), "Contract does not exist");
-    require(_milestoneId < c.milestones.length, "Milestone does not exist");
-    require(msg.sender == c.receiver, "Only receiver can approve milestones");
-    
-    Milestone storage m = c.milestones[_milestoneId];
-    require(m.isCompleted, "Milestone is not completed"); // Add this check
-    
-    m.isApproved = true;
-    m.approvedTimestamp = block.timestamp;
+    function approveMilestone(uint256 _contractId, uint256 _milestoneId) external {
+        SWCContract storage c = contracts[_contractId];
+        require(c.creator != address(0), "Contract does not exist");
+        require(_milestoneId < c.milestones.length, "Milestone does not exist");
+        require(msg.sender == c.receiver, "Only receiver can approve milestones");
 
-    emit MilestoneApproved(_contractId, _milestoneId);
-}
-// Complete Milestone by Creator
-function completeMilestone(uint256 _contractId, uint256 _milestoneId) external {
-    SWCContract storage c = contracts[_contractId];
-    require(c.creator != address(0), "Contract does not exist");
-    require(_milestoneId < c.milestones.length, "Milestone does not exist");
-    require(msg.sender == c.creator, "Only creator can complete milestones");
+        Milestone storage m = c.milestones[_milestoneId];
+        require(m.isCompleted, "Milestone is not completed");
+        require(!m.isApproved, "Milestone already approved");
 
-    Milestone storage m = c.milestones[_milestoneId];
-    m.isCompleted = true;
-    m.completedTimestamp = block.timestamp;
+        m.isApproved = true;
+        m.approvedTimestamp = block.timestamp;
+        m.approvalCooldown = block.timestamp + 1 days; // Set cooldown period
 
-    emit MilestoneCompleted(_contractId, _milestoneId);
-}
+        emit MilestoneApproved(_contractId, _milestoneId);
+
+        // Update contract status
+        if (c.status < ContractStatus.InProgress) {
+            c.status = ContractStatus.InProgress;
+        }
+    }
+
+    // Complete Milestone by Creator
+    function completeMilestone(uint256 _contractId, uint256 _milestoneId) external {
+        SWCContract storage c = contracts[_contractId];
+        require(c.creator != address(0), "Contract does not exist");
+        require(_milestoneId < c.milestones.length, "Milestone does not exist");
+        require(msg.sender == c.creator, "Only creator can complete milestones");
+
+        Milestone storage m = c.milestones[_milestoneId];
+        require(!m.isCompleted, "Milestone already completed");
+
+        m.isCompleted = true;
+        m.completedTimestamp = block.timestamp;
+
+        emit MilestoneCompleted(_contractId, _milestoneId);
+
+        // Update contract status
+        if (c.status < ContractStatus.InProgress) {
+            c.status = ContractStatus.InProgress;
+        }
+    }
+
     // Release Payment for Approved Milestone
-function releaseMilestonePayment(uint256 _contractId, uint256 _milestoneId) external noReentrant {
-    SWCContract storage c = contracts[_contractId];
-    require(c.status == ContractStatus.Approved, "Contract not approved"); // Update this line
-    require(msg.sender == c.receiver || msg.sender == c.creator, "Not a party");
+    function releaseMilestonePayment(uint256 _contractId, uint256 _milestoneId) external noReentrant {
+        SWCContract storage c = contracts[_contractId];
+        require(c.status >= ContractStatus.Approved, "Contract not approved"); // Fixed line
+        require(msg.sender == c.receiver || msg.sender == c.creator, "Not a party");
 
-    Milestone storage m = c.milestones[_milestoneId];
-    require(m.isApproved, "Milestone not approved");
-    require(!m.isPaid, "Already paid");
-    require(m.amount <= c.remainingBalance, "Insufficient balance");
+        Milestone storage m = c.milestones[_milestoneId];
+        require(m.isApproved, "Milestone not approved");
+        require(!m.isPaid, "Already paid");
+        require(m.amount <= c.remainingBalance, "Insufficient balance");
 
-    c.remainingBalance -= m.amount;
-    (bool sent, ) = c.receiver.call{value: m.amount}("");
-    require(sent, "Payment failed");
-    m.isPaid = true;
+        c.remainingBalance -= m.amount;
+        (bool sent, ) = c.receiver.call{value: m.amount}("");
+        require(sent, "Payment failed");
+        m.isPaid = true;
 
-    emit MilestonePaid(_contractId, _milestoneId, m.amount);
-}
+        emit MilestonePaid(_contractId, _milestoneId, m.amount);
+
+        if (c.remainingBalance == 0) {
+            c.status = ContractStatus.Completed;
+        }
+    }
 
     // Option 2: Worker Search & Proposal System
     function createWorkPost(
