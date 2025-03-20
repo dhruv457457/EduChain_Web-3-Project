@@ -1,24 +1,28 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import Transfer from "./pages/Transfer";
-import Home from "./pages/Home";
-import User from "./pages/User";
-import Contract from "./pages/Contract";
-import Docs from "./pages/Docs";
+
+// Lazy Load Components
+const Transfer = lazy(() => import("./pages/Transfer"));
+const Home = lazy(() => import("./pages/Home"));
+const User = lazy(() => import("./pages/User"));
+const Contract = lazy(() => import("./pages/Contract"));
+const Docs = lazy(() => import("./pages/Docs"));
 
 function AnimatedRoutes() {
-  const location = useLocation(); // Track current route
+  const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait"> 
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="/transfer" element={<Transfer />} />
-        <Route path="/docs" element={<Docs />} />
-        <Route path="/user" element={<User />} />
-        <Route path="/contract" element={<Contract />} />
-      </Routes>
+    <AnimatePresence mode="wait">
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Home />} />
+          <Route path="/transfer" element={<Transfer />} />
+          <Route path="/docs" element={<Docs />} />
+          <Route path="/user" element={<User />} />
+          <Route path="/contract" element={<Contract />} />
+        </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 }
