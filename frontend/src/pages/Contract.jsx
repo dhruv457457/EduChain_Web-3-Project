@@ -530,7 +530,7 @@ const Contract = () => {
                         showTimeSelect
                         dateFormat="Pp"
                         minDate={new Date()}
-                        className="w-[590px] bg-gray-100 p-2 rounded-md text-gray-800"
+                        className="w-full lg:w-[590px] bg-gray-100 p-2 rounded-md text-gray-800"
                         required
                         placeholderText="Select deadline"
                       />
