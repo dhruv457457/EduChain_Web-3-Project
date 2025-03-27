@@ -1,8 +1,30 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, Component } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { WalletProvider } from "./components/WalletContext";
+import Navbar from "./components/Navbar";
 
-// Lazy Load Components
+// Error Boundary Component
+class ErrorBoundary extends Component {
+  state = { hasError: false, error: null };
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="text-center text-white p-4">
+          <h1 className="text-2xl font-bold">Something went wrong in Navbar</h1>
+          <p>{this.state.error?.message || "Unknown error"}</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const Transfer = lazy(() => import("./pages/Transfer"));
 const Home = lazy(() => import("./pages/Home"));
 const User = lazy(() => import("./pages/User"));
@@ -29,9 +51,14 @@ function AnimatedRoutes() {
 
 function App() {
   return (
-    <Router>
-      <AnimatedRoutes />
-    </Router>
+    <WalletProvider>
+      <Router>
+        <ErrorBoundary>
+          <Navbar />
+        </ErrorBoundary>
+        <AnimatedRoutes />
+      </Router>
+    </WalletProvider>
   );
 }
 
