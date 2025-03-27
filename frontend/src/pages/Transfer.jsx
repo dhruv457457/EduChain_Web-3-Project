@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
+import { ethers } from "ethers";
 import { ToastContainer, toast } from "react-toastify";
 import useContract from "../hooks/useContract";
-import { ethers } from "ethers";
 import TransferForm from "../components/TransferForm";
 import TransactionList from "../components/TransactionList";
 import FundTransferWithRegistryABI from "../contracts/FundTransferWithRegistry.json";
+import { useWallet } from "../components/WalletContext";
 
 const fundTransferAddress = "0x20a4BEe5E72Cd0842bba1407230C7B2bFCaa0fe3";
 
 const Transfer = () => {
-  const { transactions, fetchTransactions, getContract, userAddress } = useContract();
+  const { walletData } = useWallet();
+  const { transactions, fetchTransactions, getContract, userAddress } = useContract(walletData?.provider);
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (userAddress) {
+    if (walletData?.address) {
       fetchTransactions();
     }
-  }, [userAddress]);
+  }, [walletData?.address, fetchTransactions]);
 
   const validateInputs = () => {
     if (!recipient || recipient.trim() === "") {
@@ -35,8 +36,8 @@ const Transfer = () => {
   };
 
   const sendFunds = async () => {
-    if (!window.ethereum) {
-      toast.error("🦊 Please install MetaMask!");
+    if (!walletData?.provider) {
+      toast.error("🦊 Please connect your wallet!");
       return;
     }
     if (!validateInputs()) return;
@@ -44,7 +45,6 @@ const Transfer = () => {
     try {
       setLoading(true);
       const contract = await getContract(fundTransferAddress, FundTransferWithRegistryABI.abi);
-
       if (!contract) {
         toast.error("❌ Contract instance not found!");
         return;
@@ -52,7 +52,6 @@ const Transfer = () => {
 
       const amountInWei = ethers.parseEther(amount);
       console.log(`💰 Sending ${amount} ETH to ${recipient}...`);
-
       const tx = await contract.sendFunds(recipient, message, { value: amountInWei });
       console.log("🔄 Transaction sent. Waiting for confirmation...");
       await tx.wait();
@@ -61,7 +60,6 @@ const Transfer = () => {
       setRecipient("");
       setAmount("");
       setMessage("");
-
       fetchTransactions();
     } catch (error) {
       console.error("❌ Transaction error:", error);
@@ -73,8 +71,6 @@ const Transfer = () => {
 
   return (
     <>
-    
-      <Navbar />
       <ToastContainer position="top-right" autoClose={5000} />
       <div className="flex flex-col bg-customSemiPurple justify-between md:flex-row py-20">
         <TransferForm
@@ -87,7 +83,7 @@ const Transfer = () => {
           sendFunds={sendFunds}
           loading={loading}
         />
-        <TransactionList transactions={transactions} userAddress={userAddress} />
+        <TransactionList transactions={transactions} userAddress={walletData?.address} />
       </div>
     </>
   );

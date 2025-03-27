@@ -1,22 +1,29 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { useWallet } from "../components/WalletContext"; // Import useWallet
 import useContract from "../hooks/useContract";
 
-const ClaimButton = () => {
-  const { getContract, fetchTransactions } = useContract();
+const ClaimButton = ({ contractAddress = "0x20a4BEe5E72Cd0842bba1407230C7B2bFCaa0fe3", contractABI }) => {
+  const { walletData } = useWallet(); // Get wallet data from context
+  const { getContract, fetchTransactions } = useContract(walletData?.provider); // Pass provider
   const [loading, setLoading] = useState(false);
 
   const claimFunds = async () => {
+    if (!walletData?.provider) {
+      toast.error("🦊 Please connect your wallet via Navbar!");
+      return;
+    }
+
     try {
       setLoading(true);
-      const contract = await getContract();
-      const tx = await contract.claimFunds(); 
+      const contract = await getContract(contractAddress, contractABI); // Pass address and ABI
+      const tx = await contract.claimFunds();
       await tx.wait();
       toast.success("✅ Claimed successfully!");
-      fetchTransactions(); 
+      fetchTransactions();
     } catch (error) {
-      console.error(error);
-      toast.error("❌ Claim failed!");
+      console.error("Claim error:", error);
+      toast.error(`❌ Claim failed: ${error.message || "Unknown error"}`);
     } finally {
       setLoading(false);
     }
