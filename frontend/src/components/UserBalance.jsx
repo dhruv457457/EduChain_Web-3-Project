@@ -1,8 +1,8 @@
 import React from "react";
 import useContract from "../hooks/useContract";
 
-const UserBalance = ({ registeredName }) => {
-  const { userAddress, balance, fetchBalance } = useContract();
+const UserBalance = ({ registeredName, provider }) => {
+  const { userAddress, balance, fetchBalance } = useContract(provider); // Pass provider
 
   return (
     <div className="bg-customDark border-y-4 border-customPurple rounded-md text-white p-5 shadow-custom-purple flex flex-col justify-between">

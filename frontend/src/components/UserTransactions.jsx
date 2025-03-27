@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import useContract from "../hooks/useContract";
 
-const UserTransactions = () => {
-  const { userTransactions, fetchUserTransactions, userAddress } = useContract();
+const UserTransactions = ({ provider }) => {
+  const { userTransactions, fetchUserTransactions, userAddress } = useContract(provider); // Pass provider
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -32,7 +32,7 @@ const UserTransactions = () => {
       ) : userTransactions.length === 0 ? (
         <p className="text-gray-400">No transactions found.</p>
       ) : (
-        <ul className="space-y-4 ">
+        <ul className="space-y-4">
           {userTransactions.map((tx, index) => (
             <li key={index} className="p-4 border border-gray-700 rounded-lg bg-gray-800">
               <p><strong>From:</strong> {tx.sender || "N/A"}</p>

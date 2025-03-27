@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import UserBalance from "./UserBalance";
 import RegisterName from "./RegisterName";
 import UserTransactions from "./UserTransactions";
+import { useWallet } from "./WalletContext"; // Import context
 
 const UserDashboard = () => {
+  const { walletData } = useWallet(); // Get wallet data from context
   const [registeredName, setRegisteredName] = useState(null);
 
   return (
@@ -17,14 +19,15 @@ const UserDashboard = () => {
         </p>
       </div>
 
-      {/* Dashboard Content */}
       <div className="mt-12 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <UserBalance registeredName={registeredName} />
+        <UserBalance registeredName={registeredName} provider={walletData?.provider} />
 
         <div className="flex flex-col gap-6">
-          <RegisterName setGlobalRegisteredName={setRegisteredName} />
-
-          <UserTransactions />
+          <RegisterName 
+            setGlobalRegisteredName={setRegisteredName} 
+            provider={walletData?.provider} 
+          />
+          <UserTransactions provider={walletData?.provider} />
         </div>
       </div>
     </div>

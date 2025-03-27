@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import useContract from "../hooks/useContract";
 
-const RegisterName = ({ setGlobalRegisteredName }) => {
-  const { userAddress, getContract } = useContract();
+const RegisterName = ({ setGlobalRegisteredName, provider }) => {
+  const { userAddress, getContract } = useContract(provider); // Pass provider
   const [name, setName] = useState("");
   const [registeredName, setRegisteredName] = useState(null);
   const [loading, setLoading] = useState(false);
