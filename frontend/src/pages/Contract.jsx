@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
 import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-import Navbar from "../components/Navbar";
-import useContract from "../hooks/useContract2";
+import useContract2 from "../hooks/useContract2";
 import ContractIntro from "../components/ContractIntro";
 import CreateContractForm from "../components/CreateContractForm";
 import FetchContractSection from "../components/FetchContractSection";
+import { useWallet } from "../components/WalletContext"; // Corrected import path (assuming src/WalletContext.js)
 
 const pageVariants = {
   initial: { opacity: 0, y: 50 },
@@ -18,37 +16,20 @@ const pageVariants = {
 };
 
 const Contract = () => {
-  const contractHooks = useContract();
+  const { walletData } = useWallet(); // Get wallet data from context
+  const contractHooks = useContract2(walletData?.provider); // Add optional chaining for safety
   const [contractId, setContractId] = useState("");
   const [contractDetails, setContractDetails] = useState(null);
   const [milestones, setMilestones] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [currentAccount, setCurrentAccount] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showFetchForm, setShowFetchForm] = useState(false);
 
-  useEffect(() => {
-    const checkWalletConnection = async () => {
-      try {
-        if (!window.ethereum) {
-          toast.error("Install MetaMask to continue.");
-          return;
-        }
-
-        const accounts = await window.ethereum.request({
-          method: "eth_accounts",
-        });
-        if (accounts.length > 0) {
-          setCurrentAccount(accounts[0]);
-        }
-      } catch (error) {
-        toast.error("Wallet connection error: " + error.message);
-      }
-    };
-    checkWalletConnection();
-  }, []);
-
   const handleGetContractDetails = async () => {
+    if (!walletData?.provider) {
+      toast.error("🦊 Please connect your wallet!");
+      return;
+    }
     setLoading(true);
     try {
       const details = await contractHooks.getContractDetails(contractId);
@@ -70,7 +51,6 @@ const Contract = () => {
       exit="exit"
       className="bg-customSemiPurple min-h-screen text-white"
     >
-      <Navbar />
       <div className="container mx-auto px-4 py-10 pt-32">
         <h1 className="text-4xl font-extrabold mb-8 text-center">
           Milestone-Based Contracts
@@ -97,7 +77,7 @@ const Contract = () => {
             setContractId={setContractId}
             contractDetails={contractDetails}
             milestones={milestones}
-            currentAccount={currentAccount}
+            currentAccount={walletData?.address}
             loading={loading}
             handleGetContractDetails={handleGetContractDetails}
             contractHooks={contractHooks}

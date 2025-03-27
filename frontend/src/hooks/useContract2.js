@@ -4,22 +4,17 @@ import CryptifySWC from "../contracts/CryptifySWC.json";
 
 const CONTRACT_ADDRESS = "0x484A5AA1d51021C4a5eB335F938F7D15eF229c4c";
 
-const useContract2 = () => {
+const useContract2 = (provider) => { // Accept provider as parameter
   const [contract, setContract] = useState(null);
-  const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize Contract
+  // Initialize Contract when provider is available
   useEffect(() => {
     const initContract = async () => {
+      if (!provider) return; // Wait for provider from Navbar
       try {
-        if (!window.ethereum) throw new Error("Install MetaMask to continue.");
-
-        const web3Provider = new ethers.BrowserProvider(window.ethereum);
-        setProvider(web3Provider);
-
-        const web3Signer = await web3Provider.getSigner();
+        const web3Signer = await provider.getSigner();
         setSigner(web3Signer);
 
         const contractInstance = new ethers.Contract(
@@ -32,11 +27,10 @@ const useContract2 = () => {
         console.log("Contract initialized:", contractInstance);
       } catch (error) {
         console.error("Contract Initialization Error:", error);
-        throw new Error(`Failed to initialize contract: ${error.message}`);
       }
     };
     initContract();
-  }, []);
+  }, [provider]);
 
   // Transaction Handler
   const handleTransaction = async (transactionFn, successMsg) => {
@@ -64,6 +58,7 @@ const useContract2 = () => {
 
   // Check if Contract Exists
   const contractExists = async (contractId) => {
+    if (!contract) return false;
     try {
       const details = await contract.getContractDetails(contractId);
       return details.creator !== ethers.ZeroAddress;
@@ -75,10 +70,8 @@ const useContract2 = () => {
 
   // Create Contract
   const createContract = async (receiver, title, description, coinType, duration, contractType, amount) => {
+    if (!contract) throw new Error("Contract not initialized");
     try {
-      if (!contract) throw new Error("Contract not initialized");
-
-      // Validate inputs
       if (!receiver.match(/^0x[a-fA-F0-9]{40}$/)) {
         throw new Error("Invalid Ethereum address");
       }
@@ -115,25 +108,25 @@ const useContract2 = () => {
       throw error;
     }
   };
-// Add this to useContract2.js
-const approveContract = async (contractId) => {
-  try {
+
+  // Approve Contract
+  const approveContract = async (contractId) => {
     if (!contract) throw new Error("Contract not initialized");
-    return handleTransaction(
-      () => contract.approveContract(contractId),
-      "Contract approved"
-    );
-  } catch (error) {
-    console.error("Approve Contract Error:", error);
-    throw error;
-  }
-};
+    try {
+      return handleTransaction(
+        () => contract.approveContract(contractId),
+        "Contract approved"
+      );
+    } catch (error) {
+      console.error("Approve Contract Error:", error);
+      throw error;
+    }
+  };
+
   // Add Milestone
   const addMilestone = async (contractId, title, amount, deadline, deliverables) => {
+    if (!contract) throw new Error("Contract not initialized");
     try {
-      if (!contract) throw new Error("Contract not initialized");
-
-      // Validate inputs
       if (!title || !amount || !deadline || !deliverables) {
         throw new Error("All milestone fields are required");
       }
@@ -155,9 +148,8 @@ const approveContract = async (contractId) => {
 
   // Approve Milestone
   const approveMilestone = async (contractId, milestoneId) => {
+    if (!contract) throw new Error("Contract not initialized");
     try {
-      if (!contract) throw new Error("Contract not initialized");
-
       return handleTransaction(
         () => contract.approveMilestone(contractId, milestoneId),
         "Milestone approved"
@@ -174,9 +166,8 @@ const approveContract = async (contractId) => {
 
   // Complete Milestone
   const completeMilestone = async (contractId, milestoneId) => {
+    if (!contract) throw new Error("Contract not initialized");
     try {
-      if (!contract) throw new Error("Contract not initialized");
-
       return handleTransaction(
         () => contract.completeMilestone(contractId, milestoneId),
         "Milestone completed"
@@ -192,29 +183,27 @@ const approveContract = async (contractId) => {
   };
 
   // Release Payment
-  // Update the releaseMilestonePayment function
-const releaseMilestonePayment = async (contractId, milestoneId) => {
-  try {
+  const releaseMilestonePayment = async (contractId, milestoneId) => {
     if (!contract) throw new Error("Contract not initialized");
-    
-    // Add fresh contract details check
-    const currentDetails = await getContractDetails(contractId);
-    if (currentDetails.status < 1) {
-      throw new Error("Contract must be approved first");
-    }
+    try {
+      const currentDetails = await getContractDetails(contractId);
+      if (currentDetails.status < 1) {
+        throw new Error("Contract must be approved first");
+      }
 
-    return handleTransaction(
-      () => contract.releaseMilestonePayment(contractId, milestoneId),
-      "Payment released"
-    );
-  } catch (error) {
-    console.error("Release Payment Error:", error);
-    throw error;
-  }
-};
+      return handleTransaction(
+        () => contract.releaseMilestonePayment(contractId, milestoneId),
+        "Payment released"
+      );
+    } catch (error) {
+      console.error("Release Payment Error:", error);
+      throw error;
+    }
+  };
 
   // Get Contract Details
   const getContractDetails = async (contractId) => {
+    if (!contract) throw new Error("Contract not initialized");
     try {
       if (!(await contractExists(contractId))) throw new Error("Contract not found");
 
@@ -246,6 +235,7 @@ const releaseMilestonePayment = async (contractId, milestoneId) => {
 
   // Get Milestones
   const getMilestones = async (contractId) => {
+    if (!contract) throw new Error("Contract not initialized");
     try {
       if (!(await contractExists(contractId))) throw new Error("Contract not found");
 
@@ -272,7 +262,8 @@ const releaseMilestonePayment = async (contractId, milestoneId) => {
     createContract,
     addMilestone,
     approveMilestone,
-    completeMilestone,approveContract,
+    completeMilestone,
+    approveContract,
     releaseMilestonePayment,
     getContractDetails,
     getMilestones,

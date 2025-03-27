@@ -24,8 +24,8 @@ const ContractCreatedModal = ({ contractId, onClose }) => {
             Your contract has been created. Please save your Contract ID.
           </p>
           
-          <div className="flex items-center justify-center bg-gray-100 rounded-lg p-4 mb-6">
-            <span className="text-lg font-medium mr-4 truncate max-w-[200px]">
+          <div className="flex items-center justify-center bg-black rounded-lg p-4 mb-6">
+            <span className="text-lg text-black font-medium mr-4 truncate max-w-[200px]">
               {contractId}
             </span>
             <button 
