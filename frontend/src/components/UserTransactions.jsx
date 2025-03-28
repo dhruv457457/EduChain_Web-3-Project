@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import useContract from "../hooks/useContract";
 
 const UserTransactions = ({ provider }) => {
-  const { userTransactions, fetchUserTransactions, userAddress } = useContract(provider); // Pass provider
+  const { userTransactions, fetchUserTransactions, userAddress } = useContract(provider);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,11 +35,11 @@ const UserTransactions = ({ provider }) => {
         <ul className="space-y-4">
           {userTransactions.map((tx, index) => (
             <li key={index} className="p-4 border border-gray-700 rounded-lg bg-gray-800">
-              <p><strong>From:</strong> {tx.sender || "N/A"}</p>
-              <p><strong>To:</strong> {tx.receiver || "N/A"}</p>
-              <p><strong>Amount:</strong> {ethers.formatEther(tx.amount?.toString() || "0")} ETH</p>
+              <p><strong>From:</strong> {tx.senderName} ({tx.sender})</p>
+              <p><strong>To:</strong> {tx.receiverName} ({tx.receiver})</p>
+              <p><strong>Amount:</strong> {tx.amount} ETH</p>
               <p><strong>Message:</strong> {tx.message || "No message provided"}</p>
-              <p><strong>Timestamp:</strong> {tx.timestamp ? new Date(Number(tx.timestamp) * 1000).toLocaleString() : "N/A"}</p>
+              <p><strong>Timestamp:</strong> {new Date(tx.timestamp * 1000).toLocaleString()}</p>
               <p className={tx.claimed ? "text-green-400" : "text-yellow-400"}>
                 {tx.claimed ? "✅ Claimed" : "⏳ Pending"}
               </p>

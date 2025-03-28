@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useWallet } from "../components/WalletContext"; // Import useWallet
 import useContract from "../hooks/useContract";
 
-const ClaimButton = ({ contractAddress = "0x20a4BEe5E72Cd0842bba1407230C7B2bFCaa0fe3", contractABI }) => {
+const ClaimButton = ({ contractAddress = "0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A", contractABI }) => {
   const { walletData } = useWallet(); // Get wallet data from context
   const { getContract, fetchTransactions } = useContract(walletData?.provider); // Pass provider
   const [loading, setLoading] = useState(false);
