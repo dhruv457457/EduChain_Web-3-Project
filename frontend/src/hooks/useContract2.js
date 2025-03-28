@@ -1,28 +1,32 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import CryptifySWC from "../contracts/CryptifySWC.json";
+import CryptifySWCABI from "../contracts/CryptifySWC.json";
 
-const CONTRACT_ADDRESS = "0x484A5AA1d51021C4a5eB335F938F7D15eF229c4c";
+const CONTRACT_ADDRESS = "0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A";
 
-const useContract2 = (provider) => { // Accept provider as parameter
+const useContract2 = (provider) => {
   const [contract, setContract] = useState(null);
   const [signer, setSigner] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [reputation, setReputation] = useState("500"); // Default base score
 
-  // Initialize Contract when provider is available
   useEffect(() => {
     const initContract = async () => {
-      if (!provider) return; // Wait for provider from Navbar
+      if (!provider) return;
       try {
         const web3Signer = await provider.getSigner();
         setSigner(web3Signer);
 
         const contractInstance = new ethers.Contract(
           CONTRACT_ADDRESS,
-          CryptifySWC.abi,
+          CryptifySWCABI.abi,
           web3Signer
         );
         setContract(contractInstance);
+
+        const address = await web3Signer.getAddress();
+        const rep = await contractInstance.getReputation(address);
+        setReputation(ethers.formatUnits(rep, 0)); // Reputation is in uint256, no decimals
 
         console.log("Contract initialized:", contractInstance);
       } catch (error) {
@@ -32,7 +36,6 @@ const useContract2 = (provider) => { // Accept provider as parameter
     initContract();
   }, [provider]);
 
-  // Transaction Handler
   const handleTransaction = async (transactionFn, successMsg) => {
     if (!contract) throw new Error("Contract not initialized.");
     setIsLoading(true);
@@ -42,6 +45,12 @@ const useContract2 = (provider) => { // Accept provider as parameter
       console.log("Transaction sent:", tx);
       const receipt = await tx.wait();
       console.log("Transaction successful:", successMsg, receipt);
+
+      // Update reputation after transaction
+      const address = await signer.getAddress();
+      const rep = await contract.getReputation(address);
+      setReputation(ethers.formatUnits(rep, 0));
+
       return receipt;
     } catch (error) {
       console.error("Transaction Error:", {
@@ -56,7 +65,6 @@ const useContract2 = (provider) => { // Accept provider as parameter
     }
   };
 
-  // Check if Contract Exists
   const contractExists = async (contractId) => {
     if (!contract) return false;
     try {
@@ -68,12 +76,11 @@ const useContract2 = (provider) => { // Accept provider as parameter
     }
   };
 
-  // Create Contract
-  const createContract = async (receiver, title, description, coinType, duration, contractType, amount) => {
+  const createContract = async (receiverUsername, title, description, coinType, duration, contractType, amount) => {
     if (!contract) throw new Error("Contract not initialized");
     try {
-      if (!receiver.match(/^0x[a-fA-F0-9]{40}$/)) {
-        throw new Error("Invalid Ethereum address");
+      if (!receiverUsername || receiverUsername.trim() === "") {
+        throw new Error("Receiver username is required");
       }
       if (isNaN(amount) || amount <= 0) {
         throw new Error("Amount must be a valid positive number");
@@ -83,7 +90,7 @@ const useContract2 = (provider) => { // Accept provider as parameter
       const contractTypeEnum = contractType === "Basic" ? 0 : 1;
 
       const tx = await contract.createContract(
-        receiver,
+        receiverUsername,
         title,
         description,
         coinType,
@@ -100,108 +107,54 @@ const useContract2 = (provider) => { // Accept provider as parameter
       if (!event) throw new Error("Contract creation event not found");
       return event.args.contractId.toString();
     } catch (error) {
-      console.error("Create Contract Error:", {
-        error,
-        message: error.message,
-        stack: error.stack,
-      });
+      console.error("Create Contract Error:", error);
       throw error;
     }
   };
 
-  // Approve Contract
   const approveContract = async (contractId) => {
-    if (!contract) throw new Error("Contract not initialized");
-    try {
-      return handleTransaction(
-        () => contract.approveContract(contractId),
-        "Contract approved"
-      );
-    } catch (error) {
-      console.error("Approve Contract Error:", error);
-      throw error;
-    }
+    return handleTransaction(
+      () => contract.approveContract(contractId),
+      "Contract approved"
+    );
   };
 
-  // Add Milestone
   const addMilestone = async (contractId, title, amount, deadline, deliverables) => {
-    if (!contract) throw new Error("Contract not initialized");
-    try {
-      if (!title || !amount || !deadline || !deliverables) {
-        throw new Error("All milestone fields are required");
-      }
-
-      const amountInWei = ethers.parseEther(amount.toString());
-      return handleTransaction(
-        () => contract.addMilestone(contractId, title, amountInWei, deadline, deliverables),
-        "Milestone added"
-      );
-    } catch (error) {
-      console.error("Add Milestone Error:", {
-        error,
-        message: error.message,
-        stack: error.stack,
-      });
-      throw error;
+    if (!title || !amount || !deadline || !deliverables) {
+      throw new Error("All milestone fields are required");
     }
+    const amountInWei = ethers.parseEther(amount.toString());
+    return handleTransaction(
+      () => contract.addMilestone(contractId, title, amountInWei, deadline, deliverables),
+      "Milestone added"
+    );
   };
 
-  // Approve Milestone
   const approveMilestone = async (contractId, milestoneId) => {
-    if (!contract) throw new Error("Contract not initialized");
-    try {
-      return handleTransaction(
-        () => contract.approveMilestone(contractId, milestoneId),
-        "Milestone approved"
-      );
-    } catch (error) {
-      console.error("Approve Milestone Error:", {
-        error,
-        message: error.message,
-        stack: error.stack,
-      });
-      throw error;
-    }
+    return handleTransaction(
+      () => contract.approveMilestone(contractId, milestoneId),
+      "Milestone approved"
+    );
   };
 
-  // Complete Milestone
   const completeMilestone = async (contractId, milestoneId) => {
-    if (!contract) throw new Error("Contract not initialized");
-    try {
-      return handleTransaction(
-        () => contract.completeMilestone(contractId, milestoneId),
-        "Milestone completed"
-      );
-    } catch (error) {
-      console.error("Complete Milestone Error:", {
-        error,
-        message: error.message,
-        stack: error.stack,
-      });
-      throw error;
-    }
+    return handleTransaction(
+      () => contract.completeMilestone(contractId, milestoneId),
+      "Milestone completed"
+    );
   };
 
-  // Release Payment
   const releaseMilestonePayment = async (contractId, milestoneId) => {
-    if (!contract) throw new Error("Contract not initialized");
-    try {
-      const currentDetails = await getContractDetails(contractId);
-      if (currentDetails.status < 1) {
-        throw new Error("Contract must be approved first");
-      }
-
-      return handleTransaction(
-        () => contract.releaseMilestonePayment(contractId, milestoneId),
-        "Payment released"
-      );
-    } catch (error) {
-      console.error("Release Payment Error:", error);
-      throw error;
+    const currentDetails = await getContractDetails(contractId);
+    if (currentDetails.status < 1) {
+      throw new Error("Contract must be approved first");
     }
+    return handleTransaction(
+      () => contract.releaseMilestonePayment(contractId, milestoneId),
+      "Payment released"
+    );
   };
 
-  // Get Contract Details
   const getContractDetails = async (contractId) => {
     if (!contract) throw new Error("Contract not initialized");
     try {
@@ -211,29 +164,26 @@ const useContract2 = (provider) => { // Accept provider as parameter
       return {
         creator: details[0],
         receiver: details[1],
-        title: details[2],
-        description: details[3],
-        amount: ethers.formatEther(details[4]),
-        coinType: details[5],
-        duration: details[6],
-        createdAt: details[7],
-        remainingBalance: ethers.formatEther(details[8]),
-        contractType: details[9],
-        status: details[10],
-        creatorApproved: details[11],
-        receiverApproved: details[12],
+        creatorUsername: details[2],
+        receiverUsername: details[3],
+        title: details[4],
+        description: details[5],
+        amount: ethers.formatEther(details[6]),
+        coinType: details[7],
+        duration: Number(details[8]),
+        createdAt: Number(details[9]),
+        remainingBalance: ethers.formatEther(details[10]),
+        contractType: Number(details[11]),
+        status: Number(details[12]),
+        creatorApproved: details[13],
+        receiverApproved: details[14],
       };
     } catch (error) {
-      console.error("Get Contract Details Error:", {
-        error,
-        message: error.message,
-        stack: error.stack,
-      });
+      console.error("Get Contract Details Error:", error);
       throw error;
     }
   };
 
-  // Get Milestones
   const getMilestones = async (contractId) => {
     if (!contract) throw new Error("Contract not initialized");
     try {
@@ -241,15 +191,19 @@ const useContract2 = (provider) => { // Accept provider as parameter
 
       const milestones = await contract.getMilestones(contractId);
       return milestones.map((m) => ({
-        ...m,
+        title: m.title,
         amount: ethers.formatEther(m.amount),
+        deadline: Number(m.deadline),
+        isCompleted: m.isCompleted,
+        isApproved: m.isApproved,
+        isPaid: m.isPaid,
+        deliverables: m.deliverables,
+        completedTimestamp: Number(m.completedTimestamp),
+        approvedTimestamp: Number(m.approvedTimestamp),
+        approvalCooldown: Number(m.approvalCooldown),
       }));
     } catch (error) {
-      console.error("Get Milestones Error:", {
-        error,
-        message: error.message,
-        stack: error.stack,
-      });
+      console.error("Get Milestones Error:", error);
       throw error;
     }
   };
@@ -259,6 +213,7 @@ const useContract2 = (provider) => { // Accept provider as parameter
     provider,
     signer,
     isLoading,
+    reputation,
     createContract,
     addMilestone,
     approveMilestone,

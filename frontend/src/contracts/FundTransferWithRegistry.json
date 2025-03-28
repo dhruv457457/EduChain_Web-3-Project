@@ -1,538 +1,482 @@
 {
-  "abi":[
-   {
-     "inputs": [],
-     "stateMutability": "nonpayable",
-     "type": "constructor"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "address",
-         "name": "owner",
-         "type": "address"
-       }
-     ],
-     "name": "OwnableInvalidOwner",
-     "type": "error"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "address",
-         "name": "account",
-         "type": "address"
-       }
-     ],
-     "name": "OwnableUnauthorizedAccount",
-     "type": "error"
-   },
-   {
-     "anonymous": false,
-     "inputs": [
-       {
-         "indexed": true,
-         "internalType": "address",
-         "name": "recipient",
-         "type": "address"
-       },
-       {
-         "indexed": false,
-         "internalType": "uint256",
-         "name": "amount",
-         "type": "uint256"
-       }
-     ],
-     "name": "EscrowReleased",
-     "type": "event"
-   },
-   {
-     "anonymous": false,
-     "inputs": [
-       {
-         "indexed": true,
-         "internalType": "address",
-         "name": "receiver",
-         "type": "address"
-       },
-       {
-         "indexed": false,
-         "internalType": "uint256",
-         "name": "amount",
-         "type": "uint256"
-       }
-     ],
-     "name": "FundsClaimed",
-     "type": "event"
-   },
-   {
-     "anonymous": false,
-     "inputs": [
-       {
-         "indexed": true,
-         "internalType": "address",
-         "name": "user",
-         "type": "address"
-       },
-       {
-         "indexed": false,
-         "internalType": "uint256",
-         "name": "amount",
-         "type": "uint256"
-       }
-     ],
-     "name": "FundsDeposited",
-     "type": "event"
-   },
-   {
-     "anonymous": false,
-     "inputs": [
-       {
-         "indexed": true,
-         "internalType": "address",
-         "name": "sender",
-         "type": "address"
-       },
-       {
-         "indexed": true,
-         "internalType": "address",
-         "name": "receiver",
-         "type": "address"
-       },
-       {
-         "indexed": false,
-         "internalType": "uint256",
-         "name": "amount",
-         "type": "uint256"
-       },
-       {
-         "indexed": false,
-         "internalType": "string",
-         "name": "message",
-         "type": "string"
-       }
-     ],
-     "name": "FundsSent",
-     "type": "event"
-   },
-   {
-     "anonymous": false,
-     "inputs": [
-       {
-         "indexed": true,
-         "internalType": "address",
-         "name": "previousOwner",
-         "type": "address"
-       },
-       {
-         "indexed": true,
-         "internalType": "address",
-         "name": "newOwner",
-         "type": "address"
-       }
-     ],
-     "name": "OwnershipTransferred",
-     "type": "event"
-   },
-   {
-     "anonymous": false,
-     "inputs": [
-       {
-         "indexed": true,
-         "internalType": "address",
-         "name": "sender",
-         "type": "address"
-       },
-       {
-         "indexed": false,
-         "internalType": "uint256",
-         "name": "amount",
-         "type": "uint256"
-       }
-     ],
-     "name": "RefundIssued",
-     "type": "event"
-   },
-   {
-     "anonymous": false,
-     "inputs": [
-       {
-         "indexed": true,
-         "internalType": "address",
-         "name": "user",
-         "type": "address"
-       },
-       {
-         "indexed": false,
-         "internalType": "string",
-         "name": "username",
-         "type": "string"
-       }
-     ],
-     "name": "UserRegistered",
-     "type": "event"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "uint256",
-         "name": "",
-         "type": "uint256"
-       }
-     ],
-     "name": "allTransactions",
-     "outputs": [
-       {
-         "internalType": "address",
-         "name": "sender",
-         "type": "address"
-       },
-       {
-         "internalType": "address",
-         "name": "receiver",
-         "type": "address"
-       },
-       {
-         "internalType": "string",
-         "name": "senderName",
-         "type": "string"
-       },
-       {
-         "internalType": "string",
-         "name": "receiverName",
-         "type": "string"
-       },
-       {
-         "internalType": "uint256",
-         "name": "amount",
-         "type": "uint256"
-       },
-       {
-         "internalType": "string",
-         "name": "message",
-         "type": "string"
-       },
-       {
-         "internalType": "uint256",
-         "name": "timestamp",
-         "type": "uint256"
-       },
-       {
-         "internalType": "bool",
-         "name": "claimed",
-         "type": "bool"
-       },
-       {
-         "internalType": "bool",
-         "name": "refunded",
-         "type": "bool"
-       }
-     ],
-     "stateMutability": "view",
-     "type": "function"
-   },
-   {
-     "inputs": [],
-     "name": "claimFunds",
-     "outputs": [],
-     "stateMutability": "nonpayable",
-     "type": "function"
-   },
-   {
-     "inputs": [],
-     "name": "depositFunds",
-     "outputs": [],
-     "stateMutability": "payable",
-     "type": "function"
-   },
-   {
-     "inputs": [],
-     "name": "getAllTransactions",
-     "outputs": [
-       {
-         "components": [
-           {
-             "internalType": "address",
-             "name": "sender",
-             "type": "address"
-           },
-           {
-             "internalType": "address",
-             "name": "receiver",
-             "type": "address"
-           },
-           {
-             "internalType": "string",
-             "name": "senderName",
-             "type": "string"
-           },
-           {
-             "internalType": "string",
-             "name": "receiverName",
-             "type": "string"
-           },
-           {
-             "internalType": "uint256",
-             "name": "amount",
-             "type": "uint256"
-           },
-           {
-             "internalType": "string",
-             "name": "message",
-             "type": "string"
-           },
-           {
-             "internalType": "uint256",
-             "name": "timestamp",
-             "type": "uint256"
-           },
-           {
-             "internalType": "bool",
-             "name": "claimed",
-             "type": "bool"
-           },
-           {
-             "internalType": "bool",
-             "name": "refunded",
-             "type": "bool"
-           }
-         ],
-         "internalType": "struct FundTransferWithRegistry.Transaction[]",
-         "name": "",
-         "type": "tuple[]"
-       }
-     ],
-     "stateMutability": "view",
-     "type": "function"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "address",
-         "name": "user",
-         "type": "address"
-       }
-     ],
-     "name": "getUserTransactions",
-     "outputs": [
-       {
-         "components": [
-           {
-             "internalType": "address",
-             "name": "sender",
-             "type": "address"
-           },
-           {
-             "internalType": "address",
-             "name": "receiver",
-             "type": "address"
-           },
-           {
-             "internalType": "string",
-             "name": "senderName",
-             "type": "string"
-           },
-           {
-             "internalType": "string",
-             "name": "receiverName",
-             "type": "string"
-           },
-           {
-             "internalType": "uint256",
-             "name": "amount",
-             "type": "uint256"
-           },
-           {
-             "internalType": "string",
-             "name": "message",
-             "type": "string"
-           },
-           {
-             "internalType": "uint256",
-             "name": "timestamp",
-             "type": "uint256"
-           },
-           {
-             "internalType": "bool",
-             "name": "claimed",
-             "type": "bool"
-           },
-           {
-             "internalType": "bool",
-             "name": "refunded",
-             "type": "bool"
-           }
-         ],
-         "internalType": "struct FundTransferWithRegistry.Transaction[]",
-         "name": "",
-         "type": "tuple[]"
-       }
-     ],
-     "stateMutability": "view",
-     "type": "function"
-   },
-   {
-     "inputs": [],
-     "name": "owner",
-     "outputs": [
-       {
-         "internalType": "address",
-         "name": "",
-         "type": "address"
-       }
-     ],
-     "stateMutability": "view",
-     "type": "function"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "address",
-         "name": "",
-         "type": "address"
-       }
-     ],
-     "name": "pendingBalances",
-     "outputs": [
-       {
-         "internalType": "uint256",
-         "name": "",
-         "type": "uint256"
-       }
-     ],
-     "stateMutability": "view",
-     "type": "function"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "string",
-         "name": "_username",
-         "type": "string"
-       }
-     ],
-     "name": "registerUsername",
-     "outputs": [],
-     "stateMutability": "nonpayable",
-     "type": "function"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "address",
-         "name": "_recipient",
-         "type": "address"
-       },
-       {
-         "internalType": "uint256",
-         "name": "_amount",
-         "type": "uint256"
-       }
-     ],
-     "name": "releaseEscrow",
-     "outputs": [],
-     "stateMutability": "nonpayable",
-     "type": "function"
-   },
-   {
-     "inputs": [],
-     "name": "renounceOwnership",
-     "outputs": [],
-     "stateMutability": "nonpayable",
-     "type": "function"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "string",
-         "name": "_receiverUsername",
-         "type": "string"
-       },
-       {
-         "internalType": "string",
-         "name": "_message",
-         "type": "string"
-       }
-     ],
-     "name": "sendFunds",
-     "outputs": [],
-     "stateMutability": "payable",
-     "type": "function"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "address",
-         "name": "_receiver",
-         "type": "address"
-       },
-       {
-         "internalType": "string",
-         "name": "_message",
-         "type": "string"
-       }
-     ],
-     "name": "sendFundsToAddress",
-     "outputs": [],
-     "stateMutability": "payable",
-     "type": "function"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "address",
-         "name": "newOwner",
-         "type": "address"
-       }
-     ],
-     "name": "transferOwnership",
-     "outputs": [],
-     "stateMutability": "nonpayable",
-     "type": "function"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "string",
-         "name": "",
-         "type": "string"
-       }
-     ],
-     "name": "usernameToAddress",
-     "outputs": [
-       {
-         "internalType": "address",
-         "name": "",
-         "type": "address"
-       }
-     ],
-     "stateMutability": "view",
-     "type": "function"
-   },
-   {
-     "inputs": [
-       {
-         "internalType": "address",
-         "name": "",
-         "type": "address"
-       }
-     ],
-     "name": "users",
-     "outputs": [
-       {
-         "internalType": "string",
-         "name": "username",
-         "type": "string"
-       },
-       {
-         "internalType": "bool",
-         "name": "registered",
-         "type": "bool"
-       }
-     ],
-     "stateMutability": "view",
-     "type": "function"
-   }
- ]
- 
+  
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_registryAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "EscrowReleased",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundsClaimed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundsDeposited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "message",
+          "type": "string"
+        }
+      ],
+      "name": "FundsSent",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "RefundIssued",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "allTransactions",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "senderName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "receiverName",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "claimed",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "refunded",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "claimFunds",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "depositFunds",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getAllTransactions",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "senderName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "receiverName",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "message",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "claimed",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "refunded",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct FundTransferWithRegistry.Transaction[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserTransactions",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "receiver",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "senderName",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "receiverName",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "message",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "claimed",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "refunded",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct FundTransferWithRegistry.Transaction[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "pendingBalances",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "registry",
+      "outputs": [
+        {
+          "internalType": "contract UsernameRegistry",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_recipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "releaseEscrow",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_receiverUsername",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_message",
+          "type": "string"
+        }
+      ],
+      "name": "sendFunds",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_message",
+          "type": "string"
+        }
+      ],
+      "name": "sendFundsToAddress",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
 }

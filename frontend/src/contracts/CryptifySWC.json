@@ -1,7 +1,14 @@
 {
+  
   "abi": [
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_registryAddress",
+          "type": "address"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "constructor"
     },
@@ -224,6 +231,25 @@
       "inputs": [
         {
           "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newScore",
+          "type": "uint256"
+        }
+      ],
+      "name": "ReputationUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
           "internalType": "uint256",
           "name": "postId",
           "type": "uint256"
@@ -393,6 +419,16 @@
         },
         {
           "internalType": "string",
+          "name": "creatorUsername",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "receiverUsername",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
           "name": "title",
           "type": "string"
         },
@@ -453,9 +489,9 @@
     {
       "inputs": [
         {
-          "internalType": "address payable",
-          "name": "_receiver",
-          "type": "address"
+          "internalType": "string",
+          "name": "_receiverUsername",
+          "type": "string"
         },
         {
           "internalType": "string",
@@ -535,6 +571,16 @@
           "internalType": "address",
           "name": "receiver",
           "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "creatorUsername",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "receiverUsername",
+          "type": "string"
         },
         {
           "internalType": "string",
@@ -667,6 +713,25 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "getReputation",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "owner",
       "outputs": [
@@ -775,6 +840,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "registry",
+      "outputs": [
+        {
+          "internalType": "contract UsernameRegistry",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -790,6 +868,25 @@
       "name": "releaseMilestonePayment",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "reputationScores",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {

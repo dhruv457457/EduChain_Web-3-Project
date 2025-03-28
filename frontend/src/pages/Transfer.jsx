@@ -7,7 +7,7 @@ import TransactionList from "../components/TransactionList";
 import FundTransferWithRegistryABI from "../contracts/FundTransferWithRegistry.json";
 import { useWallet } from "../components/WalletContext";
 
-const fundTransferAddress = "0x20a4BEe5E72Cd0842bba1407230C7B2bFCaa0fe3";
+const fundTransferAddress = "0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c";
 
 const Transfer = () => {
   const { walletData } = useWallet();
