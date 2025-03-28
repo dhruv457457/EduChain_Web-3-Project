@@ -3,12 +3,13 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract FundTransferWithRegistry is Ownable {
-    struct User {
-        string username;
-        bool registered;
-    }
+interface UsernameRegistry {
+    function getAddressFromUsername(string memory _username) external view returns (address);
+    function getUsernameFromAddress(address _user) external view returns (string memory);
+    function isRegistered(address _user) external view returns (bool);
+}
 
+contract FundTransferWithRegistry is Ownable {
     struct Transaction {
         address sender;
         address receiver;
@@ -21,29 +22,18 @@ contract FundTransferWithRegistry is Ownable {
         bool refunded;
     }
 
-    mapping(address => User) public users;
-    mapping(string => address) public usernameToAddress;
+    UsernameRegistry public registry; // Reference to shared username registry
     Transaction[] public allTransactions;
     mapping(address => uint256) public pendingBalances;
 
-    event UserRegistered(address indexed user, string username);
     event FundsSent(address indexed sender, address indexed receiver, uint256 amount, string message);
     event FundsClaimed(address indexed receiver, uint256 amount);
     event RefundIssued(address indexed sender, uint256 amount);
     event FundsDeposited(address indexed user, uint256 amount);
     event EscrowReleased(address indexed recipient, uint256 amount);
 
-    constructor() Ownable(msg.sender) {}
-
-    function registerUsername(string calldata _username) external {
-        require(bytes(_username).length > 0, "Username cannot be empty");
-        require(usernameToAddress[_username] == address(0), "Username already taken");
-        require(!users[msg.sender].registered, "User already registered");
-
-        users[msg.sender] = User(_username, true);
-        usernameToAddress[_username] = msg.sender;
-
-        emit UserRegistered(msg.sender, _username);
+    constructor(address _registryAddress) Ownable(msg.sender) {
+        registry = UsernameRegistry(_registryAddress);
     }
 
     function depositFunds() external payable {
@@ -54,9 +44,9 @@ contract FundTransferWithRegistry is Ownable {
 
     function sendFunds(string memory _receiverUsername, string memory _message) external payable {
         require(msg.value > 0, "Amount must be greater than 0");
-        require(users[msg.sender].registered, "Sender must be registered");
+        require(registry.isRegistered(msg.sender), "Sender must be registered");
 
-        address receiver = usernameToAddress[_receiverUsername];
+        address receiver = registry.getAddressFromUsername(_receiverUsername);
         require(receiver != address(0), "Receiver username not found");
 
         _processTransaction(msg.sender, receiver, msg.value, _message);
@@ -64,8 +54,8 @@ contract FundTransferWithRegistry is Ownable {
 
     function sendFundsToAddress(address _receiver, string memory _message) external payable {
         require(msg.value > 0, "Amount must be greater than 0");
-        require(users[msg.sender].registered, "Sender must be registered");
-        require(users[_receiver].registered, "Receiver must be registered");
+        require(registry.isRegistered(msg.sender), "Sender must be registered");
+        require(registry.isRegistered(_receiver), "Receiver must be registered");
 
         _processTransaction(msg.sender, _receiver, msg.value, _message);
     }
@@ -74,8 +64,8 @@ contract FundTransferWithRegistry is Ownable {
         allTransactions.push(Transaction({
             sender: _sender,
             receiver: _receiver,
-            senderName: users[_sender].username,
-            receiverName: users[_receiver].username,
+            senderName: registry.getUsernameFromAddress(_sender),
+            receiverName: registry.getUsernameFromAddress(_receiver),
             amount: _amount,
             message: _message,
             timestamp: block.timestamp,

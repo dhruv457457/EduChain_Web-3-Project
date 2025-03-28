@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+interface UsernameRegistry {
+    function getAddressFromUsername(string memory _username) external view returns (address);
+    function getUsernameFromAddress(address _user) external view returns (string memory);
+    function isRegistered(address _user) external view returns (bool);
+}
+
 contract CryptifySWC {
     enum ContractStatus { Pending, Approved, InProgress, Completed, Cancelled, Disputed }
     enum ContractType { Basic, Milestone }
@@ -15,12 +21,14 @@ contract CryptifySWC {
         string deliverables;
         uint256 completedTimestamp;
         uint256 approvedTimestamp;
-        uint256 approvalCooldown; // Added cooldown period
+        uint256 approvalCooldown;
     }
 
     struct SWCContract {
         address payable creator;
         address payable receiver;
+        string creatorUsername; // Added for username tracking
+        string receiverUsername; // Added for username tracking
         string title;
         string description;
         uint256 amount;
@@ -54,32 +62,36 @@ contract CryptifySWC {
         bool accepted;
     }
 
+    UsernameRegistry public registry; // Reference to shared username registry
     uint256 public contractCounter;
     uint256 public postCounter;
     uint256 public proposalCounter;
-
     mapping(uint256 => SWCContract) public contracts;
     mapping(uint256 => WorkPost) public workPosts;
     mapping(uint256 => Proposal[]) public postProposals;
+    mapping(address => uint256) public reputationScores; // Reputation score tracking
 
     bool private locked;
     bool public paused;
     address public owner;
     uint256 public constant MAX_MILESTONES = 10;
     uint256 public constant MAX_DURATION = 365 days;
+    uint256 constant MAX_SCORE = 1000;
+    uint256 constant BASE_SCORE = 500;
 
     // Events
+    event ContractCreated(uint256 indexed contractId, address indexed creator, address indexed receiver, string title);
     event ContractFunded(uint256 indexed contractId, uint256 amount);
     event ContractApproved(uint256 indexed contractId);
     event ContractCompleted(uint256 indexed contractId, uint256 timestamp);
     event WorkPostCreated(uint256 indexed postId);
     event ProposalSubmitted(uint256 indexed postId, uint256 indexed proposalId);
     event ProposalAccepted(uint256 indexed postId, uint256 indexed proposalId);
-    event ContractCreated(uint256 indexed contractId, address indexed creator, address indexed receiver, string title);
     event MilestoneAdded(uint256 indexed contractId, uint256 indexed milestoneId, string title, uint256 amount);
     event MilestoneCompleted(uint256 indexed contractId, uint256 indexed milestoneId);
     event MilestoneApproved(uint256 indexed contractId, uint256 indexed milestoneId);
     event MilestonePaid(uint256 indexed contractId, uint256 indexed milestoneId, uint256 amount);
+    event ReputationUpdated(address indexed user, uint256 newScore);
 
     // Modifiers
     modifier onlyOwner() {
@@ -99,16 +111,17 @@ contract CryptifySWC {
         locked = false;
     }
 
-    constructor() {
+    constructor(address _registryAddress) {
         owner = msg.sender;
         paused = false;
+        registry = UsernameRegistry(_registryAddress);
     }
 
     receive() external payable {}
 
-    // Option 1: Direct Contract Creation
+    // Option 1: Direct Contract Creation (Supports username or address)
     function createContract(
-        address payable _receiver,
+        string memory _receiverUsername, // Changed to username input
         string memory _title,
         string memory _description,
         string memory _coinType,
@@ -116,15 +129,19 @@ contract CryptifySWC {
         ContractType _contractType
     ) public payable whenNotPaused {
         require(msg.value > 0, "Contract must be funded");
-        require(_receiver != address(0), "Invalid receiver address");
+        address payable receiver = payable(registry.getAddressFromUsername(_receiverUsername));
+        require(receiver != address(0), "Receiver username not found");
         require(_duration > 0 && _duration <= MAX_DURATION, "Invalid duration");
-        require(_receiver != msg.sender, "Cannot create contract with yourself");
+        require(receiver != msg.sender, "Cannot create contract with yourself");
+        require(registry.isRegistered(msg.sender), "Sender must be registered");
 
         contractCounter++;
         SWCContract storage newContract = contracts[contractCounter];
 
         newContract.creator = payable(msg.sender);
-        newContract.receiver = _receiver;
+        newContract.receiver = receiver;
+        newContract.creatorUsername = registry.getUsernameFromAddress(msg.sender);
+        newContract.receiverUsername = _receiverUsername;
         newContract.title = _title;
         newContract.description = _description;
         newContract.amount = msg.value;
@@ -135,11 +152,11 @@ contract CryptifySWC {
         newContract.status = ContractStatus.Pending;
         newContract.createdAt = block.timestamp;
 
-        emit ContractCreated(contractCounter, msg.sender, _receiver, _title);
+        emit ContractCreated(contractCounter, msg.sender, receiver, _title);
         emit ContractFunded(contractCounter, msg.value);
     }
 
-    // Approve Contract by Creator or Receiver
+    // Approve Contract
     function approveContract(uint256 _contractId) external {
         SWCContract storage c = contracts[_contractId];
         require(msg.sender == c.creator || msg.sender == c.receiver, "Not a party");
@@ -154,7 +171,7 @@ contract CryptifySWC {
         }
     }
 
-    // Add Milestone to Contract
+    // Add Milestone
     function addMilestone(
         uint256 _contractId,
         string memory _title,
@@ -166,15 +183,13 @@ contract CryptifySWC {
         require(c.creator != address(0), "Contract does not exist");
         require(msg.sender == c.creator, "Only creator can add milestones");
         require(c.milestones.length < MAX_MILESTONES, "Maximum milestones reached");
-        require(_deadline > block.timestamp, "Deadline must be in the future"); // Added check
+        require(_deadline > block.timestamp, "Deadline must be in future");
 
-        // Ensure milestone amount does not exceed remaining balance
-        uint256 totalMilestones = c.amount;
         uint256 sum = _amount;
         for (uint i = 0; i < c.milestones.length; i++) {
             sum += c.milestones[i].amount;
         }
-        require(sum <= totalMilestones, "Exceeds contract amount");
+        require(sum <= c.amount, "Exceeds contract amount");
 
         c.milestones.push(Milestone({
             title: _title,
@@ -186,36 +201,13 @@ contract CryptifySWC {
             deliverables: _deliverables,
             completedTimestamp: 0,
             approvedTimestamp: 0,
-            approvalCooldown: 0 // Initialize cooldown
+            approvalCooldown: 0
         }));
 
         emit MilestoneAdded(_contractId, c.milestones.length - 1, _title, _amount);
     }
 
-    // Approve Milestone by Receiver
-    function approveMilestone(uint256 _contractId, uint256 _milestoneId) external {
-        SWCContract storage c = contracts[_contractId];
-        require(c.creator != address(0), "Contract does not exist");
-        require(_milestoneId < c.milestones.length, "Milestone does not exist");
-        require(msg.sender == c.receiver, "Only receiver can approve milestones");
-
-        Milestone storage m = c.milestones[_milestoneId];
-        require(m.isCompleted, "Milestone is not completed");
-        require(!m.isApproved, "Milestone already approved");
-
-        m.isApproved = true;
-        m.approvedTimestamp = block.timestamp;
-        m.approvalCooldown = block.timestamp + 1 days; // Set cooldown period
-
-        emit MilestoneApproved(_contractId, _milestoneId);
-
-        // Update contract status
-        if (c.status < ContractStatus.InProgress) {
-            c.status = ContractStatus.InProgress;
-        }
-    }
-
-    // Complete Milestone by Creator
+    // Complete Milestone
     function completeMilestone(uint256 _contractId, uint256 _milestoneId) external {
         SWCContract storage c = contracts[_contractId];
         require(c.creator != address(0), "Contract does not exist");
@@ -229,17 +221,38 @@ contract CryptifySWC {
         m.completedTimestamp = block.timestamp;
 
         emit MilestoneCompleted(_contractId, _milestoneId);
+        if (c.status < ContractStatus.InProgress) {
+            c.status = ContractStatus.InProgress;
+        }
 
-        // Update contract status
+        _updateReputation(c.creator, 10, true); // +10 for completion
+    }
+
+    // Approve Milestone
+    function approveMilestone(uint256 _contractId, uint256 _milestoneId) external {
+        SWCContract storage c = contracts[_contractId];
+        require(c.creator != address(0), "Contract does not exist");
+        require(_milestoneId < c.milestones.length, "Milestone does not exist");
+        require(msg.sender == c.receiver, "Only receiver can approve milestones");
+
+        Milestone storage m = c.milestones[_milestoneId];
+        require(m.isCompleted, "Milestone not completed");
+        require(!m.isApproved, "Milestone already approved");
+
+        m.isApproved = true;
+        m.approvedTimestamp = block.timestamp;
+        m.approvalCooldown = block.timestamp + 1 days;
+
+        emit MilestoneApproved(_contractId, _milestoneId);
         if (c.status < ContractStatus.InProgress) {
             c.status = ContractStatus.InProgress;
         }
     }
 
-    // Release Payment for Approved Milestone
+    // Release Milestone Payment
     function releaseMilestonePayment(uint256 _contractId, uint256 _milestoneId) external noReentrant {
         SWCContract storage c = contracts[_contractId];
-        require(c.status >= ContractStatus.Approved, "Contract not approved"); // Fixed line
+        require(c.status >= ContractStatus.Approved, "Contract not approved");
         require(msg.sender == c.receiver || msg.sender == c.creator, "Not a party");
 
         Milestone storage m = c.milestones[_milestoneId];
@@ -256,6 +269,9 @@ contract CryptifySWC {
 
         if (c.remainingBalance == 0) {
             c.status = ContractStatus.Completed;
+            emit ContractCompleted(_contractId, block.timestamp);
+            _updateReputation(c.receiver, 20, true); // +20 for completion
+            _updateReputation(c.creator, 20, true);
         }
     }
 
@@ -268,6 +284,7 @@ contract CryptifySWC {
     ) external whenNotPaused {
         require(_budget > 0, "Budget must be greater than zero");
         require(_duration > 0 && _duration <= MAX_DURATION, "Invalid duration");
+        require(registry.isRegistered(msg.sender), "Sender must be registered");
 
         postCounter++;
         workPosts[postCounter] = WorkPost({
@@ -286,6 +303,7 @@ contract CryptifySWC {
     function submitProposal(uint256 _postId, string memory _message) external whenNotPaused {
         require(workPosts[_postId].isOpen, "Post is not open");
         require(msg.sender != workPosts[_postId].creator, "Cannot propose on your own post");
+        require(registry.isRegistered(msg.sender), "Proposer must be registered");
 
         proposalCounter++;
         postProposals[_postId].push(Proposal({
@@ -312,9 +330,10 @@ contract CryptifySWC {
         proposal.accepted = true;
         post.isOpen = false;
 
-        // Transition to direct contract flow
+        // Transition to contract creation with username
+        string memory proposerUsername = registry.getUsernameFromAddress(proposal.proposer);
         createContract(
-            proposal.proposer,
+            proposerUsername,
             post.title,
             post.description,
             "EDU Coin",
@@ -323,6 +342,25 @@ contract CryptifySWC {
         );
 
         emit ProposalAccepted(_postId, _proposalId);
+    }
+
+    // Reputation Update Logic
+    function _updateReputation(address _user, uint256 _points, bool _positive) internal {
+        uint256 score = reputationScores[_user] == 0 ? BASE_SCORE : reputationScores[_user];
+        if (_positive) {
+            score += _points;
+            if (score > MAX_SCORE) score = MAX_SCORE;
+        } else {
+            if (score > _points) score -= _points;
+            else score = 0;
+        }
+        reputationScores[_user] = score;
+        emit ReputationUpdated(_user, score);
+    }
+
+    // Get Reputation
+    function getReputation(address _user) external view returns (uint256) {
+        return reputationScores[_user] == 0 ? BASE_SCORE : reputationScores[_user];
     }
 
     // Admin Functions
@@ -343,6 +381,8 @@ contract CryptifySWC {
     function getContractDetails(uint256 _contractId) public view returns (
         address creator,
         address receiver,
+        string memory creatorUsername,
+        string memory receiverUsername,
         string memory title,
         string memory description,
         uint256 amount,
@@ -361,6 +401,8 @@ contract CryptifySWC {
         return (
             c.creator,
             c.receiver,
+            c.creatorUsername,
+            c.receiverUsername,
             c.title,
             c.description,
             c.amount,
