@@ -1,8 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ethers } from "ethers";
-import MetaMaskSDK from '@metamask/sdk';
-import { FaBars, FaTimes, FaWallet, FaSignOutAlt, FaExclamationTriangle, FaCopy } from "react-icons/fa";
+import MetaMaskSDK from "@metamask/sdk";
+import {
+  FaBars,
+  FaTimes,
+  FaWallet,
+  FaSignOutAlt,
+  FaExclamationTriangle,
+  FaCopy,
+} from "react-icons/fa";
 import { useWallet } from "./WalletContext";
 
 function Navbar() {
@@ -13,11 +20,20 @@ function Navbar() {
   const [error, setError] = useState(null);
   const alertTimeoutRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation(); // Get current page path
 
-  const MMSDK = useRef(new MetaMaskSDK({
-    dappMetadata: { name: "Cryptify" },
-    logging: { developerMode: true },
-  })).current;
+  const getLinkClasses = (path) => {
+    return location.pathname === path
+      ? "bg-gradient-to-r from-customPurple to-customBlue text-white rounded-md px-2 py-1 transition-all duration-300"
+      : "hover:text-customBlue2 transition-all duration-300";
+  };
+
+  const MMSDK = useRef(
+    new MetaMaskSDK({
+      dappMetadata: { name: "Cryptify" },
+      logging: { developerMode: true },
+    })
+  ).current;
 
   useEffect(() => {
     const initializeProvider = async () => {
@@ -40,7 +56,7 @@ function Navbar() {
   useEffect(() => {
     const storedAddress = localStorage.getItem("walletAddress");
     if (storedAddress && walletData.provider) {
-      setWalletData(prev => ({ ...prev, address: storedAddress }));
+      setWalletData((prev) => ({ ...prev, address: storedAddress }));
       checkConnectedAccounts();
       checkChainId();
     }
@@ -89,7 +105,8 @@ function Navbar() {
       const accounts = await MMSDK.connect();
       if (accounts && accounts.length > 0) {
         const sdkProvider = MMSDK.getProvider();
-        if (!sdkProvider) throw new Error("Provider not available after connection");
+        if (!sdkProvider)
+          throw new Error("Provider not available after connection");
         const ethProvider = new ethers.BrowserProvider(sdkProvider);
         setWalletData({ address: accounts[0], provider: ethProvider });
         localStorage.setItem("walletAddress", accounts[0]);
@@ -100,7 +117,9 @@ function Navbar() {
       }
     } catch (error) {
       console.error("Wallet connection failed:", error);
-      setError("Failed to connect wallet. Please ensure MetaMask is installed.");
+      setError(
+        "Failed to connect wallet. Please ensure MetaMask is installed."
+      );
     }
   };
 
@@ -124,7 +143,8 @@ function Navbar() {
   useEffect(() => {
     if (!walletData.provider) return;
     const sdkProvider = MMSDK.getProvider();
-    if (sdkProvider && typeof sdkProvider.on === "function") { // Guard against undefined
+    if (sdkProvider && typeof sdkProvider.on === "function") {
+      // Guard against undefined
       const handleChainChanged = (chainId) => {
         if (chainId !== "0xa045c") {
           showCustomAlert();
@@ -157,11 +177,13 @@ function Navbar() {
   return (
     <>
       {showAlert && (
-        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-11/12 md:w-auto">
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-11/12 md:w-auto ">
           <div className="bg-customDarkpurple border-2 border-customPurple rounded-lg shadow-lg px-6 py-4 flex flex-col md:flex-row items-center gap-4 backdrop-blur-sm bg-opacity-95 animate-fadeIn">
             <FaExclamationTriangle className="text-yellow-300 text-3xl flex-shrink-0" />
             <div className="flex-1 text-center md:text-left">
-              <h3 className="text-white font-bold text-lg mb-1">Wrong Network Detected</h3>
+              <h3 className="text-white font-bold text-lg mb-1">
+                Wrong Network Detected
+              </h3>
               <p className="text-customGray text-sm mb-3">
                 Please connect to OpenCampus Codex Sepolia (EDU Chain).
               </p>
@@ -190,30 +212,39 @@ function Navbar() {
         </h1>
 
         <div className="hidden md:flex gap-10 items-center text-base">
-          <Link to="/" className="hover:text-customBlue2 transition duration-300">
+          <Link to="/" className={getLinkClasses("/")}>
             Home
           </Link>
-          <Link to="/contract" className="hover:text-customBlue2 transition duration-300">
+          <Link to="/contract" className={getLinkClasses("/contract")}>
             Contract
           </Link>
-          <Link to="/docs" className="hover:text-customBlue2 transition duration-300">
+          <Link to="/docs" className={getLinkClasses("/docs")}>
             Docs
           </Link>
-          <Link to="/transfer" className="hover:text-customBlue2 transition duration-300">
+          <Link to="/transfer" className={getLinkClasses("/transfer")}>
             Transfer
           </Link>
-          <Link to="/user" className="hover:text-customBlue2 transition duration-300">
+          <Link to="/user" className={getLinkClasses("/user")}>
             Profile
           </Link>
 
           {walletData.address ? (
             <div className="flex items-center gap-2 bg-gradient-to-r from-customPurple to-customBlue px-4 py-2 rounded-lg text-white font-semibold shadow-md hover:opacity-90 transition-all">
               <FaWallet className="text-white" />
-              <span>{walletData.address.slice(0, 6)}...{walletData.address.slice(-4)}</span>
-              <button onClick={copyAddress} className="text-white hover:text-customGray">
+              <span>
+                {walletData.address.slice(0, 6)}...
+                {walletData.address.slice(-4)}
+              </span>
+              <button
+                onClick={copyAddress}
+                className="text-white hover:text-customGray"
+              >
                 <FaCopy title={copied ? "Copied!" : "Copy Address"} />
               </button>
-              <button onClick={disconnectWallet} className="text-red-300 hover:text-red-500">
+              <button
+                onClick={disconnectWallet}
+                className="text-red-300 hover:text-red-500"
+              >
                 <FaSignOutAlt title="Disconnect" />
               </button>
             </div>
@@ -229,7 +260,10 @@ function Navbar() {
         </div>
 
         <div className="md:hidden">
-          <button onClick={() => setIsOpen(!isOpen)} className="text-white text-2xl">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-white text-2xl"
+          >
             {isOpen ? <FaTimes /> : <FaBars />}
           </button>
         </div>
@@ -240,30 +274,59 @@ function Navbar() {
           }`}
         >
           <div className="flex flex-col items-center py-4 space-y-4">
-            <Link to="/" className="hover:text-customBlue2 transition duration-300" onClick={() => setIsOpen(false)}>
+            <Link
+              to="/"
+              className="hover:text-customBlue2 transition duration-300"
+              onClick={() => setIsOpen(false)}
+            >
               Home
             </Link>
-            <Link to="/contract" className="hover:text-customBlue2 transition duration-300" onClick={() => setIsOpen(false)}>
+            <Link
+              to="/contract"
+              className="hover:text-customBlue2 transition duration-300"
+              onClick={() => setIsOpen(false)}
+            >
               Contract
             </Link>
-            <Link to="/docs" className="hover:text-customBlue2 transition duration-300" onClick={() => setIsOpen(false)}>
+            <Link
+              to="/docs"
+              className="hover:text-customBlue2 transition duration-300"
+              onClick={() => setIsOpen(false)}
+            >
               Docs
             </Link>
-            <Link to="/transfer" className="hover:text-customBlue2 transition duration-300" onClick={() => setIsOpen(false)}>
+            <Link
+              to="/transfer"
+              className="hover:text-customBlue2 transition duration-300"
+              onClick={() => setIsOpen(false)}
+            >
               Transfer
             </Link>
-            <Link to="/user" className="hover:text-customBlue2 transition duration-300" onClick={() => setIsOpen(false)}>
+            <Link
+              to="/user"
+              className="hover:text-customBlue2 transition duration-300"
+              onClick={() => setIsOpen(false)}
+            >
               Profile
             </Link>
 
             {walletData.address ? (
               <div className="flex items-center gap-2 bg-gradient-to-r from-customPurple to-customBlue px-4 py-2 rounded-lg text-white font-semibold shadow-md hover:opacity-90 transition-all">
                 <FaWallet className="text-white" />
-                <span>{walletData.address.slice(0, 6)}...{walletData.address.slice(-4)}</span>
-                <button onClick={copyAddress} className="text-white hover:text-customGray">
+                <span>
+                  {walletData.address.slice(0, 6)}...
+                  {walletData.address.slice(-4)}
+                </span>
+                <button
+                  onClick={copyAddress}
+                  className="text-white hover:text-customGray"
+                >
                   <FaCopy title={copied ? "Copied!" : "Copy Address"} />
                 </button>
-                <button onClick={disconnectWallet} className="text-red-300 hover:text-red-500">
+                <button
+                  onClick={disconnectWallet}
+                  className="text-red-300 hover:text-red-500"
+                >
                   <FaSignOutAlt title="Disconnect" />
                 </button>
               </div>
