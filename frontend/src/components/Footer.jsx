@@ -31,7 +31,7 @@ export default function Footer() {
             <h1 className='text-2xl text-white font-bold '>Contact</h1>
             <div className="flex justify-center md:justify-start space-x-3 mt-3">
             <a href="#" className="text-white text-lg hover:text-gray-400"><FaFacebook /></a>
-            <a href="#" className="text-white text-lg hover:text-gray-400"><FaTwitter /></a>
+            <a href="https://x.com/CryptifySecure" className="text-white text-lg hover:text-gray-400"><FaTwitter /></a>
             <a href="#" className="text-white text-lg hover:text-gray-400"><FaLinkedin /></a>
           </div>
            </div>

@@ -2,7 +2,7 @@ import React from "react";
 import ParticleBackground from "./ParticleBackground";
 import { Link } from "react-router-dom";
 
-function Header({ scrollToFeatures }) {
+function Header() {
   return (
     <div className="relative bg-customSemiPurple min-h-screen w-full flex flex-col items-center justify-center gap-6 px-4 md:px-8 lg:px-16">
       <ParticleBackground />
@@ -25,10 +25,10 @@ function Header({ scrollToFeatures }) {
           <Link to="/docs">View Docs</Link>
         </button>
         <button
-          onClick={scrollToFeatures}
+          onClick={() => window.open("https://x.com/CryptifySecure", "_blank")}
           className="text-customBlue bg-white px-6 py-3 md:px-8 md:py-3 rounded-md font-semibold border-b-4 border-customBlue shadow-custom-purple transition-all duration-300 ease-in-out hover:bg-customBlue hover:text-white hover:border-white"
         >
-          Explore Features
+          Connect with us
         </button>
       </div>
     </div>

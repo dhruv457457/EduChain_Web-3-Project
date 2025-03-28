@@ -71,11 +71,7 @@ const features = [
 ];
 
 function Home() {
-  const featuresRef = useRef(null);
-
-  const scrollToFeatures = () => {
-    featuresRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+ 
 
   return (
     <motion.div
@@ -85,10 +81,10 @@ function Home() {
       exit="exit"
       className="bg-customSemiPurple min-h-screen"
     >
-      <Header scrollToFeatures={scrollToFeatures} />
+      <Header />
 
       {/* Features Section */}
-      <section className="w-full px-4" ref={featuresRef}>
+      <section className="w-full px-4" >
         <div className="flex flex-col items-center text-center mx-4">
           <motion.h1
             className="text-customPurple text-3xl md:text-4xl lg:text-5xl font-bold"
