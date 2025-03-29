@@ -11,10 +11,11 @@ const fundTransferAddress = "0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c";
 
 const Transfer = () => {
   const { walletData } = useWallet();
-  const { transactions, fetchTransactions, getContract, userAddress } = useContract(walletData?.provider);
+  const { transactions, fetchTransactions, getContract, userAddress, claimFunds, sendFunds, sendFundsToAddress } = useContract(walletData?.provider); // Add sendFundsToAddress
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
+  const [isAddress, setIsAddress] = useState(false); // Toggle for address vs username
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -32,10 +33,14 @@ const Transfer = () => {
       toast.error("❌ Please enter a valid amount!");
       return false;
     }
+    if (isAddress && !ethers.isAddress(recipient)) {
+      toast.error("❌ Invalid Ethereum address!");
+      return false;
+    }
     return true;
   };
 
-  const sendFunds = async () => {
+  const handleSendFunds = async () => {
     if (!walletData?.provider) {
       toast.error("🦊 Please connect your wallet!");
       return;
@@ -44,15 +49,17 @@ const Transfer = () => {
 
     try {
       setLoading(true);
-      const contract = await getContract(fundTransferAddress, FundTransferWithRegistryABI.abi);
-      if (!contract) {
-        toast.error("❌ Contract instance not found!");
-        return;
+      const amountInWei = ethers.parseEther(amount);
+      let tx;
+
+      if (isAddress) {
+        console.log(`💰 Sending ${amount} ETH to address ${recipient}...`);
+        tx = await sendFundsToAddress(recipient, amount, message); // Use sendFundsToAddress
+      } else {
+        console.log(`💰 Sending ${amount} ETH to username ${recipient}...`);
+        tx = await sendFunds(recipient, amount, message); // Use sendFunds
       }
 
-      const amountInWei = ethers.parseEther(amount);
-      console.log(`💰 Sending ${amount} ETH to ${recipient}...`);
-      const tx = await contract.sendFunds(recipient, message, { value: amountInWei });
       console.log("🔄 Transaction sent. Waiting for confirmation...");
       await tx.wait();
 
@@ -80,8 +87,11 @@ const Transfer = () => {
           setAmount={setAmount}
           message={message}
           setMessage={setMessage}
-          sendFunds={sendFunds}
+          sendFunds={handleSendFunds} // Renamed to avoid confusion
+          claimFunds={claimFunds}
           loading={loading}
+          isAddress={isAddress}
+          setIsAddress={setIsAddress} // Pass toggle state
         />
         <TransactionList transactions={transactions} userAddress={walletData?.address} />
       </div>

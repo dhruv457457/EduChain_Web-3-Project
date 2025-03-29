@@ -1,26 +1,21 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { useWallet } from "../components/WalletContext"; // Import useWallet
-import useContract from "../hooks/useContract";
 
-const ClaimButton = ({ contractAddress = "0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A", contractABI }) => {
-  const { walletData } = useWallet(); // Get wallet data from context
-  const { getContract, fetchTransactions } = useContract(walletData?.provider); // Pass provider
+const ClaimButton = ({ claimFunds }) => {
   const [loading, setLoading] = useState(false);
 
-  const claimFunds = async () => {
-    if (!walletData?.provider) {
-      toast.error("🦊 Please connect your wallet via Navbar!");
+  const handleClaimFunds = async () => {
+    if (!claimFunds) {
+      toast.error("❌ Claim functionality not available!");
       return;
     }
 
     try {
       setLoading(true);
-      const contract = await getContract(contractAddress, contractABI); // Pass address and ABI
-      const tx = await contract.claimFunds();
-      await tx.wait();
-      toast.success("✅ Claimed successfully!");
-      fetchTransactions();
+      console.log("Attempting to claim funds..."); // Debug
+      const txHash = await claimFunds();
+      console.log("Claim transaction hash:", txHash); // Debug
+      toast.success(`✅ Funds claimed successfully! TX: ${txHash}`);
     } catch (error) {
       console.error("Claim error:", error);
       toast.error(`❌ Claim failed: ${error.message || "Unknown error"}`);
@@ -31,7 +26,7 @@ const ClaimButton = ({ contractAddress = "0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00
 
   return (
     <button
-      onClick={claimFunds}
+      onClick={handleClaimFunds}
       className={`w-full px-4 py-2 rounded text-white transition-all ${
         loading
           ? "bg-gray-500 cursor-not-allowed"
