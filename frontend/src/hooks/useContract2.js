@@ -26,7 +26,12 @@ const useContract2 = (provider) => {
 
         const address = await web3Signer.getAddress();
         const rep = await contractInstance.getReputation(address);
-        setReputation(ethers.formatUnits(rep, 0)); // Reputation is in uint256, no decimals
+        setReputation(ethers.formatUnits(rep, 0));
+
+        // Event listeners
+        contractInstance.on("ContractCreated", () => fetchReputation());
+        contractInstance.on("MilestoneCompleted", () => fetchReputation());
+        contractInstance.on("ContractCompleted", () => fetchReputation());
 
         console.log("Contract initialized:", contractInstance);
       } catch (error) {
@@ -34,6 +39,14 @@ const useContract2 = (provider) => {
       }
     };
     initContract();
+
+    return () => {
+      if (contract) {
+        contract.removeAllListeners("ContractCreated");
+        contract.removeAllListeners("MilestoneCompleted");
+        contract.removeAllListeners("ContractCompleted");
+      }
+    };
   }, [provider]);
 
   const handleTransaction = async (transactionFn, successMsg) => {
@@ -42,7 +55,6 @@ const useContract2 = (provider) => {
     try {
       console.log("Executing transaction:", successMsg);
       const tx = await transactionFn();
-      console.log("Transaction sent:", tx);
       const receipt = await tx.wait();
       console.log("Transaction successful:", successMsg, receipt);
 
@@ -53,13 +65,8 @@ const useContract2 = (provider) => {
 
       return receipt;
     } catch (error) {
-      console.error("Transaction Error:", {
-        error,
-        message: error.message,
-        reason: error.reason,
-        stack: error.stack,
-      });
-      throw new Error(error.reason || error.message);
+      console.error("Transaction Error:", error);
+      throw error.message || "Transaction failed";
     } finally {
       setIsLoading(false);
     }
@@ -79,12 +86,9 @@ const useContract2 = (provider) => {
   const createContract = async (receiverUsername, title, description, coinType, duration, contractType, amount) => {
     if (!contract) throw new Error("Contract not initialized");
     try {
-      if (!receiverUsername || receiverUsername.trim() === "") {
-        throw new Error("Receiver username is required");
-      }
-      if (isNaN(amount) || amount <= 0) {
-        throw new Error("Amount must be a valid positive number");
-      }
+      if (!receiverUsername || receiverUsername.trim() === "") throw new Error("Receiver username is required");
+      if (isNaN(amount) || amount <= 0) throw new Error("Amount must be a valid positive number");
+      if (isNaN(duration) || duration <= 0 || duration > 365 * 24 * 60 * 60) throw new Error("Invalid duration");
 
       const amountInWei = ethers.parseEther(amount.toString());
       const contractTypeEnum = contractType === "Basic" ? 0 : 1;
@@ -120,9 +124,7 @@ const useContract2 = (provider) => {
   };
 
   const addMilestone = async (contractId, title, amount, deadline, deliverables) => {
-    if (!title || !amount || !deadline || !deliverables) {
-      throw new Error("All milestone fields are required");
-    }
+    if (!title || !amount || !deadline || !deliverables) throw new Error("All milestone fields are required");
     const amountInWei = ethers.parseEther(amount.toString());
     return handleTransaction(
       () => contract.addMilestone(contractId, title, amountInWei, deadline, deliverables),
@@ -146,13 +148,54 @@ const useContract2 = (provider) => {
 
   const releaseMilestonePayment = async (contractId, milestoneId) => {
     const currentDetails = await getContractDetails(contractId);
-    if (currentDetails.status < 1) {
-      throw new Error("Contract must be approved first");
-    }
+    if (currentDetails.status < 1) throw new Error("Contract must be approved first");
     return handleTransaction(
       () => contract.releaseMilestonePayment(contractId, milestoneId),
       "Payment released"
     );
+  };
+
+  const createWorkPost = async (title, description, budget, duration) => {
+    return handleTransaction(
+      () => contract.createWorkPost(title, description, ethers.parseEther(budget.toString()), Number(duration)),
+      "Work post created"
+    );
+  };
+
+  const submitProposal = async (postId, message) => {
+    return handleTransaction(
+      () => contract.submitProposal(postId, message),
+      "Proposal submitted"
+    );
+  };
+
+  const acceptProposal = async (postId, proposalId, budget) => {
+    return handleTransaction(
+      () => contract.acceptProposal(postId, proposalId, { value: ethers.parseEther(budget.toString()) }),
+      "Proposal accepted"
+    );
+  };
+
+  const getUserContracts = async () => {
+    if (!contract || !signer) throw new Error("Contract or signer not initialized");
+    const address = await signer.getAddress();
+    const contractCount = await contract.contractCounter();
+    const userContracts = [];
+    for (let i = 1; i <= Number(contractCount); i++) {
+      const details = await getContractDetails(i);
+      if (details.creator === address || details.receiver === address) {
+        userContracts.push({ contractId: i, ...details });
+      }
+    }
+    return userContracts;
+  };
+
+  const fetchReputation = async () => {
+    if (!contract || !signer) throw new Error("Contract or signer not initialized");
+    const address = await signer.getAddress();
+    const rep = await contract.getReputation(address);
+    setReputation(ethers.formatUnits(rep, 0));
+    return rep.toString();
   };
 
   const getContractDetails = async (contractId) => {
@@ -220,6 +263,11 @@ const useContract2 = (provider) => {
     completeMilestone,
     approveContract,
     releaseMilestonePayment,
+    createWorkPost,
+    submitProposal,
+    acceptProposal,
+    getUserContracts,
+    fetchReputation,
     getContractDetails,
     getMilestones,
   };

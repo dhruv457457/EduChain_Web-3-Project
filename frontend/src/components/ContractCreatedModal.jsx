@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import React, { useState } from "react";
+import { Copy, Check } from "lucide-react";
 
 const ContractCreatedModal = ({ contractId, onClose }) => {
   const [copied, setCopied] = useState(false);
@@ -23,12 +23,11 @@ const ContractCreatedModal = ({ contractId, onClose }) => {
           <p className="text-gray-600 mb-6">
             Your contract has been created. Please save your Contract ID.
           </p>
-          
-          <div className="flex items-center justify-center bg-black rounded-lg p-4 mb-6">
-            <span className="text-lg text-black font-medium mr-4 truncate max-w-[200px]">
+          <div className="flex items-center justify-center bg-gray-100 rounded-lg p-4 mb-6">
+            <span className="text-lg text-gray-800 font-medium mr-4 truncate max-w-[200px]">
               {contractId}
             </span>
-            <button 
+            <button
               onClick={handleCopy}
               className="text-gray-600 hover:text-gray-800 transition-colors"
               aria-label="Copy Contract ID"
@@ -40,15 +39,12 @@ const ContractCreatedModal = ({ contractId, onClose }) => {
               )}
             </button>
           </div>
-          
-          <div className="flex justify-center space-x-4">
-            <button 
-              onClick={onClose}
-              className="bg-purple-600 hover:bg-purple-700 text-black px-6 py-3 rounded-md"
-            >
-              Close
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-md"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>

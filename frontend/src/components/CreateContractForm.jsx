@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
-import ContractCreatedModal from './ContractCreatedModal';
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import ContractCreatedModal from "./ContractCreatedModal";
 
 const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
   const [formData, setFormData] = useState({
-    receiver: "",
+    receiverUsername: "",
     title: "",
     description: "",
     coinType: "ETH",
@@ -20,32 +20,24 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { receiver, title, description, coinType, duration, amount } =
-        formData;
+      const { receiverUsername, title, description, coinType, duration, amount } = formData;
 
-      if (!receiver.match(/^0x[a-fA-F0-9]{40}$/)) {
-        throw new Error("Invalid Ethereum address");
-      }
-
-      if (isNaN(amount) || amount <= 0) {
-        throw new Error("Amount must be a valid positive number");
-      }
+      if (!receiverUsername.trim()) throw new Error("Receiver username is required");
+      if (isNaN(amount) || amount <= 0) throw new Error("Amount must be a valid positive number");
+      if (isNaN(duration) || duration <= 0) throw new Error("Duration must be a valid positive number");
 
       const id = await contractHooks.createContract(
-        receiver,
+        receiverUsername,
         title,
         description,
         coinType,
         duration,
-        "Milestone",
+        "Milestone", // Hardcoded as per your hook
         amount
       );
-      
-      // Set the created contract ID and show modal
+
       setCreatedContractId(id);
-      
-      // Optional: Still show a toast notification
-      toast.success(`Contract created successfully!`);
+      toast.success(`Contract created successfully! ID: ${id}`);
     } catch (err) {
       toast.error(err.message || "Contract creation failed");
     } finally {
@@ -57,14 +49,11 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
     <>
       <div className="bg-customDark p-6 rounded-lg mb-8">
         <h2 className="text-2xl font-bold mb-6">Create New Contract</h2>
-        <form
-          onSubmit={handleCreateContract}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4"
-        >
+        <form onSubmit={handleCreateContract} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.entries(formData).map(([key, value]) => (
             <div key={key} className="mb-4">
               <label className="block text-sm font-medium mb-2 capitalize">
-                {key}
+                {key === "receiverUsername" ? "Receiver Username" : key}
               </label>
               {key === "description" ? (
                 <textarea
@@ -77,9 +66,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
                 />
               ) : (
                 <input
-                  type={
-                    ["amount", "duration"].includes(key) ? "number" : "text"
-                  }
+                  type={["amount", "duration"].includes(key) ? "number" : "text"}
                   name={key}
                   value={value}
                   onChange={handleChange}
@@ -99,9 +86,8 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
         </form>
       </div>
 
-      {/* Contract Created Modal */}
       {createdContractId && (
-        <ContractCreatedModal 
+        <ContractCreatedModal
           contractId={createdContractId}
           onClose={() => setCreatedContractId(null)}
         />

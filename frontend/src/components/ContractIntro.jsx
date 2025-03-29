@@ -1,27 +1,23 @@
-import React from 'react';
+import React from "react";
 
-const ContractIntro = ({ 
-  showCreateForm, 
-  showFetchForm, 
-  onToggleCreateForm, 
-  onToggleFetchForm 
+const ContractIntro = ({
+  showCreateForm,
+  showFetchForm,
+  showWorkPostForm,
+  onToggleCreateForm,
+  onToggleFetchForm,
+  onToggleWorkPostForm,
 }) => {
   return (
     <div className="bg-customDark p-6 rounded-lg mb-8">
-      <h2 className="text-2xl font-bold mb-4">
-        Welcome to SWC Contract System
-      </h2>
+      <h2 className="text-2xl font-bold mb-4">Welcome to SWC System</h2>
       <p className="mb-4">
-        This platform allows you to create and manage milestone-based
-        contracts securely on the blockchain. You can create new contracts,
-        fetch existing contract details, and manage milestones with ease.
+        Manage milestone-based contracts and work posts securely on the blockchain. Create contracts, fetch details, manage milestones, post work opportunities, and handle proposals.
       </p>
       <ul className="list-disc list-inside mb-4">
-        <li>Create new contracts with specific details and milestones.</li>
-        <li>Fetch and view details of existing contracts.</li>
-        <li>
-          Manage milestones by adding, approving, and completing them.
-        </li>
+        <li>Create contracts with milestones.</li>
+        <li>Fetch and manage existing contracts.</li>
+        <li>Post work opportunities and accept proposals.</li>
       </ul>
       <div className="flex justify-center gap-4">
         <button
@@ -35,6 +31,12 @@ const ContractIntro = ({
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md"
         >
           {showFetchForm ? "Hide Fetch Contract" : "Fetch Contract"}
+        </button>
+        <button
+          onClick={onToggleWorkPostForm}
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md"
+        >
+          {showWorkPostForm ? "Hide Work Post" : "Create Work Post"}
         </button>
       </div>
     </div>

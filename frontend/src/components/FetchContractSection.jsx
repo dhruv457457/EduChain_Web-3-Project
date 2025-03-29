@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 const STATUS_LABELS = [
   "Pending",
@@ -19,7 +19,7 @@ const FetchContractSection = ({
   currentAccount,
   loading,
   handleGetContractDetails,
-  contractHooks
+  contractHooks,
 }) => {
   const [milestoneData, setMilestoneData] = useState({
     title: "",
@@ -29,26 +29,20 @@ const FetchContractSection = ({
   });
 
   const formatDate = (timestamp) => {
-    return new Date(timestamp * 1000).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return timestamp > 0
+      ? new Date(timestamp * 1000).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "N/A";
   };
 
-  const handleMilestoneAction = async (
-    actionFn,
-    successMessage,
-    milestoneId
-  ) => {
+  const handleMilestoneAction = async (actionFn, successMessage, milestoneId) => {
     try {
-      const accounts = await window.ethereum.request({
-        method: "eth_accounts",
-      });
-      if (accounts.length === 0) throw new Error("Connect your wallet first");
-
+      if (!currentAccount) throw new Error("Connect your wallet first");
       await actionFn(contractId, milestoneId);
       await handleGetContractDetails();
       toast.success(successMessage);
@@ -60,19 +54,11 @@ const FetchContractSection = ({
   const handleAddMilestone = async () => {
     try {
       const { title, amount, deadline, deliverables } = milestoneData;
-      if (!title || !amount || !deadline) {
+      if (!title || !amount || !deadline || !deliverables) {
         throw new Error("All fields are required");
       }
-
       const unixDeadline = Math.floor(deadline.getTime() / 1000);
-      await contractHooks.addMilestone(
-        contractId, 
-        title, 
-        amount, 
-        unixDeadline, 
-        deliverables
-      );
-      
+      await contractHooks.addMilestone(contractId, title, amount, unixDeadline, deliverables);
       toast.success("Milestone added!");
       setMilestoneData({
         title: "",
@@ -82,31 +68,23 @@ const FetchContractSection = ({
       });
       await handleGetContractDetails();
     } catch (err) {
-      toast.error("Failed to add milestone");
+      toast.error(err.message || "Failed to add milestone");
     }
   };
 
   const handleContractApproval = async () => {
     try {
-      const accounts = await window.ethereum.request({
-        method: "eth_accounts",
-      });
-      if (accounts.length === 0) throw new Error("Connect your wallet first");
-
-      const isCreator =
-        accounts[0].toLowerCase() === contractDetails.creator.toLowerCase();
-      const isReceiver =
-        accounts[0].toLowerCase() === contractDetails.receiver.toLowerCase();
-
+      if (!currentAccount) throw new Error("Connect your wallet first");
+      const isCreator = currentAccount.toLowerCase() === contractDetails.creator.toLowerCase();
+      const isReceiver = currentAccount.toLowerCase() === contractDetails.receiver.toLowerCase();
       if (!isCreator && !isReceiver) {
         throw new Error("Only contract parties can approve");
       }
-
       await contractHooks.approveContract(contractId);
       toast.success("Contract approved!");
       await handleGetContractDetails();
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.message || "Failed to approve contract");
     }
   };
 
@@ -132,61 +110,62 @@ const FetchContractSection = ({
 
       {contractDetails && (
         <div className="space-y-4">
-          {/* Contract Status and Details Section */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="flex gap-10">
-              <div>
-                <label className="text-sm text-gray-400">Status</label>
-                <p
-                  className={`font-medium ${
-                    contractDetails.status == 1
-                      ? "text-green-400"
-                      : "text-yellow-400"
-                  }`}
-                >
-                  {STATUS_LABELS[Number(contractDetails.status)] || "Unknown"}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-400">Amount</label>
-                <p className="font-medium">
-                  {contractDetails.amount} {contractDetails.coinType}
-                </p>
-              </div>
-              <div>
-                <label className="text-sm text-gray-400">
-                  Remaining Balance
-                </label>
-                <p className="font-medium">
-                  {contractDetails.remainingBalance}{" "}
-                  {contractDetails.coinType}
-                </p>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="text-sm text-gray-400">Status</label>
+              <p
+                className={`font-medium ${
+                  contractDetails.status === 1 ? "text-green-400" : "text-yellow-400"
+                }`}
+              >
+                {STATUS_LABELS[Number(contractDetails.status)] || "Unknown"}
+              </p>
             </div>
             <div>
-              {contractDetails.status == 0 && (
-                <button
-                  onClick={handleContractApproval}
-                  className="bg-customBlue hover:bg-customBlue2 text-white px-4 py-2 rounded-md"
-                  disabled={loading}
-                >
-                  {loading ? "Approving..." : "Approve Contract"}
-                </button>
-              )}
+              <label className="text-sm text-gray-400">Amount</label>
+              <p className="font-medium">
+                {contractDetails.amount} {contractDetails.coinType}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm text-gray-400">Remaining Balance</label>
+              <p className="font-medium">
+                {contractDetails.remainingBalance} {contractDetails.coinType}
+              </p>
             </div>
           </div>
+          {contractDetails.status === 0 && (
+            <button
+              onClick={handleContractApproval}
+              className="bg-customBlue hover:bg-customBlue2 text-white px-4 py-2 rounded-md"
+              disabled={loading}
+            >
+              {loading ? "Approving..." : "Approve Contract"}
+            </button>
+          )}
 
-          {/* Milestones Section */}
           {milestones.map((milestone, index) => (
             <div key={index} className="bg-customInput p-4 rounded-md">
               <div className="flex justify-between items-start mb-2">
                 <div>
-                  <h4 className="font-medium">Milestones: {milestone.title}</h4>
+                  <h4 className="font-medium">Milestone: {milestone.title}</h4>
                   <p className="text-sm text-gray-400">
-                    Milestone amount: {milestone.amount} {contractDetails.coinType}
+                    Amount: {milestone.amount} {contractDetails.coinType}
                   </p>
                   <p className="text-sm text-gray-400">
                     Deadline: {formatDate(milestone.deadline)}
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Deliverables: {milestone.deliverables}
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Completed: {formatDate(milestone.completedTimestamp)}
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Approved: {formatDate(milestone.approvedTimestamp)}
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Approval Cooldown: {milestone.approvalCooldown} seconds
                   </p>
                 </div>
                 <div className="text-right">
@@ -199,16 +178,10 @@ const FetchContractSection = ({
                         : "bg-customDark"
                     }`}
                   >
-                    {milestone.isPaid
-                      ? "Paid"
-                      : milestone.isApproved
-                      ? "Approved"
-                      : "Pending"}
+                    {milestone.isPaid ? "Paid" : milestone.isApproved ? "Approved" : "Pending"}
                   </span>
                 </div>
               </div>
-              
-              {/* Milestone Action Buttons */}
               <div className="flex gap-2 mt-2">
                 <button
                   onClick={() =>
@@ -220,11 +193,11 @@ const FetchContractSection = ({
                   }
                   className={`text-sm px-3 py-1 rounded ${
                     milestone.isCompleted ||
-                    currentAccount.toLowerCase() !==
-                      contractDetails.creator.toLowerCase()
+                    currentAccount?.toLowerCase() !== contractDetails.creator.toLowerCase()
                       ? "bg-gray-400 opacity-75 cursor-not-allowed"
                       : "bg-purple-600 hover:bg-purple-700 cursor-pointer"
                   }`}
+                  disabled={milestone.isCompleted || currentAccount?.toLowerCase() !== contractDetails.creator.toLowerCase()}
                 >
                   Complete
                 </button>
@@ -238,11 +211,11 @@ const FetchContractSection = ({
                   }
                   className={`text-sm px-3 py-1 rounded ${
                     milestone.isApproved ||
-                    currentAccount.toLowerCase() !==
-                      contractDetails.receiver.toLowerCase()
+                    currentAccount?.toLowerCase() !== contractDetails.receiver.toLowerCase()
                       ? "bg-gray-400 opacity-75 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
                   }`}
+                  disabled={milestone.isApproved || currentAccount?.toLowerCase() !== contractDetails.receiver.toLowerCase()}
                 >
                   Approve
                 </button>
@@ -254,7 +227,12 @@ const FetchContractSection = ({
                       index
                     )
                   }
-                  className="text-sm px-3 py-1 rounded bg-green-600 hover:bg-green-700 cursor-pointer"
+                  className={`text-sm px-3 py-1 rounded ${
+                    milestone.isPaid
+                      ? "bg-gray-400 opacity-75 cursor-not-allowed"
+                      : "bg-green-600 hover:bg-green-700 cursor-pointer"
+                  }`}
+                  disabled={milestone.isPaid}
                 >
                   Release Payment
                 </button>
@@ -262,55 +240,36 @@ const FetchContractSection = ({
             </div>
           ))}
 
-          {/* Add New Milestone Section */}
           <div className="mt-8">
             <h3 className="text-xl font-bold mb-4">Add New Milestone</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">
-                  Title
-                </label>
+                <label className="block text-sm text-gray-400 mb-1">Title</label>
                 <input
                   type="text"
-                  placeholder="Enter your milestone title"
+                  placeholder="Enter milestone title"
                   value={milestoneData.title}
-                  onChange={(e) =>
-                    setMilestoneData({
-                      ...milestoneData,
-                      title: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setMilestoneData({ ...milestoneData, title: e.target.value })}
                   className="w-full bg-gray-100 p-2 rounded-md text-gray-800"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">
-                  Amount
-                </label>
+                <label className="block text-sm text-gray-400 mb-1">Amount</label>
                 <input
                   type="number"
                   placeholder="Enter milestone amount"
                   value={milestoneData.amount}
-                  onChange={(e) =>
-                    setMilestoneData({
-                      ...milestoneData,
-                      amount: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setMilestoneData({ ...milestoneData, amount: e.target.value })}
                   className="w-full bg-gray-100 p-2 rounded-md text-gray-800"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">
-                  Deadline
-                </label>
+                <label className="block text-sm text-gray-400 mb-1">Deadline</label>
                 <DatePicker
                   selected={milestoneData.deadline}
-                  onChange={(date) =>
-                    setMilestoneData({ ...milestoneData, deadline: date })
-                  }
+                  onChange={(date) => setMilestoneData({ ...milestoneData, deadline: date })}
                   showTimeSelect
                   dateFormat="Pp"
                   minDate={new Date()}
@@ -320,18 +279,13 @@ const FetchContractSection = ({
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">
-                  Deliverables
-                </label>
+                <label className="block text-sm text-gray-400 mb-1">Deliverables</label>
                 <input
                   type="text"
                   placeholder="Enter milestone deliverables"
                   value={milestoneData.deliverables}
                   onChange={(e) =>
-                    setMilestoneData({
-                      ...milestoneData,
-                      deliverables: e.target.value,
-                    })
+                    setMilestoneData({ ...milestoneData, deliverables: e.target.value })
                   }
                   className="w-full bg-gray-100 p-2 rounded-md text-gray-800"
                   required
@@ -341,8 +295,9 @@ const FetchContractSection = ({
             <button
               onClick={handleAddMilestone}
               className="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-md"
+              disabled={loading}
             >
-              Add Milestone
+              {loading ? "Adding..." : "Add Milestone"}
             </button>
           </div>
         </div>
