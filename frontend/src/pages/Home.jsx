@@ -1,12 +1,12 @@
 import React, { useRef, memo } from "react";
 import { motion } from "framer-motion";
-import Header from "../components/Header";
-import Cards from "../components/Cards";
+import Header from "../components/HomeModule/Header";
+import Cards from "../components/HomeModule/Cards";
 import { FaShieldAlt, FaHandshake, FaUserTag } from "react-icons/fa";
-import Footer from "../components/Footer";
-import LogoCloud from "../components/LogoCloud";
-import CommitmentStepsSection from "../components/CommitmentStepsSection";
-import Chatbot from "../components/Chatbot";
+import Footer from "../components/HomeModule/Footer";
+import LogoCloud from "../components/HomeModule/LogoCloud";
+import CommitmentStepsSection from "../components/HomeModule/CommitmentStepsSection";
+import Chatbot from "../components/Global/Chatbot";
 
 // Animation variants for page transitions
 const pageVariants = {

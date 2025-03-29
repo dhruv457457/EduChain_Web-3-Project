@@ -1,6 +1,6 @@
 import React from "react";
 import { ToastContainer } from "react-toastify";
-import UserDashboard from "../components/UserDashboard";
+import UserDashboard from "../components/UserModule/UserDashboard";
 
 const User = () => {
   return (

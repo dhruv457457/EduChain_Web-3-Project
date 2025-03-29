@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useContract2 from "../hooks/useContract2";
+import useContract2 from "../../hooks/useContract2";
 
 const UserContracts = ({ provider }) => {
   const { getUserContracts, isLoading } = useContract2(provider);

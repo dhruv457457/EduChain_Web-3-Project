@@ -1,5 +1,5 @@
 import React from "react";
-import LoaderButton from "./LoaderButton";
+import LoaderButton from "../Global/LoaderButton";
 
 const TransactionItem = ({ tx, userAddress, refund, loading }) => {
   return (

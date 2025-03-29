@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import useContract2 from "../hooks/useContract2";
-import ContractIntro from "../components/ContractIntro";
-import CreateContractForm from "../components/CreateContractForm";
-import FetchContractSection from "../components/FetchContractSection";
-import WorkPostSection from "../components/WorkPostSection"; // New component
-import { useWallet } from "../components/WalletContext";
+import ContractIntro from "../components/ContractModule/ContractIntro";
+import CreateContractForm from "../components/ContractModule/CreateContractForm";
+import FetchContractSection from "../components/ContractModule/FetchContractSection";
+import WorkPostSection from "../components/ContractModule/WorkPostSection"; // New component
+import { useWallet } from "../components/Global/WalletContext";
 
 const pageVariants = {
   initial: { opacity: 0, y: 50 },

@@ -1,8 +1,8 @@
 import React, { Suspense, lazy, Component } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { WalletProvider } from "./components/WalletContext";
-import Navbar from "./components/Navbar";
+import { WalletProvider } from "./components/Global/WalletContext";
+import Navbar from "./components/Global/Navbar";
 
 // Error Boundary Component
 class ErrorBoundary extends Component {

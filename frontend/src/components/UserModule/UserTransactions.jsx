@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import useContract from "../hooks/useContract";
+import useContract from "../../hooks/useContract";
 
 const UserTransactions = ({ provider }) => {
   const { userTransactions, fetchUserTransactions, userAddress } = useContract(provider);

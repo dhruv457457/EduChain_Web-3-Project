@@ -1,6 +1,6 @@
 import React from "react";
-import useContract from "../hooks/useContract";
-import useContract2 from "../hooks/useContract2"; // Import SWC hook for reputation
+import useContract from "../../hooks/useContract";
+import useContract2 from "../../hooks/useContract2"; // Import SWC hook for reputation
 
 const UserBalance = ({ registeredName, provider }) => {
   const { userAddress, balance, fetchBalance, pendingBalance } = useContract(provider);

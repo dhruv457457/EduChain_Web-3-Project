@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import useUsernameRegistry from "../hooks/useUsernameRegistry";
+import useUsernameRegistry from "../../hooks/useUsernameRegistry";
 
 const RegisterName = ({ setGlobalRegisteredName, provider }) => {
   const { username, isRegistered, registerUsername, isLoading } = useUsernameRegistry(provider);

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { ToastContainer, toast } from "react-toastify";
 import useContract from "../hooks/useContract";
-import TransferForm from "../components/TransferForm";
-import TransactionList from "../components/TransactionList";
+import TransferForm from "../components/TransferModule/TransferForm";
+import TransactionList from "../components/TransferModule/TransactionList";
 import FundTransferWithRegistryABI from "../contracts/FundTransferWithRegistry.json";
-import { useWallet } from "../components/WalletContext";
+import { useWallet } from "../components/Global/WalletContext";
 
 const fundTransferAddress = "0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c";
 

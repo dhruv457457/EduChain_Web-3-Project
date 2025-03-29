@@ -3,9 +3,9 @@ import UserBalance from "./UserBalance";
 import RegisterName from "./RegisterName";
 import UserTransactions from "./UserTransactions";
 import UserContracts from "./UserContracts";
-import { useWallet } from "./WalletContext";
-import useContract2 from "../hooks/useContract2";
-import useUsernameRegistry from "../hooks/useUsernameRegistry";
+import { useWallet } from "../Global/WalletContext";
+import useContract2 from "../../hooks/useContract2";
+import useUsernameRegistry from "../../hooks/useUsernameRegistry";
 
 const UserDashboard = () => {
   const { walletData } = useWallet();

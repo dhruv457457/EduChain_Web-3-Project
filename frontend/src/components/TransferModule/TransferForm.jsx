@@ -1,6 +1,6 @@
 import React from "react";
-import LoaderButton from "./LoaderButton";
-import ClaimButton from "../components/ClaimButton";
+import LoaderButton from "../Global/LoaderButton";
+import ClaimButton from "./ClaimButton";
 
 const TransferForm = ({
   recipient,
