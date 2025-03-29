@@ -27,6 +27,25 @@ const useContract = (provider) => {
       }
     };
     fetchAccount();
+
+    // Setup event listeners
+    const contract = getContract();
+    if (contract) {
+      contract.then((c) => {
+        c.on("FundsSent", () => {
+          fetchTransactions();
+          fetchUserTransactions(userAddress);
+          fetchPendingBalance(userAddress);
+        });
+        c.on("FundsClaimed", () => fetchPendingBalance(userAddress));
+      });
+      return () => {
+        contract.then((c) => {
+          c.removeAllListeners("FundsSent");
+          c.removeAllListeners("FundsClaimed");
+        });
+      };
+    }
   }, [provider]);
 
   const getContract = async (
@@ -111,6 +130,24 @@ const useContract = (provider) => {
     }
   };
 
+  const depositFunds = async (amount) => {
+    if (!provider) throw new Error("Wallet not connected.");
+    setIsLoading(true);
+    try {
+      const contract = await getContract();
+      const amountInWei = ethers.parseEther(amount.toString());
+      const tx = await contract.depositFunds({ value: amountInWei });
+      await tx.wait();
+      fetchPendingBalance(userAddress);
+      return tx.hash;
+    } catch (error) {
+      console.error("Error depositing funds:", error);
+      throw error.message || "Failed to deposit funds";
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const sendFunds = async (receiverUsername, amount, message) => {
     if (!provider) throw new Error("Wallet not connected.");
     setIsLoading(true);
@@ -124,7 +161,26 @@ const useContract = (provider) => {
       return tx.hash;
     } catch (error) {
       console.error("Error sending funds:", error);
-      throw error;
+      throw error.message || "Failed to send funds";
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendFundsToAddress = async (receiverAddress, amount, message) => {
+    if (!provider) throw new Error("Wallet not connected.");
+    setIsLoading(true);
+    try {
+      const contract = await getContract();
+      const amountInWei = ethers.parseEther(amount.toString());
+      const tx = await contract.sendFundsToAddress(receiverAddress, message, { value: amountInWei });
+      await tx.wait();
+      fetchUserTransactions(userAddress);
+      fetchPendingBalance(userAddress);
+      return tx.hash;
+    } catch (error) {
+      console.error("Error sending funds to address:", error);
+      throw error.message || "Failed to send funds to address";
     } finally {
       setIsLoading(false);
     }
@@ -142,7 +198,7 @@ const useContract = (provider) => {
       return tx.hash;
     } catch (error) {
       console.error("Error claiming funds:", error);
-      throw error;
+      throw error.message || "Failed to claim funds";
     } finally {
       setIsLoading(false);
     }
@@ -159,7 +215,9 @@ const useContract = (provider) => {
     fetchUserTransactions,
     pendingBalance,
     fetchPendingBalance,
+    depositFunds,
     sendFunds,
+    sendFundsToAddress,
     claimFunds,
     isLoading,
   };

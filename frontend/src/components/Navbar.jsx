@@ -2,14 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ethers } from "ethers";
 import MetaMaskSDK from "@metamask/sdk";
-import {
-  FaBars,
-  FaTimes,
-  FaWallet,
-  FaSignOutAlt,
-  FaExclamationTriangle,
-  FaCopy,
-} from "react-icons/fa";
+import { FaBars, FaTimes, FaWallet, FaSignOutAlt, FaExclamationTriangle, FaCopy } from "react-icons/fa";
 import { useWallet } from "./WalletContext";
 
 function Navbar() {
@@ -20,13 +13,12 @@ function Navbar() {
   const [error, setError] = useState(null);
   const alertTimeoutRef = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation(); // Get current page path
+  const location = useLocation();
 
-  const getLinkClasses = (path) => {
-    return location.pathname === path
+  const getLinkClasses = (path) =>
+    location.pathname === path
       ? "bg-gradient-to-r from-customPurple to-customBlue text-white rounded-md px-2 py-1 transition-all duration-300"
       : "hover:text-customBlue2 transition-all duration-300";
-  };
 
   const MMSDK = useRef(
     new MetaMaskSDK({
@@ -39,15 +31,17 @@ function Navbar() {
     const initializeProvider = async () => {
       try {
         const sdkProvider = MMSDK.getProvider();
-        if (sdkProvider) {
-          const ethProvider = new ethers.BrowserProvider(sdkProvider);
-          const accounts = await ethProvider.send("eth_accounts", []);
-          if (accounts.length > 0) {
-            setWalletData({ address: accounts[0], provider: ethProvider });
-          }
+        console.log("SDK Provider:", sdkProvider); // Debug
+        if (!sdkProvider) throw new Error("MetaMask SDK provider not initialized");
+        const ethProvider = new ethers.BrowserProvider(sdkProvider);
+        const accounts = await ethProvider.send("eth_accounts", []);
+        if (accounts.length > 0) {
+          setWalletData({ address: accounts[0], provider: ethProvider });
+          console.log("Initial walletData:", { address: accounts[0], provider: ethProvider });
         }
       } catch (err) {
         setError("Failed to initialize provider: " + err.message);
+        console.error("Initialize Provider Error:", err);
       }
     };
     initializeProvider();
@@ -76,12 +70,8 @@ function Navbar() {
 
   const showCustomAlert = () => {
     setShowAlert(true);
-    if (alertTimeoutRef.current) {
-      clearTimeout(alertTimeoutRef.current);
-    }
-    alertTimeoutRef.current = setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
+    if (alertTimeoutRef.current) clearTimeout(alertTimeoutRef.current);
+    alertTimeoutRef.current = setTimeout(() => setShowAlert(false), 5000);
   };
 
   const checkChainId = async () => {
@@ -89,7 +79,8 @@ function Navbar() {
     try {
       const network = await walletData.provider.getNetwork();
       const chainId = network.chainId.toString();
-      if (chainId !== "656476") {
+      console.log("Current Chain ID:", chainId); // Debug
+      if (chainId !== "656476") { // EDU Chain Sepolia
         showCustomAlert();
         return false;
       }
@@ -102,24 +93,20 @@ function Navbar() {
 
   const connectWallet = async () => {
     try {
+      console.log("Connecting to MetaMask..."); // Debug
       const accounts = await MMSDK.connect();
-      if (accounts && accounts.length > 0) {
-        const sdkProvider = MMSDK.getProvider();
-        if (!sdkProvider)
-          throw new Error("Provider not available after connection");
-        const ethProvider = new ethers.BrowserProvider(sdkProvider);
-        setWalletData({ address: accounts[0], provider: ethProvider });
-        localStorage.setItem("walletAddress", accounts[0]);
-        const isCorrectChain = await checkChainId();
-        if (!isCorrectChain) {
-          console.log("Not connected to EDU Chain");
-        }
-      }
+      console.log("Connected accounts:", accounts); // Debug
+      if (!accounts || accounts.length === 0) throw new Error("No accounts returned");
+      const sdkProvider = MMSDK.getProvider();
+      if (!sdkProvider) throw new Error("Provider not available after connection");
+      const ethProvider = new ethers.BrowserProvider(sdkProvider);
+      setWalletData({ address: accounts[0], provider: ethProvider });
+      localStorage.setItem("walletAddress", accounts[0]);
+      const isCorrectChain = await checkChainId();
+      if (!isCorrectChain) console.log("Not connected to EDU Chain");
     } catch (error) {
       console.error("Wallet connection failed:", error);
-      setError(
-        "Failed to connect wallet. Please ensure MetaMask is installed."
-      );
+      setError("Failed to connect wallet. Please ensure MetaMask is installed and unlocked.");
     }
   };
 
@@ -144,9 +131,9 @@ function Navbar() {
     if (!walletData.provider) return;
     const sdkProvider = MMSDK.getProvider();
     if (sdkProvider && typeof sdkProvider.on === "function") {
-      // Guard against undefined
       const handleChainChanged = (chainId) => {
-        if (chainId !== "0xa045c") {
+        console.log("Chain changed to:", chainId); // Debug
+        if (chainId !== "0xa045c") { // EDU Chain Sepolia in hex
           showCustomAlert();
         } else {
           setShowAlert(false);
@@ -174,6 +161,7 @@ function Navbar() {
     );
   }
 
+  // Rest of your JSX remains unchanged...
   return (
     <>
       {showAlert && (

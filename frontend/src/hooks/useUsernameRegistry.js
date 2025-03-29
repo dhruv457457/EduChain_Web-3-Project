@@ -11,7 +11,6 @@ const useUsernameRegistry = (provider) => {
   const [isRegistered, setIsRegistered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize contract and check registration status
   useEffect(() => {
     const init = async () => {
       if (!provider) return;
@@ -34,11 +33,23 @@ const useUsernameRegistry = (provider) => {
           const name = await contractInstance.getUsernameFromAddress(address);
           setUsername(name);
         }
+
+        // Event listener
+        contractInstance.on("UserRegistered", (user) => {
+          if (user.toLowerCase() === address.toLowerCase()) {
+            contractInstance.getUsernameFromAddress(address).then(setUsername);
+            setIsRegistered(true);
+          }
+        });
       } catch (error) {
         console.error("Initialization error:", error);
       }
     };
     init();
+
+    return () => {
+      if (contract) contract.removeAllListeners("UserRegistered");
+    };
   }, [provider]);
 
   const registerUsername = async (usernameInput) => {
@@ -54,7 +65,7 @@ const useUsernameRegistry = (provider) => {
       return tx.hash;
     } catch (error) {
       console.error("Registration error:", error);
-      throw error;
+      throw error.message || "Failed to register username";
     } finally {
       setIsLoading(false);
     }
@@ -71,6 +82,22 @@ const useUsernameRegistry = (provider) => {
     }
   };
 
+  const getUsernameFromAddress = async (address) => {
+    if (!contract) throw new Error("Contract not initialized");
+    try {
+      const name = await contract.getUsernameFromAddress(address);
+      return name || null;
+    } catch (error) {
+      console.error("Username lookup error:", error);
+      throw error;
+    }
+  };
+
+  const checkRegistration = async (address) => {
+    if (!contract) return false;
+    return await contract.isRegistered(address || userAddress);
+  };
+
   return {
     contract,
     userAddress,
@@ -79,10 +106,8 @@ const useUsernameRegistry = (provider) => {
     isLoading,
     registerUsername,
     getAddressFromUsername,
-    checkRegistration: async (address) => {
-      if (!contract) return false;
-      return await contract.isRegistered(address || userAddress);
-    }
+    getUsernameFromAddress,
+    checkRegistration,
   };
 };
 
