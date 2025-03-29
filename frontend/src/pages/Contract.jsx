@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
@@ -6,7 +6,7 @@ import useContract2 from "../hooks/useContract2";
 import ContractIntro from "../components/ContractModule/ContractIntro";
 import CreateContractForm from "../components/ContractModule/CreateContractForm";
 import FetchContractSection from "../components/ContractModule/FetchContractSection";
-import WorkPostSection from "../components/ContractModule/WorkPostSection"; // New component
+import WorkPostSection from "../components/ContractModule/WorkPostSection";
 import { useWallet } from "../components/Global/WalletContext";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -30,6 +30,7 @@ const Contract = () => {
   const [showWorkPostForm, setShowWorkPostForm] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const tourStarted = useRef(false);
 
   const handleGetContractDetails = async () => {
     if (!walletData?.provider) {
@@ -49,89 +50,107 @@ const Contract = () => {
     }
   };
 
+  const startTour = () => {
+    console.log("🚀 Attempting to start Driver.js tour...");
+    const elements = {
+      intro: document.querySelector('[data-driver="contract-intro"]'),
+      create: document.querySelector('[data-driver="create-contract"]'),
+      fetch: document.querySelector('[data-driver="fetch-contract"]'),
+      workPost: document.querySelector('[data-driver="work-post"]'),
+    };
+    console.log("Elements:", elements);
+
+    if (!elements.intro || !elements.create || !elements.fetch || !elements.workPost) {
+      console.error("❌ One or more elements not found:", elements);
+      toast.error("Tour failed: Components not fully loaded.");
+      return;
+    }
+
+    const contractTour = driver({
+      showProgress: true,
+      allowClose: true,
+      steps: [
+        {
+          element: '[data-driver="contract-intro"]',
+          popover: {
+            title: "Welcome to Contracts! 📜",
+            description: "This is your main dashboard.",
+            side: "bottom",
+            align: "center",
+          },
+        },
+        {
+          element: '[data-driver="create-contract"]',
+          popover: {
+            title: "Create a Contract 🛠️",
+            description: "Create a new contract here.",
+            side: "bottom",
+            align: "center",
+          },
+        },
+        {
+          element: '[data-driver="fetch-contract"]',
+          popover: {
+            title: "Fetch Contracts 🔍",
+            description: "View existing contracts.",
+            side: "bottom",
+            align: "center",
+          },
+        },
+        {
+          element: '[data-driver="work-post"]',
+          popover: {
+            title: "Work Posts 💼",
+            description: "Post work opportunities.",
+            side: "bottom",
+            align: "center",
+          },
+        },
+        {
+          popover: {
+            title: "Tour Complete 🎉",
+            description: "You’re ready to explore!",
+          },
+        },
+      ],
+      onDestroyed: () => {
+        console.log("✅ Tour completed.");
+        setShowCreateForm(false);
+        setShowFetchForm(false);
+        setShowWorkPostForm(false);
+      },
+    });
+
+    contractTour.drive();
+  };
+
   useEffect(() => {
     const shouldStartContractTour = localStorage.getItem("startContractTour");
 
-    if (shouldStartContractTour === "true") {
-      localStorage.removeItem("startContractTour"); // Prevent repeat tours
+    if (shouldStartContractTour === "true" && !tourStarted.current) {
+      localStorage.removeItem("startContractTour");
+      tourStarted.current = true;
 
-      // Make sure forms are visible before the tour starts
+      console.log("🔧 Setting up tour...");
       setShowCreateForm(true);
       setShowFetchForm(true);
       setShowWorkPostForm(true);
-
-      // Wait for components to render before starting the tour
-      setTimeout(() => {
-        console.log("🚀 Starting Driver.js tour...");
-
-        const contractTour = new driver({
-          showProgress: true,
-          showButtons: true,
-          allowClose: true,
-          opacity: 0.1,
-          stageBackground: "rgba(0, 0, 0, 0.6)",
-          highlightedClass: "driver-highlight",
-          scrollIntoViewOptions: { behavior: "smooth", block: "center" },
-          steps: [
-            {
-              element: '[data-driver="contract-intro"]',
-              popover: {
-                title: "Welcome to Contracts! 📜",
-                description:
-                  "This is the main dashboard where you can manage your contracts and work posts.",
-                position: "bottom",
-              },
-            },
-            {
-              element: '[data-driver="create-contract"]',
-              popover: {
-                title: "Create a Contract 🛠️",
-                description:
-                  "Use this form to create a new milestone-based contract. Fill in the details and submit.",
-                position: "bottom",
-              },
-            },
-            {
-              element: '[data-driver="fetch-contract"]',
-              popover: {
-                title: "Fetch Existing Contracts 🔍",
-                description:
-                  "Retrieve and view details of an existing contract by entering its ID.",
-                position: "bottom",
-              },
-            },
-            {
-              element: '[data-driver="work-post"]',
-              popover: {
-                title: "Post Work Requests 💼",
-                description:
-                  "Post work requirements to find collaborators for your project.",
-                position: "bottom",
-              },
-            },
-            {
-              popover: {
-                title: "Tour Complete 🎉",
-                description:
-                  "You’ve completed the tour! Feel free to explore the features on your own.",
-                position: "center",
-              },
-            },
-          ],
-          onDestroyed: () => {
-            console.log("✅ Contract tour completed.");
-            // Hide forms after the tour ends
-            setShowCreateForm(false);
-            setShowFetchForm(false);
-            setShowWorkPostForm(false);
-          },
-        });
-
-        // Start the tour
-        contractTour.drive();
-      }, 1000); // Wait for 1 second to ensure components are rendered
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (showCreateForm && showFetchForm && showWorkPostForm && tourStarted.current) {
+      console.log("⏳ All forms visible, starting tour...");
+      setTimeout(() => startTour(), 500); // Small delay to ensure DOM updates
+    }
+  }, [showCreateForm, showFetchForm, showWorkPostForm]);
+
+  const handleManualTour = () => {
+    setShowCreateForm(true);
+    setShowFetchForm(true);
+    setShowWorkPostForm(true);
+    setTimeout(() => startTour(), 500);
+  };
 
   return (
     <motion.div
@@ -146,6 +165,13 @@ const Contract = () => {
         <h1 className="text-4xl font-extrabold mb-8 text-center">
           Milestone-Based Contracts & Work Posts
         </h1>
+
+        <button
+          onClick={handleManualTour}
+          className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md mb-4"
+        >
+          Start Tour Manually
+        </button>
 
         <ContractIntro
           data-driver="contract-intro"

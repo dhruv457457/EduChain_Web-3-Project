@@ -32,7 +32,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
         description,
         coinType,
         duration,
-        "Milestone", // Hardcoded as per your hook
+        "Milestone",
         amount
       );
 
@@ -47,7 +47,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
 
   return (
     <>
-      <div className="bg-customDark p-6 rounded-lg mb-8">
+      <div data-driver="create-contract" className="bg-customDark p-6 rounded-lg mb-8">
         <h2 className="text-2xl font-bold mb-6">Create New Contract</h2>
         <form onSubmit={handleCreateContract} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.entries(formData).map(([key, value]) => (

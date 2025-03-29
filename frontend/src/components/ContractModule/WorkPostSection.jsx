@@ -72,7 +72,7 @@ const WorkPostSection = ({ contractHooks, currentAccount, loading, setLoading })
   };
 
   return (
-    <div className="bg-customDark p-6 rounded-lg mb-8">
+    <div data-driver="work-post" className="bg-customDark p-6 rounded-lg mb-8">
       <h2 className="text-2xl font-bold mb-6">Work Posts & Proposals</h2>
 
       {/* Create Work Post */}

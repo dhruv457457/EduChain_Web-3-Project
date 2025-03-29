@@ -89,7 +89,7 @@ const FetchContractSection = ({
   };
 
   return (
-    <div className="bg-customDark p-6 rounded-lg mb-8">
+    <div data-driver="fetch-contract" className="bg-customDark p-6 rounded-lg mb-8">
       <h2 className="text-2xl font-bold mb-6">Contract Details</h2>
       <div className="flex gap-4 mb-4">
         <input

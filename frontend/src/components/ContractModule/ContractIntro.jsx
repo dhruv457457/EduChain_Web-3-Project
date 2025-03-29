@@ -9,7 +9,7 @@ const ContractIntro = ({
   onToggleWorkPostForm,
 }) => {
   return (
-    <div className="bg-customDark p-6 rounded-lg mb-8">
+    <div data-driver="contract-intro" className="bg-customDark p-6 rounded-lg mb-8">
       <h2 className="text-2xl font-bold mb-4">Welcome to SWC System</h2>
       <p className="mb-4">
         Manage milestone-based contracts and work posts securely on the blockchain. Create contracts, fetch details, manage milestones, post work opportunities, and handle proposals.
