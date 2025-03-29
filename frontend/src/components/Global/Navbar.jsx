@@ -31,13 +31,13 @@ function Navbar() {
     const initializeProvider = async () => {
       try {
         const sdkProvider = MMSDK.getProvider();
-        console.log("SDK Provider:", sdkProvider); // Debug
+        // console.log("SDK Provider:", sdkProvider); // Debug
         if (!sdkProvider) throw new Error("MetaMask SDK provider not initialized");
         const ethProvider = new ethers.BrowserProvider(sdkProvider);
         const accounts = await ethProvider.send("eth_accounts", []);
         if (accounts.length > 0) {
           setWalletData({ address: accounts[0], provider: ethProvider });
-          console.log("Initial walletData:", { address: accounts[0], provider: ethProvider });
+          // console.log("Initial walletData:", { address: accounts[0], provider: ethProvider });
         }
       } catch (err) {
         setError("Failed to initialize provider: " + err.message);
@@ -79,7 +79,7 @@ function Navbar() {
     try {
       const network = await walletData.provider.getNetwork();
       const chainId = network.chainId.toString();
-      console.log("Current Chain ID:", chainId); // Debug
+      // console.log("Current Chain ID:", chainId); // Debug
       if (chainId !== "656476") { // EDU Chain Sepolia
         showCustomAlert();
         return false;
@@ -93,9 +93,9 @@ function Navbar() {
 
   const connectWallet = async () => {
     try {
-      console.log("Connecting to MetaMask..."); // Debug
+      // console.log("Connecting to MetaMask..."); // Debug
       const accounts = await MMSDK.connect();
-      console.log("Connected accounts:", accounts); // Debug
+      // console.log("Connected accounts:", accounts); // Debug
       if (!accounts || accounts.length === 0) throw new Error("No accounts returned");
       const sdkProvider = MMSDK.getProvider();
       if (!sdkProvider) throw new Error("Provider not available after connection");
@@ -132,7 +132,7 @@ function Navbar() {
     const sdkProvider = MMSDK.getProvider();
     if (sdkProvider && typeof sdkProvider.on === "function") {
       const handleChainChanged = (chainId) => {
-        console.log("Chain changed to:", chainId); // Debug
+        // console.log("Chain changed to:", chainId); // Debug
         if (chainId !== "0xa045c") { // EDU Chain Sepolia in hex
           showCustomAlert();
         } else {

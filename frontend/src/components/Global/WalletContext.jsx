@@ -21,7 +21,7 @@ export const WalletProvider = ({ children }) => {
         const accounts = await ethProvider.send("eth_accounts", []);
         if (accounts.length > 0) {
           setWalletData({ address: accounts[0], provider: ethProvider });
-          console.log("Wallet initialized:", { address: accounts[0], provider: ethProvider });
+          // console.log("Wallet initialized:", { address: accounts[0], provider: ethProvider });
         }
       } catch (err) {
         console.error("WalletProvider initialization failed:", err);

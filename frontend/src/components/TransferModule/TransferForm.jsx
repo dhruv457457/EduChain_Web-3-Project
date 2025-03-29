@@ -16,14 +16,21 @@ const TransferForm = ({
   setIsAddress, // Add toggle props
 }) => {
   return (
-    <div className="px-4 sm:px-10 lg:pl-36 py-20 w-full flex justify-center">
+    <div
+      className="px-4 sm:px-10 lg:pl-36 py-20 w-full flex justify-center"
+      data-driver="transfer-form"
+    >
       <div className="border-b-4 border-customPurple rounded-md px-6 sm:px-10 py-8 bg-customDark flex flex-col items-center gap-5 shadow-custom-purple w-full max-w-lg">
-        <h2 className="text-2xl font-bold mb-4 text-white text-center">Transfer Funds</h2>
+        <h2 className="text-2xl font-bold mb-4 text-white text-center">
+          Transfer Funds
+        </h2>
 
         <div className="flex items-center gap-2 w-full">
           <input
             type="text"
-            placeholder={isAddress ? "Receiver Address (0x...)" : "Receiver UserName"}
+            placeholder={
+              isAddress ? "Receiver Address (0x...)" : "Receiver UserName"
+            }
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
             className="border border-customPurple p-2 rounded-md w-full bg-customInput text-cyan-50"

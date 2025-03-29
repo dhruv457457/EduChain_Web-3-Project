@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import TransactionItem from "./TransactionItem";
 import "./customScrollbar.css"; // Custom scrollbar styles
 
-const TransactionList = ({ transactions = [], userAddress, refund, loading }) => {
+const TransactionList = ({
+  transactions = [],
+  userAddress,
+  refund,
+  loading,
+}) => {
   const [sortType, setSortType] = useState("newest"); // Default: Sort by newest
 
   // Sorting logic
@@ -20,7 +25,7 @@ const TransactionList = ({ transactions = [], userAddress, refund, loading }) =>
   });
 
   return (
-    <div className="px-4 sm:px-10 lg:pr-40">
+    <div className="px-4 sm:px-10 lg:pr-40" data-driver="transaction-list">
       <div className="flex flex-col border-b-4 border-customPurple rounded-md bg-customDark py-5 px-6 sm:px-10 mt-10 sm:mt-14 shadow-custom-purple md:min-h-[450px] md:min-w-[470px]">
         <div className="flex justify-between items-center">
           <h3 className="text-xl text-white font-bold">Recent Transactions</h3>

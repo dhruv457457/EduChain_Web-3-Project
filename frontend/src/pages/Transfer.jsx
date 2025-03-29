@@ -6,17 +6,30 @@ import TransferForm from "../components/TransferModule/TransferForm";
 import TransactionList from "../components/TransferModule/TransactionList";
 import FundTransferWithRegistryABI from "../contracts/FundTransferWithRegistry.json";
 import { useWallet } from "../components/Global/WalletContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 const fundTransferAddress = "0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c";
 
 const Transfer = () => {
   const { walletData } = useWallet();
-  const { transactions, fetchTransactions, getContract, userAddress, claimFunds, sendFunds, sendFundsToAddress } = useContract(walletData?.provider); // Add sendFundsToAddress
+  const {
+    transactions,
+    fetchTransactions,
+    getContract,
+    userAddress,
+    claimFunds,
+    sendFunds,
+    sendFundsToAddress,
+  } = useContract(walletData?.provider); // Add sendFundsToAddress
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [isAddress, setIsAddress] = useState(false); // Toggle for address vs username
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation(); // Get current pathname
 
   useEffect(() => {
     if (walletData?.address) {
@@ -70,17 +83,69 @@ const Transfer = () => {
       fetchTransactions();
     } catch (error) {
       console.error("❌ Transaction error:", error);
-      toast.error(`❌ Transaction failed! ${error.reason || error.message || "Unknown error"}`);
+      toast.error(
+        `❌ Transaction failed! ${
+          error.reason || error.message || "Unknown error"
+        }`
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const shouldStartTransactionTour = localStorage.getItem(
+      "startTransactionTour"
+    );
+    if (shouldStartTransactionTour === "true") {
+      localStorage.removeItem("startTransactionTour");
+
+      const transactionTour = new driver({
+        showProgress: true,
+        showButtons: true,
+        allowClose: true,
+        opacity: 0.1,
+        stageBackground: "rgba(0, 0, 0, 0.6)",
+        highlightedClass: "driver-highlight",
+        steps: [
+          {
+            element: '[data-driver="transfer-form"]',
+            popover: {
+              title: "Transfer Funds Form 📝",
+              description:
+                "Fill in the recipient, amount, and message to send funds.",
+              position: "bottom",
+            },
+          },
+          {
+            element: '[data-driver="transaction-list"]',
+            popover: {
+              title: "Your Transactions 📂",
+              description: "View all the transactions anyone have made.",
+              position: "bottom",
+            },
+          },
+        ],
+        onDestroyed: () => {
+          console.log(
+            "Transaction tour finished, navigating to contract page..."
+          );
+          localStorage.setItem("startContractTour", "true"); // Set flag for Contract tour
+          setTimeout(() => navigate("/contract"), 100);
+        },
+      });
+
+      // 🔹 Increase delay to 1000ms to ensure components are rendered
+      setTimeout(() => transactionTour.drive(), 1000);
+    }
+  }, [navigate, location.pathname]);
 
   return (
     <>
       <ToastContainer position="top-right" autoClose={5000} />
       <div className="flex flex-col bg-customSemiPurple justify-between md:flex-row py-20">
         <TransferForm
+          data-driver="transfer-form"
           recipient={recipient}
           setRecipient={setRecipient}
           amount={amount}
@@ -93,7 +158,11 @@ const Transfer = () => {
           isAddress={isAddress}
           setIsAddress={setIsAddress} // Pass toggle state
         />
-        <TransactionList transactions={transactions} userAddress={walletData?.address} />
+        <TransactionList
+          data-driver="transaction-list"
+          transactions={transactions}
+          userAddress={walletData?.address}
+        />
       </div>
     </>
   );
