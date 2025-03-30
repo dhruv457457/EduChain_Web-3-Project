@@ -127,10 +127,14 @@ Ensure you have MetaMask installed and Linea network added for a smooth experien
 
 ## 📄 License
 This project is licensed under the MIT License.
+
 ---
+
 ## 🤝 Contributing
 Contributions are welcome! Feel free to open issues, submit PRs, and help improve Cryptify.
+
 ---
+
 ## 📧 Contact Support
 For any inquiries, support, or collaboration opportunities, feel free to reach out:
 
@@ -139,7 +143,9 @@ For any inquiries, support, or collaboration opportunities, feel free to reach o
 - dpancholi.pp123@gmail.com
 
 - gjain0229@gmail.com
+
 ---
+
 ## 🐦 Follow us on X (Twitter): [@CryptifySecure](https://x.com/CryptifySecure)
 
 ##🌎 Website: [Cryptify](https://cryptify-defi.vercel.app/)
@@ -147,4 +153,6 @@ For any inquiries, support, or collaboration opportunities, feel free to reach o
 🚀 Join our Web3 revolution!
 
 🔥 Built for the Future of Web3 Payments! 🔥
+
 --------
+
