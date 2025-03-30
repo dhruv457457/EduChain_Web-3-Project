@@ -125,6 +125,8 @@ npm run dev
 
 Ensure you have MetaMask installed and Linea network added for a smooth experience.
 
+---
+
 ## 📄 License
 This project is licensed under the MIT License.
 
