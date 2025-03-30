@@ -128,7 +128,8 @@ Ensure you have MetaMask installed and Linea network added for a smooth experien
 ---
 
 ## 📄 License
-This project is licensed under the MIT License.
+This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 (CC BY-NC 4.0)** License.  
+It can be used for **hackathons, academic research, and engineering evaluation** but **cannot be used for commercial purposes**. 
 
 ---
 
