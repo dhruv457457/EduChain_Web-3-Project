@@ -32,12 +32,12 @@ const ContractIntro = ({
         >
           {showFetchForm ? "Hide Fetch Contract" : "Fetch Contract"}
         </button>
-        <button
+        {/* <button
           onClick={onToggleWorkPostForm}
           className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md"
         >
           {showWorkPostForm ? "Hide Work Post" : "Create Work Post"}
-        </button>
+        </button> */}
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Wallet } from "lucide-react";
-
 import { ExternalLink } from "lucide-react";
 
 function Docs() {
@@ -8,28 +7,32 @@ function Docs() {
 
   // Function to handle adding chain to MetaMask
   const addChainToMetaMask = async () => {
-    if (typeof window.ethereum !== 'undefined') {
+    if (typeof window.ethereum !== "undefined") {
       try {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId: '0xa045c', // Chain ID in hex format
-            chainName: 'OpenCampus Codex Sepolia',
-            nativeCurrency: {
-              name: 'EDU',
-              symbol: 'EDU',
-              decimals: 18
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              chainId: "0xa045c", // Chain ID in hex format
+              chainName: "OpenCampus Codex Sepolia",
+              nativeCurrency: {
+                name: "EDU",
+                symbol: "EDU",
+                decimals: 18,
+              },
+              rpcUrls: ["https://open-campus-codex-sepolia.drpc.org"],
+              blockExplorerUrls: ["https://opencampus-codex.blockscout.com"],
             },
-            rpcUrls: ['https://open-campus-codex-sepolia.drpc.org'],
-            blockExplorerUrls: ['https://opencampus-codex.blockscout.com']
-          }]
+          ],
         });
       } catch (error) {
         console.error(error);
-        alert('Failed to add network to MetaMask. Please try again or add it manually.');
+        alert(
+          "Failed to add network to MetaMask. Please try again or add it manually."
+        );
       }
     } else {
-      alert('MetaMask is not installed. Please install MetaMask first.');
+      alert("MetaMask is not installed. Please install MetaMask first.");
     }
   };
 
@@ -85,14 +88,16 @@ function Docs() {
               Adding EDU Chain
             </h1>
             <p className="text-gray-300 mb-8">
-              To add OpenCampus Codex Sepolia Testnet to your MetaMask wallet, follow these steps:
+              To add OpenCampus Codex Sepolia Testnet to your MetaMask wallet,
+              follow these steps:
             </p>
             <div className="border border-purple-500 rounded-lg p-4 md:p-6 mb-6 bg-purple-900 bg-opacity-30 w-full">
               <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
                 Automatic Method
               </h2>
               <p className="text-gray-300 mb-4">
-                The easiest way to add the OpenCampus Codex Sepolia Testnet is by clicking the button below:
+                The easiest way to add the OpenCampus Codex Sepolia Testnet is
+                by clicking the button below:
               </p>
               <button
                 onClick={addChainToMetaMask}
@@ -107,14 +112,17 @@ function Docs() {
                 Manual Method
               </h2>
               <p className="text-gray-300 mb-4">
-                If the automatic method doesn't work, you can manually add the network with these details:
+                If the automatic method doesn't work, you can manually add the
+                network with these details:
               </p>
               <ul className="list-disc pl-5 text-gray-300 space-y-1">
                 <li>Network Name: OpenCampus Codex Sepolia</li>
                 <li>New RPC URL: https://open-campus-codex-sepolia.drpc.org</li>
                 <li>Chain ID: 656476 </li>
                 <li>Currency Symbol: EDU</li>
-                <li>Block Explorer URL: https://opencampus-codex.blockscout.com</li>
+                <li>
+                  Block Explorer URL: https://opencampus-codex.blockscout.com
+                </li>
               </ul>
             </div>
           </>
@@ -208,7 +216,7 @@ function Docs() {
                 Go to the profile section in the Cryptify
               </p>
               <ul className="list-disc pl-5 text-gray-300 space-y-1">
-              <li>Connect MetaMask</li>
+                <li>Connect MetaMask</li>
                 <li>Enter your username.</li>
                 <li>Click on the register button.</li>
                 <li>Congratulations you are registered as user.</li>
@@ -216,6 +224,61 @@ function Docs() {
             </div>
           </>
         );
+      case "Understanding Contracts":
+        return (
+          <>
+            <h1 className="text-2xl md:text-3xl font-bold mb-4">
+              Understanding Smart Work Commitment (SWC)
+            </h1>
+            <p className="text-gray-300 mb-4">
+              Smart Work Commitment (SWC) is a blockchain-based contract system
+              that ensures trust and security between two parties. It automates
+              payments, milestones, and contract approvals without
+              intermediaries.
+            </p>
+            <p className="text-gray-300 mb-4">
+              In Cryptify, SWC allows users to create contracts, set milestones,
+              and release payments only when both parties approve the progress.
+            </p>
+            <h2 className="text-xl md:text-2xl font-semibold mb-3">
+              Key Features:
+            </h2>
+            <ul className="list-disc pl-5 text-gray-300 space-y-2">
+              <li>
+                Contracts are self-executing and stored on the blockchain.
+              </li>
+              <li>
+                Funds are securely locked in escrow until both parties approve.
+              </li>
+              <li>
+                Supports milestone-based payments for structured work delivery.
+              </li>
+              <li>
+                Ensures transparency and eliminates the need for intermediaries.
+              </li>
+            </ul>
+          </>
+        );
+
+      case "How Cryptify Works":
+        return (
+          <>
+            <h1 className="text-2xl md:text-3xl font-bold mb-4">
+              How Cryptify Works
+            </h1>
+            <p className="text-gray-300 mb-8">
+              Cryptify allows users to transfer crypto, register usernames, and
+              interact securely using blockchain technology.
+            </p>
+            <ul className="list-disc pl-5 text-gray-300 space-y-1">
+              <li>Connect your wallet to Cryptify.</li>
+              <li>Use your username instead of wallet addresses.</li>
+              <li>Make payments with transaction remarks.</li>
+              <li>Utilize Smart Work Commitments for secure deals.</li>
+            </ul>
+          </>
+        );
+
       default:
         return null;
     }
@@ -223,7 +286,6 @@ function Docs() {
 
   return (
     <>
-      
       <div className="flex flex-col lg:flex-row bg-customSemiPurple mt-20 border-t-2 border-customPurple border-opacity-25 min-h-screen">
         {/* Sidebar */}
         <div className="bg-customDarkpurple lg:h-screen w-full lg:w-80 border-b-2 lg:border-b-0 lg:border-r-2 border-customPurple border-opacity-25 flex flex-row lg:flex-col gap-5 py-5 px-4 overflow-x-auto lg:overflow-y-auto">
@@ -243,6 +305,8 @@ function Docs() {
               "Getting Test Tokens",
               "Making Transactions",
               "Register as User",
+              "Understanding Contracts",
+              "How Cryptify Works",
             ].map((section) => (
               <button
                 key={section}

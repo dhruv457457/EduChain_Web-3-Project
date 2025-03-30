@@ -39,7 +39,7 @@ const TransferForm = ({
             onClick={() => setIsAddress(!isAddress)}
             className="bg-customPurple text-white px-2 py-1 rounded-md hover:bg-customLightPurple transition-all"
           >
-            {isAddress ? "Use Username" : "Use Address"}
+            {isAddress ? "Username" : "Address"}
           </button>
         </div>
 

@@ -34,10 +34,10 @@ const UserDashboard = () => {
 
   useEffect(() => {
     const shouldStartTour = localStorage.getItem("startUserTour");
-  
+
     if (shouldStartTour === "true") {
       localStorage.removeItem("startUserTour"); // ✅ Remove only after confirmation
-  
+
       const profileTour = new driver({
         showProgress: true,
         showButtons: true,
@@ -93,12 +93,11 @@ const UserDashboard = () => {
           setTimeout(() => navigate("/transfer"), 100);
         },
       });
-  
+
       setTimeout(() => profileTour.drive(), 500); // ✅ Ensure the tour starts after rendering
     }
   }, [navigate]);
-  
-  
+
   return (
     <div className="bg-customSemiPurple min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="text-center max-w-2xl pt-10">
@@ -114,20 +113,21 @@ const UserDashboard = () => {
       </div>
 
       <div className="mt-12 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div data-driver="user-balance">
+        <div data-driver="user-balance" className="flex flex-col gap-6">
           <UserBalance
             registeredName={registeredName}
             provider={walletData?.provider}
             reputation={swc.reputation}
           />
-        </div>
-        <div className="flex flex-col gap-6">
           <div data-driver="register-name">
             <RegisterName
               setGlobalRegisteredName={setRegisteredName}
               provider={walletData?.provider}
             />
           </div>
+        </div>
+
+        <div className="flex flex-col gap-6">
           <div data-driver="user-transactions">
             <UserTransactions provider={walletData?.provider} />
           </div>
