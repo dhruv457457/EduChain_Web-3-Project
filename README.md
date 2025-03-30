@@ -125,11 +125,11 @@ npm run dev
 
 Ensure you have MetaMask installed and Linea network added for a smooth experience.
 
-## 📄 License
-- This project is licensed under the MIT License.
+## 📄 License <br>
+This project is licensed under the MIT License.
 
 ## 🤝 Contributing
-- Contributions are welcome! Feel free to open issues, submit PRs, and help improve Cryptify.
+Contributions are welcome! Feel free to open issues, submit PRs, and help improve Cryptify.
 
 ## 📧 Contact Support
 - For any inquiries, support, or collaboration opportunities, feel free to reach out:
