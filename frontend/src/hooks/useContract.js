@@ -155,10 +155,10 @@ const useContract = (provider, currentChain = "eduChain") => {
       const contract = await getContract();
       const amountInWei = ethers.parseEther(amount.toString());
       const tx = await contract.sendFunds(receiverUsername, message, { value: amountInWei });
-      await tx.wait();
+      // Do not call tx.wait() here; return the tx object
       fetchUserTransactions(userAddress);
       fetchPendingBalance(userAddress);
-      return tx.hash;
+      return tx; // Return TransactionResponse object
     } catch (error) {
       console.error("Error sending funds:", error);
       throw error.message || "Failed to send funds";
@@ -174,10 +174,10 @@ const useContract = (provider, currentChain = "eduChain") => {
       const contract = await getContract();
       const amountInWei = ethers.parseEther(amount.toString());
       const tx = await contract.sendFundsToAddress(receiverAddress, message, { value: amountInWei });
-      await tx.wait();
+      // Do not call tx.wait() here; return the tx object
       fetchUserTransactions(userAddress);
       fetchPendingBalance(userAddress);
-      return tx.hash;
+      return tx; // Return TransactionResponse object
     } catch (error) {
       console.error("Error sending funds to address:", error);
       throw error.message || "Failed to send funds to address";

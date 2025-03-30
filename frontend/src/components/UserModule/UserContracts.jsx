@@ -7,16 +7,28 @@ const UserContracts = ({ provider }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Check if provider and getUserContracts are ready
+    if (!provider) {
+      setError("No wallet provider detected. Please connect your wallet.");
+      return;
+    }
+    if (!getUserContracts) {
+      setError("Contract hook not initialized yet.");
+      return;
+    }
+
     const loadContracts = async () => {
       try {
         const userContracts = await getUserContracts();
         setContracts(userContracts);
+        setError(null); // Clear any previous errors on success
       } catch (err) {
-        setError("Failed to load contracts.");
+        setError(`Failed to load contracts: ${err.message}`);
       }
     };
+
     loadContracts();
-  }, [getUserContracts]);
+  }, [provider, getUserContracts]);
 
   return (
     <div className="border-t-4 border-customPurple rounded-md bg-customDark p-5 shadow-custom-purple text-white max-h-64 overflow-y-auto custom-scrollbar">
@@ -30,11 +42,31 @@ const UserContracts = ({ provider }) => {
       ) : (
         <ul className="space-y-4">
           {contracts.map((contract) => (
-            <li key={contract.contractId} className="p-4 border border-gray-700 rounded-lg bg-gray-800">
-              <p><strong>Title:</strong> {contract.title}</p>
-              <p><strong>Role:</strong> {contract.creator === contract.userAddress ? "Creator" : "Receiver"}</p>
-              <p><strong>Amount:</strong> {contract.amount} ETH</p>
-              <p><strong>Status:</strong> {["Pending", "Approved", "InProgress", "Completed", "Cancelled", "Disputed"][contract.status]}</p>
+            <li
+              key={contract.contractId}
+              className="p-4 border border-gray-700 rounded-lg bg-gray-800"
+            >
+              <p>
+                <strong>Title:</strong> {contract.title}
+              </p>
+              <p>
+                <strong>Role:</strong>{" "}
+                {contract.creator === contract.userAddress ? "Creator" : "Receiver"}
+              </p>
+              <p>
+                <strong>Amount:</strong> {contract.amount} ETH
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
+                {[
+                  "Pending",
+                  "Approved",
+                  "InProgress",
+                  "Completed",
+                  "Cancelled",
+                  "Disputed",
+                ][contract.status]}
+              </p>
             </li>
           ))}
         </ul>

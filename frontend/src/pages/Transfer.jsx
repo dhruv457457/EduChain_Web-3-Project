@@ -4,32 +4,27 @@ import { ToastContainer, toast } from "react-toastify";
 import useContract from "../hooks/useContract";
 import TransferForm from "../components/TransferModule/TransferForm";
 import TransactionList from "../components/TransferModule/TransactionList";
-import FundTransferWithRegistryABI from "../contracts/FundTransferWithRegistry.json";
 import { useWallet } from "../components/Global/WalletContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
-
-const fundTransferAddress = "0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c";
 
 const Transfer = () => {
   const { walletData } = useWallet();
   const {
     transactions,
     fetchTransactions,
-    getContract,
-    userAddress,
     claimFunds,
     sendFunds,
     sendFundsToAddress,
-  } = useContract(walletData?.provider); // Add sendFundsToAddress
+  } = useContract(walletData?.provider);
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
-  const [isAddress, setIsAddress] = useState(false); // Toggle for address vs username
+  const [isAddress, setIsAddress] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation(); // Get current pathname
+  const location = useLocation();
 
   useEffect(() => {
     if (walletData?.address) {
@@ -67,16 +62,19 @@ const Transfer = () => {
 
       if (isAddress) {
         console.log(`💰 Sending ${amount} ETH to address ${recipient}...`);
-        tx = await sendFundsToAddress(recipient, amount, message); // Use sendFundsToAddress
+        tx = await sendFundsToAddress(recipient, amount, message);
       } else {
         console.log(`💰 Sending ${amount} ETH to username ${recipient}...`);
-        tx = await sendFunds(recipient, amount, message); // Use sendFunds
+        tx = await sendFunds(recipient, amount, message);
       }
 
+      console.log("🔍 Transaction object:", tx);
       console.log("🔄 Transaction sent. Waiting for confirmation...");
-      await tx.wait();
+      const receipt = await tx.wait();
+      console.log("🔍 Transaction receipt:", receipt);
+      const txHash = receipt.transactionHash || receipt.hash || tx.hash; // Fallbacks
 
-      toast.success(`✅ Transfer successful! TX: ${tx.hash}`);
+      toast.success(`✅ Transfer successful! TX: ${txHash}`);
       setRecipient("");
       setAmount("");
       setMessage("");
@@ -94,9 +92,7 @@ const Transfer = () => {
   };
 
   useEffect(() => {
-    const shouldStartTransactionTour = localStorage.getItem(
-      "startTransactionTour"
-    );
+    const shouldStartTransactionTour = localStorage.getItem("startTransactionTour");
     if (shouldStartTransactionTour === "true") {
       localStorage.removeItem("startTransactionTour");
 
@@ -112,8 +108,7 @@ const Transfer = () => {
             element: '[data-driver="transfer-form"]',
             popover: {
               title: "Transfer Funds Form 📝",
-              description:
-                "Fill in the recipient, amount, and message to send funds.",
+              description: "Fill in the recipient, amount, and message to send funds.",
               position: "bottom",
             },
           },
@@ -127,15 +122,12 @@ const Transfer = () => {
           },
         ],
         onDestroyed: () => {
-          console.log(
-            "Transaction tour finished, navigating to contract page..."
-          );
-          localStorage.setItem("startContractTour", "true"); // Set flag for Contract tour
+          console.log("Transaction tour finished, navigating to contract page...");
+          localStorage.setItem("startContractTour", "true");
           setTimeout(() => navigate("/contract"), 100);
         },
       });
 
-      // 🔹 Increase delay to 1000ms to ensure components are rendered
       setTimeout(() => transactionTour.drive(), 1000);
     }
   }, [navigate, location.pathname]);
@@ -152,11 +144,11 @@ const Transfer = () => {
           setAmount={setAmount}
           message={message}
           setMessage={setMessage}
-          sendFunds={handleSendFunds} // Renamed to avoid confusion
+          sendFunds={handleSendFunds}
           claimFunds={claimFunds}
           loading={loading}
           isAddress={isAddress}
-          setIsAddress={setIsAddress} // Pass toggle state
+          setIsAddress={setIsAddress}
         />
         <TransactionList
           data-driver="transaction-list"
