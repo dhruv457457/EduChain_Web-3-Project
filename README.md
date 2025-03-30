@@ -5,17 +5,15 @@ Cryptify is a next-gen Web3 payment platform that eliminates the need for long w
 ### 🔹 Key Features  
 - Smart contract security (SWC compliance)  
 - On-chain credit scoring  
-- Seamless MetaMask integration  
-- Deployed on Linea L2 for speed & low fees  
+- Username-Based Payments
+- AI Chatbot (Help Center)
+- Control on Claim Funds
+- Multi-Chain Support 
 
 ---
 
 ## 🔹 What is Cryptify?  
-Cryptify is designed to simplify and secure Web3 transactions by:  
-
-- Replacing long, complex wallet addresses with easy-to-use usernames  
-- Enhancing trust via an on-chain credit score system  
-- Ensuring seamless wallet connectivity through MetaMask SDK on Linea L2  
+Cryptify is a next-generation Web3 payment platform that brings trust, security, and simplicity to crypto transactions. It enables seamless digital payments using human-readable usernames, a trust-based credit scoring system, and secure smart contracts—all while ensuring complete transparency and decentralization.
 
 ### ✅ Core Benefits  
 - Faster & cheaper transactions with Layer-2 scaling (Linea L2)  
@@ -47,9 +45,7 @@ Using MetaMask SDK instead of `window.ethereum` unlocks next-level security and 
 
 - **Better Security** – Eliminates phishing risks & unauthorized access  
 - **Multi-Platform Support** – Works across mobile, web, and dApps effortlessly  
-- **Optimized Performance on Linea** – Faster, low-cost transactions with Layer-2 scaling  
-- **Advanced Wallet Management** – Simplifies multi-account interactions  
-- **Frictionless UX** – Automated wallet connections & smoother onboarding  
+- **Optimized Performance on Linea** – Faster, low-cost transactions with Layer-2 scaling   
 
 With MetaMask SDK, we’ve completely solved wallet connection issues!  
 
@@ -66,6 +62,16 @@ Similar to traditional credit scores, Cryptify assigns a trust score based on:
 - Fraud Prevention – Helps users assess the credibility of other wallet holders  
 - Decentralized Trust Layer – Builds a reputation system in Web3  
 - Transparent & Fair – Scores are publicly verifiable on-chain  
+
+## 🧠 AI Chatbot – Your Personal Web3 Assistant!
+Need help? Don’t worry—Cryptify’s built-in AI chatbot is here! 🚀
+
+Our AI-powered help center provides:
+- **Instant Answers** – Get real-time responses to all your Web3-related questions
+- **Seamless Support** – No need to browse external guides; get help directly within Cryptify
+- **Smarter Experience** – Enhances user onboarding by offering automated assistance
+
+With Cryptify’s AI chatbot, navigating Web3 has never been easier!
 
 ---
 
