@@ -28,7 +28,7 @@ Core Benefits:
 🔹 To build trust with an on-chain credit score system that reflects transaction reliability
 🔹 To ensure seamless wallet connectivity via MetaMask SDK on Linea L2
 🔹 To maintain top-tier security by complying with SWC security standards
-
+---
 📜 Project Description
 Cryptify redefines Web3 payments by integrating MetaMask SDK for effortless wallet authentication, deploying smart contracts on Linea L2, and introducing a trust-based credit score system for secure, transparent transactions.
 
@@ -59,7 +59,7 @@ Why It Matters?
 🔹 Fraud Prevention – Helps users assess the credibility of other wallet holders
 🔹 Decentralized Trust Layer – Builds a reputation system in Web3
 🔹 Transparent & Fair – Scores are publicly verifiable on-chain
-
+---
 🔑 Key Features & Innovations
 🚀 Username-Based Transactions – No need to copy/paste long wallet addresses
 ⚡ Deployed on Linea L2 – High-speed, low-cost Ethereum Layer-2 scaling
@@ -68,7 +68,7 @@ Why It Matters?
 🛡️ Smart Contract Security (SWC) Compliance – Prevents exploits & vulnerabilities
 👨‍🏫 Guided Wallet Connection Tour – Interactive onboarding for new users
 📱 Cross-Platform Support – Works smoothly across mobile & desktop
-
+---
 🛡️ Smart Contract Security (SWC) Compliance
 Cryptify follows SWC Registry (Smart Contract Weakness Classification) standards to ensure maximum security.
 
@@ -79,24 +79,13 @@ Cryptify follows SWC Registry (Smart Contract Weakness Classification) standards
 ✅ Prevents Unprotected SELFDESTRUCT – Avoids accidental contract destruction
 
 By following SWC security guidelines, Cryptify ensures safe, immutable, and trustable transactions.
-
+---
 💻 Technology Stack
-Frontend:
-
-ReactJS & Tailwind CSS – Modern, responsive UI
-
-Backend & Smart Contracts:
-
-Solidity & Hardhat – For blockchain automation & interactions
-
-Blockchain Ecosystem:
-
-Linea Sepolia, Solidity, Hardhat, and MetaMask SDK – Decentralization, security, transparency
-
-Wallet Integration:
-
-MetaMask SDK – Seamless Web3 transactions & user authentication
-
+Frontend: ReactJS and Tailwind CSS (Fast, responsive UI)
+Backend & Smart Contracts: Solidity and Hardhat (For blockchain automation & interactions)
+Blockchain Ecosystem: Lenia Sepolia, Solidity, Hardhat and MetaMask SDK (Decentralization, security, transparency)
+Wallet Integration: MetaMask (Seamless Web3 transactions & user authentication)
+---
 📜 Deploying Contracts on Linea
 Cryptify smart contracts are deployed on Linea L2, providing:
 
@@ -105,38 +94,40 @@ Cryptify smart contracts are deployed on Linea L2, providing:
 ✅ Scalability & Security Enhancements – Improved blockchain efficiency
 
 Using MetaMask SDK, wallet connections are automated, ensuring a secure and frictionless experience. Our contracts are SWC-compliant, making transactions robust and trustworthy.
+---
+
 
 🚀 Getting Started
 1️⃣ Installation & Setup
-sh
-Copy
-Edit
-git clone https://github.com/your-username/cryptify.git
+git clone [https://github.com/your-username/cryptify.git](https://github.com/dhruv457457/EduChain_Web-3-Project.git)
 cd cryptify
+cd ../frontend
 npm install
 npm start
 Ensure you have MetaMask installed and Linea network added for a smooth experience.
 
 2️⃣ Running the Blockchain Backend
-sh
-Copy
-Edit
 npx hardhat node
-Deploy the contracts using:
 
-sh
-Copy
-Edit
+Deploy the contracts using:
 npx hardhat run scripts/deploy.js --network linea
+---
 📄 License
 This project is licensed under the MIT License.
-
+---
 🤝 Contributing
 Contributions are welcome! Feel free to open issues, submit PRs, and help improve Cryptify.
+---
+For any inquiries, support, or collaboration opportunities, feel free to reach out:
 
-📬 Contact & Support
-💬 Join the Community: Discord
-📧 Email Support: support@cryptify.com
-🌎 Website: cryptify.com
+📧 Email Support:
+dpancholi.pp123@gmail.com
+gjain0229@gmail.com
+
+🐦 Follow us on X (Twitter): [@CryptifyWeb3](https://x.com/CryptifySecure)
+
+🌎 Website: [cryptify.com](https://edu-chain-web-3-project-rchz.vercel.app/)
+---
+🚀 Join our Web3 revolution! 🔥
 
 🚀 Built for the Future of Web3 Payments! 🔥
