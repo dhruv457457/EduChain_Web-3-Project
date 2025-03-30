@@ -1,4 +1,4 @@
-# 🚀 Cryptify: Revolutionizing Web3 Payments with Usernames & Trust-Based Transactions  
+# 🚀 Cryptify: Revolutionizing Web3 Payments
 
 Cryptify is a next-gen Web3 payment platform that eliminates the need for long wallet addresses by introducing human-readable usernames for crypto transactions. Built on Linea L2 and powered by MetaMask SDK, Cryptify ensures secure, efficient, and user-friendly decentralized payments.  
 
