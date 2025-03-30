@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import CryptifySWCABI from "../contracts/CryptifySWC.json";
+import chainConfig from "../components/chainConfig";
 
-const CONTRACT_ADDRESS = "0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A";
-
-const useContract2 = (provider) => {
+const useContract2 = (provider, currentChain = "eduChain") => {
   const [contract, setContract] = useState(null);
   const [signer, setSigner] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [reputation, setReputation] = useState("500"); // Default base score
+
+  const CONTRACT_ADDRESS = chainConfig[currentChain].cryptifySWCAddress;
 
   useEffect(() => {
     const initContract = async () => {
@@ -47,7 +48,7 @@ const useContract2 = (provider) => {
         contract.removeAllListeners("ContractCompleted");
       }
     };
-  }, [provider]);
+  }, [provider, currentChain]);
 
   const handleTransaction = async (transactionFn, successMsg) => {
     if (!contract) throw new Error("Contract not initialized.");
@@ -238,6 +239,8 @@ const useContract2 = (provider) => {
         amount: ethers.formatEther(m.amount),
         deadline: Number(m.deadline),
         isCompleted: m.isCompleted,
+
+
         isApproved: m.isApproved,
         isPaid: m.isPaid,
         deliverables: m.deliverables,

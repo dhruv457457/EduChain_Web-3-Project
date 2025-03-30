@@ -1,44 +1,6 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "C:\\Users\\mine\\Documents\\GitHub\\EduChain_Web-3-Project\\backend\\contracts\\CryptifySWC.sol": {
-      "lastModificationDate": 1743174255425,
-      "contentHash": "b7a92dd1e753164b847b467620984853",
-      "sourceName": "contracts/CryptifySWC.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "viaIR": true,
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "CryptifySWC",
-        "UsernameRegistry"
-      ]
-    },
     "C:\\Users\\mine\\Documents\\GitHub\\EduChain_Web-3-Project\\backend\\contracts\\FundTransferWithRegistry.sol": {
       "lastModificationDate": 1743174361060,
       "contentHash": "02b24ecbcb28a1a3a9fb4c7eaa7966b3",
@@ -189,6 +151,44 @@
         "^0.8.20"
       ],
       "artifacts": [
+        "UsernameRegistry"
+      ]
+    },
+    "C:\\Users\\mine\\Documents\\GitHub\\EduChain_Web-3-Project\\backend\\contracts\\CryptifySWC.sol": {
+      "lastModificationDate": 1743181054814,
+      "contentHash": "b7a92dd1e753164b847b467620984853",
+      "sourceName": "contracts/CryptifySWC.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "CryptifySWC",
         "UsernameRegistry"
       ]
     }

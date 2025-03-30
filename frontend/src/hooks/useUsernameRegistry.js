@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import UsernameRegistryABI from "../contracts/UsernameRegistry.json";
+import chainConfig from "../components/chainConfig";
 
-const REGISTRY_ADDRESS = "0x55C5C1991714595969c66F0b55DFF740f3031Cb4";
-
-const useUsernameRegistry = (provider) => {
+const useUsernameRegistry = (provider, currentChain = "eduChain") => {
   const [contract, setContract] = useState(null);
   const [userAddress, setUserAddress] = useState("");
   const [username, setUsername] = useState("");
   const [isRegistered, setIsRegistered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const REGISTRY_ADDRESS = chainConfig[currentChain].usernameRegistryAddress;
 
   useEffect(() => {
     const init = async () => {
@@ -50,12 +51,12 @@ const useUsernameRegistry = (provider) => {
     return () => {
       if (contract) contract.removeAllListeners("UserRegistered");
     };
-  }, [provider]);
+  }, [provider, currentChain]);
 
   const registerUsername = async (usernameInput) => {
     if (!contract) throw new Error("Contract not initialized");
     if (!usernameInput.trim()) throw new Error("Username cannot be empty");
-    
+
     setIsLoading(true);
     try {
       const tx = await contract.registerUsername(usernameInput);

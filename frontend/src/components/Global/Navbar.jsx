@@ -4,9 +4,10 @@ import { ethers } from "ethers";
 import MetaMaskSDK from "@metamask/sdk";
 import { FaBars, FaTimes, FaWallet, FaSignOutAlt, FaExclamationTriangle, FaCopy } from "react-icons/fa";
 import { useWallet } from "./WalletContext";
+import chainConfig from "../chainConfig";
 
 function Navbar() {
-  const { walletData, setWalletData } = useWallet();
+  const { walletData, setWalletData, currentChain, setCurrentChain } = useWallet();
   const [isOpen, setIsOpen] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -15,11 +16,6 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const getLinkClasses = (path) =>
-    location.pathname === path
-      ? "bg-gradient-to-r from-customPurple to-customBlue text-white rounded-md px-2 py-1 transition-all duration-300"
-      : "hover:text-customBlue2 transition-all duration-300";
-
   const MMSDK = useRef(
     new MetaMaskSDK({
       dappMetadata: { name: "Cryptify" },
@@ -27,17 +23,23 @@ function Navbar() {
     })
   ).current;
 
+  const getLinkClasses = (path) =>
+    location.pathname === path
+      ? "bg-gradient-to-r from-customPurple to-customBlue text-white rounded-md px-2 py-1 transition-all duration-300"
+      : "hover:text-customBlue2 transition-all duration-300";
+
   useEffect(() => {
     const initializeProvider = async () => {
       try {
         const sdkProvider = MMSDK.getProvider();
-        // console.log("SDK Provider:", sdkProvider); // Debug
         if (!sdkProvider) throw new Error("MetaMask SDK provider not initialized");
         const ethProvider = new ethers.BrowserProvider(sdkProvider);
         const accounts = await ethProvider.send("eth_accounts", []);
         if (accounts.length > 0) {
           setWalletData({ address: accounts[0], provider: ethProvider });
-          // console.log("Initial walletData:", { address: accounts[0], provider: ethProvider });
+          const network = await ethProvider.getNetwork();
+          const chainId = network.chainId.toString();
+          setCurrentChain(chainId === chainConfig.linea.chainId ? "linea" : "eduChain");
         }
       } catch (err) {
         setError("Failed to initialize provider: " + err.message);
@@ -45,7 +47,7 @@ function Navbar() {
       }
     };
     initializeProvider();
-  }, [setWalletData]);
+  }, [setWalletData, setCurrentChain]);
 
   useEffect(() => {
     const storedAddress = localStorage.getItem("walletAddress");
@@ -79,8 +81,8 @@ function Navbar() {
     try {
       const network = await walletData.provider.getNetwork();
       const chainId = network.chainId.toString();
-      // console.log("Current Chain ID:", chainId); // Debug
-      if (chainId !== "656476") { // EDU Chain Sepolia
+      const expectedChainId = chainConfig[currentChain].chainId;
+      if (chainId !== expectedChainId) {
         showCustomAlert();
         return false;
       }
@@ -93,9 +95,7 @@ function Navbar() {
 
   const connectWallet = async () => {
     try {
-      // console.log("Connecting to MetaMask..."); // Debug
       const accounts = await MMSDK.connect();
-      // console.log("Connected accounts:", accounts); // Debug
       if (!accounts || accounts.length === 0) throw new Error("No accounts returned");
       const sdkProvider = MMSDK.getProvider();
       if (!sdkProvider) throw new Error("Provider not available after connection");
@@ -103,7 +103,7 @@ function Navbar() {
       setWalletData({ address: accounts[0], provider: ethProvider });
       localStorage.setItem("walletAddress", accounts[0]);
       const isCorrectChain = await checkChainId();
-      if (!isCorrectChain) console.log("Not connected to EDU Chain");
+      if (!isCorrectChain) switchChain(currentChain);
     } catch (error) {
       console.error("Wallet connection failed:", error);
       setError("Failed to connect wallet. Please ensure MetaMask is installed and unlocked.");
@@ -112,7 +112,7 @@ function Navbar() {
 
   const disconnectWallet = () => {
     setWalletData({ address: null, provider: null });
-    localStorage.removeItem("walletAddress");
+    localStorage.removeItem("walletWaddress");
     MMSDK.terminate();
   };
 
@@ -120,6 +120,44 @@ function Navbar() {
     navigator.clipboard.writeText(walletData.address);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const switchChain = async (chainName) => {
+    const sdkProvider = MMSDK.getProvider();
+    if (!sdkProvider) return;
+
+    const targetChain = chainConfig[chainName];
+    try {
+      await sdkProvider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: `0x${parseInt(targetChain.chainId).toString(16)}` }],
+      });
+      setCurrentChain(chainName);
+      setShowAlert(false);
+    } catch (switchError) {
+      if (switchError.code === 4902) { // Chain not added to MetaMask
+        try {
+          await sdkProvider.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: `0x${parseInt(targetChain.chainId).toString(16)}`,
+                chainName: targetChain.name,
+                rpcUrls: [targetChain.rpcUrl],
+              },
+            ],
+          });
+          setCurrentChain(chainName);
+          setShowAlert(false);
+        } catch (addError) {
+          console.error("Failed to add chain:", addError);
+          setError("Failed to add chain to MetaMask.");
+        }
+      } else {
+        console.error("Failed to switch chain:", switchError);
+        setError("Failed to switch chain.");
+      }
+    }
   };
 
   const goToDocs = () => {
@@ -132,8 +170,10 @@ function Navbar() {
     const sdkProvider = MMSDK.getProvider();
     if (sdkProvider && typeof sdkProvider.on === "function") {
       const handleChainChanged = (chainId) => {
-        // console.log("Chain changed to:", chainId); // Debug
-        if (chainId !== "0xa045c") { // EDU Chain Sepolia in hex
+        const newChainId = parseInt(chainId, 16).toString();
+        const newChain = newChainId === chainConfig.linea.chainId ? "linea" : "eduChain";
+        setCurrentChain(newChain);
+        if (newChainId !== chainConfig[currentChain].chainId) {
           showCustomAlert();
         } else {
           setShowAlert(false);
@@ -145,10 +185,8 @@ function Navbar() {
           sdkProvider.removeListener("chainChanged", handleChainChanged);
         }
       };
-    } else {
-      console.warn("MetaMask SDK provider not ready or invalid");
     }
-  }, [walletData.provider]);
+  }, [walletData.provider, currentChain, setCurrentChain]);
 
   if (error) {
     return (
@@ -161,11 +199,10 @@ function Navbar() {
     );
   }
 
-  // Rest of your JSX remains unchanged...
   return (
     <>
       {showAlert && (
-        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-11/12 md:w-auto ">
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 w-11/12 md:w-auto">
           <div className="bg-customDarkpurple border-2 border-customPurple rounded-lg shadow-lg px-6 py-4 flex flex-col md:flex-row items-center gap-4 backdrop-blur-sm bg-opacity-95 animate-fadeIn">
             <FaExclamationTriangle className="text-yellow-300 text-3xl flex-shrink-0" />
             <div className="flex-1 text-center md:text-left">
@@ -173,14 +210,14 @@ function Navbar() {
                 Wrong Network Detected
               </h3>
               <p className="text-customGray text-sm mb-3">
-                Please connect to OpenCampus Codex Sepolia (EDU Chain).
+                Please switch to {chainConfig[currentChain].name}.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <button
-                  onClick={goToDocs}
+                  onClick={() => switchChain(currentChain)}
                   className="bg-gradient-to-r from-customPurple to-customBlue py-2 px-4 rounded-md text-white font-medium hover:opacity-90 transition-all"
                 >
-                  Add EDU Chain
+                  Switch to {chainConfig[currentChain].name}
                 </button>
                 <button
                   onClick={() => setShowAlert(false)}
@@ -217,24 +254,34 @@ function Navbar() {
           </Link>
 
           {walletData.address ? (
-            <div className="flex items-center gap-2 bg-gradient-to-r from-customPurple to-customBlue px-4 py-2 rounded-lg text-white font-semibold shadow-md hover:opacity-90 transition-all">
-              <FaWallet className="text-white" />
-              <span>
-                {walletData.address.slice(0, 6)}...
-                {walletData.address.slice(-4)}
-              </span>
-              <button
-                onClick={copyAddress}
-                className="text-white hover:text-customGray"
+            <div className="flex items-center gap-4">
+              <select
+                value={currentChain}
+                onChange={(e) => switchChain(e.target.value)}
+                className="bg-customSemiPurple text-white p-2 rounded-md border border-customPurple hover:bg-customBlue transition-all"
               >
-                <FaCopy title={copied ? "Copied!" : "Copy Address"} />
-              </button>
-              <button
-                onClick={disconnectWallet}
-                className="text-red-300 hover:text-red-500"
-              >
-                <FaSignOutAlt title="Disconnect" />
-              </button>
+                <option value="eduChain">{chainConfig.eduChain.name}</option>
+                <option value="linea">{chainConfig.linea.name}</option>
+              </select>
+              <div className="flex items-center gap-2 bg-gradient-to-r from-customPurple to-customBlue px-4 py-2 rounded-lg text-white font-semibold shadow-md hover:opacity-90 transition-all">
+                <FaWallet className="text-white" />
+                <span>
+                  {walletData.address.slice(0, 6)}...
+                  {walletData.address.slice(-4)}
+                </span>
+                <button
+                  onClick={copyAddress}
+                  className="text-white hover:text-customGray"
+                >
+                  <FaCopy title={copied ? "Copied!" : "Copy Address"} />
+                </button>
+                <button
+                  onClick={disconnectWallet}
+                  className="text-red-300 hover:text-red-500"
+                >
+                  <FaSignOutAlt title="Disconnect" />
+                </button>
+              </div>
             </div>
           ) : (
             <button
@@ -299,24 +346,34 @@ function Navbar() {
             </Link>
 
             {walletData.address ? (
-              <div className="flex items-center gap-2 bg-gradient-to-r from-customPurple to-customBlue px-4 py-2 rounded-lg text-white font-semibold shadow-md hover:opacity-90 transition-all">
-                <FaWallet className="text-white" />
-                <span>
-                  {walletData.address.slice(0, 6)}...
-                  {walletData.address.slice(-4)}
-                </span>
-                <button
-                  onClick={copyAddress}
-                  className="text-white hover:text-customGray"
+              <div className="flex flex-col items-center gap-4">
+                <select
+                  value={currentChain}
+                  onChange={(e) => switchChain(e.target.value)}
+                  className="bg-customSemiPurple text-white p-2 rounded-md border border-customPurple hover:bg-customBlue transition-all"
                 >
-                  <FaCopy title={copied ? "Copied!" : "Copy Address"} />
-                </button>
-                <button
-                  onClick={disconnectWallet}
-                  className="text-red-300 hover:text-red-500"
-                >
-                  <FaSignOutAlt title="Disconnect" />
-                </button>
+                  <option value="eduChain">{chainConfig.eduChain.name}</option>
+                  <option value="linea">{chainConfig.linea.name}</option>
+                </select>
+                <div className="flex items-center gap-2 bg-gradient-to-r from-customPurple to-customBlue px-4 py-2 rounded-lg text-white font-semibold shadow-md hover:opacity-90 transition-all">
+                  <FaWallet className="text-white" />
+                  <span>
+                    {walletData.address.slice(0, 6)}...
+                    {walletData.address.slice(-4)}
+                  </span>
+                  <button
+                    onClick={copyAddress}
+                    className="text-white hover:text-customGray"
+                  >
+                    <FaCopy title={copied ? "Copied!" : "Copy Address"} />
+                  </button>
+                  <button
+                    onClick={disconnectWallet}
+                    className="text-red-300 hover:text-red-500"
+                  >
+                    <FaSignOutAlt title="Disconnect" />
+                  </button>
+                </div>
               </div>
             ) : (
               <button

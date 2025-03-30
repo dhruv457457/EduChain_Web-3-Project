@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import FundTransferWithRegistryABI from "../contracts/FundTransferWithRegistry.json";
+import chainConfig from "../components/chainConfig";
 
-const FUND_TRANSFER_ADDRESS = "0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c";
-
-const useContract = (provider) => {
+const useContract = (provider, currentChain = "eduChain") => {
   const [userAddress, setUserAddress] = useState("");
   const [balance, setBalance] = useState("0");
   const [transactions, setTransactions] = useState([]);
   const [userTransactions, setUserTransactions] = useState([]);
   const [pendingBalance, setPendingBalance] = useState("0");
   const [isLoading, setIsLoading] = useState(false);
+
+  const FUND_TRANSFER_ADDRESS = chainConfig[currentChain].fundTransferAddress;
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -28,7 +29,6 @@ const useContract = (provider) => {
     };
     fetchAccount();
 
-    // Setup event listeners
     const contract = getContract();
     if (contract) {
       contract.then((c) => {
@@ -46,7 +46,7 @@ const useContract = (provider) => {
         });
       };
     }
-  }, [provider]);
+  }, [provider, currentChain]);
 
   const getContract = async (
     contractAddress = FUND_TRANSFER_ADDRESS,
