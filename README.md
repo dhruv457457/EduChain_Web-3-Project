@@ -23,7 +23,7 @@ Core Benefits:
 
 ---
 
-🎯 AIM  
+🎯 AIM:
 🔹 To simplify Web3 transactions using usernames instead of long wallet addresses  
 🔹 To build trust with an on-chain credit score system that reflects transaction reliability  
 🔹 To ensure seamless wallet connectivity via MetaMask SDK on Linea L2  
