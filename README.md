@@ -61,7 +61,9 @@ Similar to traditional credit scores, Cryptify assigns a trust score based on:
 ### 🔹 Why It Matters?  
 - Fraud Prevention – Helps users assess the credibility of other wallet holders  
 - Decentralized Trust Layer – Builds a reputation system in Web3  
-- Transparent & Fair – Scores are publicly verifiable on-chain  
+- Transparent & Fair – Scores are publicly verifiable on-chain
+  
+---
 
 ## 🧠 AI Chatbot – Your Personal Web3 Assistant!
 Need help? Don’t worry—Cryptify’s built-in AI chatbot is here! 🚀
