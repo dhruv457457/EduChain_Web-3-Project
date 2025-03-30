@@ -8,7 +8,7 @@ Cryptify is a next-gen Web3 payment platform that eliminates the need for long w
 🔹 Seamless MetaMask integration 
 🔹 Deployed on Linea L2 for speed & low fees
 
-----
+---
 
 🔹 What is Cryptify?
 Cryptify is designed to simplify and secure Web3 transactions by:
@@ -20,6 +20,8 @@ Core Benefits:
 🚀 Faster & cheaper transactions with Layer-2 scaling (Linea L2)
 🔒 SWC-compliant smart contracts for maximum security
 📱 Cross-platform support for mobile & desktop Web3 interactions
+
+---
 
 🎯 AIM
 🔹 To simplify Web3 transactions using usernames instead of long wallet addresses
