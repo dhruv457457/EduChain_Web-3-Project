@@ -9,7 +9,7 @@ Cryptify is a next-gen Web3 payment platform that eliminates the need for long w
 
 ---
 
-🔹 # What is Cryptify?
+##🔹 What is Cryptify?
 Cryptify is designed to simplify and secure Web3 transactions by:  
 
 - Replacing long, complex wallet addresses with easy-to-use usernames  
