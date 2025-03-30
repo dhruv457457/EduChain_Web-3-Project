@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import FundTransferWithRegistryABI from "../contracts/FundTransferWithRegistry.json";
-import chainConfig from "../components/chainConfig";
 
-const useContract = (provider, currentChain = "eduChain") => {
+const FUND_TRANSFER_ADDRESS = "0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c";
+
+const useContract = (provider) => {
   const [userAddress, setUserAddress] = useState("");
   const [balance, setBalance] = useState("0");
   const [transactions, setTransactions] = useState([]);
   const [userTransactions, setUserTransactions] = useState([]);
   const [pendingBalance, setPendingBalance] = useState("0");
   const [isLoading, setIsLoading] = useState(false);
-
-  const FUND_TRANSFER_ADDRESS = chainConfig[currentChain].fundTransferAddress;
 
   useEffect(() => {
     const fetchAccount = async () => {
@@ -29,6 +28,7 @@ const useContract = (provider, currentChain = "eduChain") => {
     };
     fetchAccount();
 
+    // Setup event listeners
     const contract = getContract();
     if (contract) {
       contract.then((c) => {
@@ -46,7 +46,7 @@ const useContract = (provider, currentChain = "eduChain") => {
         });
       };
     }
-  }, [provider, currentChain]);
+  }, [provider]);
 
   const getContract = async (
     contractAddress = FUND_TRANSFER_ADDRESS,
@@ -155,10 +155,10 @@ const useContract = (provider, currentChain = "eduChain") => {
       const contract = await getContract();
       const amountInWei = ethers.parseEther(amount.toString());
       const tx = await contract.sendFunds(receiverUsername, message, { value: amountInWei });
-      // Do not call tx.wait() here; return the tx object
+      await tx.wait();
       fetchUserTransactions(userAddress);
       fetchPendingBalance(userAddress);
-      return tx; // Return TransactionResponse object
+      return tx.hash;
     } catch (error) {
       console.error("Error sending funds:", error);
       throw error.message || "Failed to send funds";
@@ -174,10 +174,10 @@ const useContract = (provider, currentChain = "eduChain") => {
       const contract = await getContract();
       const amountInWei = ethers.parseEther(amount.toString());
       const tx = await contract.sendFundsToAddress(receiverAddress, message, { value: amountInWei });
-      // Do not call tx.wait() here; return the tx object
+      await tx.wait();
       fetchUserTransactions(userAddress);
       fetchPendingBalance(userAddress);
-      return tx; // Return TransactionResponse object
+      return tx.hash;
     } catch (error) {
       console.error("Error sending funds to address:", error);
       throw error.message || "Failed to send funds to address";
