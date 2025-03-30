@@ -24,10 +24,10 @@ Core Benefits:
 ---
 
 🎯 AIM
-🔹 To simplify Web3 transactions using usernames instead of long wallet addresses
-🔹 To build trust with an on-chain credit score system that reflects transaction reliability
-🔹 To ensure seamless wallet connectivity via MetaMask SDK on Linea L2
-🔹 To maintain top-tier security by complying with SWC security standards
+🔹 To simplify Web3 transactions using usernames instead of long wallet addresses  
+🔹 To build trust with an on-chain credit score system that reflects transaction reliability  
+🔹 To ensure seamless wallet connectivity via MetaMask SDK on Linea L2  
+🔹 To maintain top-tier security by complying with SWC security standards   
 ---
 📜 Project Description
 Cryptify redefines Web3 payments by integrating MetaMask SDK for effortless wallet authentication, deploying smart contracts on Linea L2, and introducing a trust-based credit score system for secure, transparent transactions.
