@@ -6,7 +6,7 @@ import useContract2 from "../hooks/useContract2";
 import ContractIntro from "../components/ContractModule/ContractIntro";
 import CreateContractForm from "../components/ContractModule/CreateContractForm";
 import FetchContractSection from "../components/ContractModule/FetchContractSection";
-import WorkPostSection from "../components/ContractModule/WorkPostSection";
+// import WorkPostSection from "../components/ContractModule/WorkPostSection";
 import { useWallet } from "../components/Global/WalletContext";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
@@ -27,7 +27,7 @@ const Contract = () => {
   const [loading, setLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showFetchForm, setShowFetchForm] = useState(false);
-  const [showWorkPostForm, setShowWorkPostForm] = useState(false);
+   // const [showWorkPostForm, setShowWorkPostForm] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const tourStarted = useRef(false);
@@ -56,11 +56,11 @@ const Contract = () => {
       intro: document.querySelector('[data-driver="contract-intro"]'),
       create: document.querySelector('[data-driver="create-contract"]'),
       fetch: document.querySelector('[data-driver="fetch-contract"]'),
-      workPost: document.querySelector('[data-driver="work-post"]'),
+      // workPost: document.querySelector('[data-driver="work-post"]'),
     };
     console.log("Elements:", elements);
 
-    if (!elements.intro || !elements.create || !elements.fetch || !elements.workPost) {
+    if (!elements.intro || !elements.create || !elements.fetch /* || !elements.workPost */) {
       console.error("❌ One or more elements not found:", elements);
       toast.error("Tour failed: Components not fully loaded.");
       return;
@@ -97,15 +97,15 @@ const Contract = () => {
             align: "center",
           },
         },
-        {
-          element: '[data-driver="work-post"]',
-          popover: {
-            title: "Work Posts 💼",
-            description: "Post work opportunities.",
-            side: "bottom",
-            align: "center",
-          },
-        },
+        // {
+        //   element: '[data-driver="work-post"]',
+        //   popover: {
+        //     title: "Work Posts 💼",
+        //     description: "Post work opportunities.",
+        //     side: "bottom",
+        //     align: "center",
+        //   },
+        // },
         {
           popover: {
             title: "Tour Complete 🎉",
@@ -117,7 +117,7 @@ const Contract = () => {
         console.log("✅ Tour completed.");
         setShowCreateForm(false);
         setShowFetchForm(false);
-        setShowWorkPostForm(false);
+        // setShowWorkPostForm(false);
       },
     });
 
@@ -134,21 +134,21 @@ const Contract = () => {
       console.log("🔧 Setting up tour...");
       setShowCreateForm(true);
       setShowFetchForm(true);
-      setShowWorkPostForm(true);
+      // setShowWorkPostForm(true);
     }
   }, [location.pathname]);
 
   useEffect(() => {
-    if (showCreateForm && showFetchForm && showWorkPostForm && tourStarted.current) {
+    if (showCreateForm && showFetchForm /* && showWorkPostForm */ && tourStarted.current) {
       console.log("⏳ All forms visible, starting tour...");
       setTimeout(() => startTour(), 500); // Small delay to ensure DOM updates
     }
-  }, [showCreateForm, showFetchForm, showWorkPostForm]);
+  }, [showCreateForm, showFetchForm/* , showWorkPostForm */]);
 
   const handleManualTour = () => {
     setShowCreateForm(true);
     setShowFetchForm(true);
-    setShowWorkPostForm(true);
+    // setShowWorkPostForm(true);
     setTimeout(() => startTour(), 500);
   };
 
@@ -177,10 +177,10 @@ const Contract = () => {
           data-driver="contract-intro"
           showCreateForm={showCreateForm}
           showFetchForm={showFetchForm}
-          showWorkPostForm={showWorkPostForm}
+          // showWorkPostForm={showWorkPostForm}
           onToggleCreateForm={() => setShowCreateForm(!showCreateForm)}
           onToggleFetchForm={() => setShowFetchForm(!showFetchForm)}
-          onToggleWorkPostForm={() => setShowWorkPostForm(!showWorkPostForm)}
+          // onToggleWorkPostForm={() => setShowWorkPostForm(!showWorkPostForm)}
         />
 
         {showCreateForm && (
@@ -206,7 +206,7 @@ const Contract = () => {
           />
         )}
 
-        {showWorkPostForm && (
+        {/* {showWorkPostForm && (
           <WorkPostSection
             data-driver="work-post"
             contractHooks={contractHooks}
@@ -214,7 +214,7 @@ const Contract = () => {
             loading={loading}
             setLoading={setLoading}
           />
-        )}
+        )} */}
       </div>
     </motion.div>
   );
