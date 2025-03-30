@@ -125,14 +125,14 @@ npm run dev
 
 Ensure you have MetaMask installed and Linea network added for a smooth experience.
 
-## 📄 License <br>
+## 📄 License
 This project is licensed under the MIT License.
 
 ## 🤝 Contributing
 Contributions are welcome! Feel free to open issues, submit PRs, and help improve Cryptify.
 
 ## 📧 Contact Support
-- For any inquiries, support, or collaboration opportunities, feel free to reach out:
+For any inquiries, support, or collaboration opportunities, feel free to reach out:
 
 ## 📧 Email Support:
 
@@ -140,11 +140,9 @@ Contributions are welcome! Feel free to open issues, submit PRs, and help improv
 
 - gjain0229@gmail.com
 
-## 🐦 Follow us on X (Twitter): 
-- [@Cryptify](https://x.com/CryptifySecure)
+## 🐦 Follow us on X (Twitter): [@Cryptify](https://x.com/CryptifySecure)
 
-##🌎 Website: 
-- [Cryptify](https://cryptify-defi.vercel.app/)
+##🌎 Website: [Cryptify](https://cryptify-defi.vercel.app/)
 
 🚀 Join our Web3 revolution!
 
