@@ -81,11 +81,11 @@ function Docs() {
             </div>
           </>
         );
-      case "Adding EDU Chain":
+     
         return (
           <>
             <h1 className="text-2xl md:text-3xl font-bold mb-4">
-              Adding EDU Chain
+              Adding Chain
             </h1>
             <p className="text-gray-300 mb-8">
               To add OpenCampus Codex Sepolia Testnet to your MetaMask wallet,
@@ -295,13 +295,13 @@ function Docs() {
               className="text-purple-500 p-1 rounded-md border-b-2 border-purple-500"
             />
             <h1 className="font-bold text-lg lg:text-xl text-white">
-              EDU Chain Docs
+              Cryptify Docs
             </h1>
           </div>
           <div className="flex lg:flex-col items-start w-full gap-2 text-white">
             {[
               "Installing MetaMask",
-              "Adding EDU Chain",
+             
               "Getting Test Tokens",
               "Making Transactions",
               "Register as User",
