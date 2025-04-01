@@ -8,6 +8,7 @@ import { useWallet } from "../components/Global/WalletContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import Loader from "../components/Global/Loader";
 
 const Transfer = () => {
   const { walletData } = useWallet();
@@ -25,11 +26,24 @@ const Transfer = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isTransactionsLoaded, setIsTransactionsLoaded] = useState(false); // New state
 
   useEffect(() => {
-    if (walletData?.address) {
-      fetchTransactions();
-    }
+    const loadTransactions = async () => {
+      if (walletData?.address) {
+        try {
+          await fetchTransactions();
+          setIsTransactionsLoaded(true);
+        } catch (error) {
+          console.error("Error loading transactions:", error);
+          toast.error("Failed to load transactions!");
+          setIsTransactionsLoaded(true); // Still set to true to prevent infinite loading
+        }
+      } else {
+        setIsTransactionsLoaded(true); // If no wallet, mark as loaded
+      }
+    };
+    loadTransactions();
   }, [walletData?.address, fetchTransactions]);
 
   const validateInputs = () => {
@@ -92,7 +106,9 @@ const Transfer = () => {
   };
 
   useEffect(() => {
-    const shouldStartTransactionTour = localStorage.getItem("startTransactionTour");
+    const shouldStartTransactionTour = localStorage.getItem(
+      "startTransactionTour"
+    );
     if (shouldStartTransactionTour === "true") {
       localStorage.removeItem("startTransactionTour");
 
@@ -108,7 +124,8 @@ const Transfer = () => {
             element: '[data-driver="transfer-form"]',
             popover: {
               title: "Transfer Funds Form 📝",
-              description: "Fill in the recipient, amount, and message to send funds.",
+              description:
+                "Fill in the recipient, amount, and message to send funds.",
               position: "bottom",
             },
           },
@@ -122,7 +139,9 @@ const Transfer = () => {
           },
         ],
         onDestroyed: () => {
-          console.log("Transaction tour finished, navigating to contract page...");
+          console.log(
+            "Transaction tour finished, navigating to contract page..."
+          );
           localStorage.setItem("startContractTour", "true");
           setTimeout(() => navigate("/contract"), 100);
         },
@@ -131,6 +150,11 @@ const Transfer = () => {
       setTimeout(() => transactionTour.drive(), 1000);
     }
   }, [navigate, location.pathname]);
+
+  // Show loader if transactions aren't loaded yet or during a transfer
+  if (!isTransactionsLoaded || loading) {
+    return <Loader />;
+  }
 
   return (
     <>
