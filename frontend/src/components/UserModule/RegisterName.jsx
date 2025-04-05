@@ -25,7 +25,7 @@ const RegisterName = ({ setGlobalRegisteredName, provider }) => {
   );
 
   return (
-    <div className="border-t-4 border-customPurple rounded-md px-6 py-8 bg-customDark shadow-custom-purple text-white">
+    <div className="rounded-md px-6 py-8 bg-customDark shadow-custom-purple text-white">
       <h2 className="text-xl font-semibold">User Name</h2>
       {isRegistered ? (
         <p className="mt-3 text-green-400">✅ Registered Name: {username}</p>

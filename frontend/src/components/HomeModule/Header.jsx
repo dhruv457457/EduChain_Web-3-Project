@@ -3,11 +3,19 @@ import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
 import ParticleBackground from "./ParticleBackground";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import { toast } from "react-toastify";
+import { useWallet } from "../Global/WalletContext";
+
 
 function Header() {
   const navigate = useNavigate(); // ✅ Initialize navigate
+  const { walletData } = useWallet();
 
   const startTour = () => {
+    if (!walletData?.address) {
+      toast.warning("⚠️ Please connect your wallet to start the tour.");
+      return;
+    }
     const tour = new driver({
       showProgress: true,
       showButtons: true,
@@ -24,13 +32,12 @@ function Header() {
             position: "bottom",
           },
         },
-    
+
         {
           element: '[data-driver="step3"]',
           popover: {
             title: "Connect with us on Twitter",
-            description:
-              "Enjoy our content on twitter",
+            description: "Enjoy our content on twitter",
             position: "bottom",
           },
         },
@@ -60,9 +67,7 @@ function Header() {
         >
           Secure DEFI
         </h1>
-        <p
-          className="text-slate-400 font-semibold text-lg md:text-xl lg:text-xl w-full md:w-3/4 lg:w-1/2 py-4"
-        >
+        <p className="text-slate-400 font-semibold text-lg md:text-xl lg:text-xl w-full md:w-3/4 lg:w-1/2 py-4">
           Experience next-generation secure transfers, group payments, and smart
           savings features with unmatched security and seamless user experience.
         </p>

@@ -87,7 +87,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 w-full z-50 backdrop-blur-md bg-customDarkpurple/80 border-b border-customPurple shadow-custom-purple px-6 py-3 flex justify-between items-center">
+    <nav className="fixed top-0 w-full h-16 z-50 backdrop-blur-md bg-customDarkpurple/80 border-b border-customPurple shadow-custom-purple px-6 py-3 flex justify-between items-center">
       {/* Brand */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
@@ -115,7 +115,7 @@ const Navbar = () => {
 
         {/* Wallet Buttons */}
         {walletData.address ? (
-          <div className="flex items-center gap-2 px-4 py-1 rounded-full text-sm shadow-md border border-customPurple bg-gradient-to-r from-customPurple to-customBlue">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-md text-sm shadow-md border border-customPurple bg-gradient-to-r from-customPurple to-customBlue">
             <FaWallet />
             <span className="font-mono">{walletData.address.slice(0, 6)}...{walletData.address.slice(-4)}</span>
             <button onClick={copyAddress} title="Copy Address">

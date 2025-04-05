@@ -7,7 +7,7 @@ import UserContracts from "./UserContracts";
 import { useWallet } from "../Global/WalletContext";
 import useContract2 from "../../hooks/useContract2";
 import useUsernameRegistry from "../../hooks/useUsernameRegistry";
-import LoaderButton from "../Global/LoaderButton";
+import LoaderButton from "../Global/Loader";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 

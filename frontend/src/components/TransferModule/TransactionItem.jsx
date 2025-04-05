@@ -3,7 +3,7 @@ import LoaderButton from "../Global/LoaderButton";
 
 const TransactionItem = ({ tx, userAddress, pending, loading }) => {
   return (
-    <div className="p-2 mt-3 text-white bg-customInput border-y-2 border-customPurple rounded-md w-auto flex flex-col items-start">
+    <div className="p-2 mt-3 text-white border border-gray-700 bg-gray-800 rounded-md w-auto flex flex-col items-start">
       <p><strong>Sender:</strong> {tx.sender}</p>
       <p><strong>Receiver:</strong> {tx.receiver}</p>
       <p><strong>Amount:</strong> {tx.amount} ETH</p> {/* Remove Number(tx.amount) / 10 ** 18 */}

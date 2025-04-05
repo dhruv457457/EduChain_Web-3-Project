@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useContract from "../../hooks/useContract";
-import LoaderButton from "../Global/LoaderButton"; // Updated import
+import LoaderButton from "../Global/Loader"; 
 
 const UserTransactions = ({ provider }) => {
   const { userTransactions, fetchUserTransactions, userAddress } = useContract(provider);
@@ -22,16 +22,15 @@ const UserTransactions = ({ provider }) => {
     loadTransactions();
   }, [userAddress, fetchUserTransactions]);
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-32">
-      <LoaderButton loading={true} text="Loading Transactions" />
-    </div>
-  );
 
   return (
-    <div className="border-t-4 border-customPurple rounded-md bg-customDark p-5 shadow-custom-purple text-white max-h-64 overflow-y-auto custom-scrollbar">
+    <div className="rounded-md bg-customDark p-5 shadow-custom-purple text-white max-h-64 overflow-y-auto custom-scrollbar">
       <h2 className="text-xl font-semibold mb-4">Your Transactions</h2>
-      {error ? (
+      {loading ? (
+        <div className="flex justify-center items-center h-24">
+          <LoaderButton loading={true} text="Loading Transactions" />
+        </div>
+      ) : error ? (
         <p className="text-red-400">{error}</p>
       ) : userTransactions.length === 0 ? (
         <p className="text-gray-400">No transactions found.</p>

@@ -1,35 +1,45 @@
 import React, { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { useWallet } from "../components/Global/WalletContext";
 import UserDashboard from "../components/UserModule/UserDashboard";
-import LoaderButton from "../components/Global/LoaderButton"; // Updated import
+import LoaderButton from "../components/Global/Loader";
+import { useNavigate } from "react-router-dom";
 
 const User = () => {
   const { walletData } = useWallet();
   const [isReady, setIsReady] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let timeout;
-    if (walletData?.provider) {
-      timeout = setTimeout(() => {
-        setIsReady(true);
-      }, 200);
+
+    if (!walletData?.provider) {
+      toast.error(
+        "⚠️ Please connect your wallet to access the user dashboard."
+      );
+
+      // ⏳ Wait for 2 seconds before redirecting
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+
+      return;
     }
 
+    timeout = setTimeout(() => {
+      setIsReady(true);
+    }, 200);
+
     return () => clearTimeout(timeout);
-  }, [walletData]);
+  }, [walletData, navigate]);
 
   return (
     <>
       <ToastContainer position="top-right" autoClose={5000} />
       {!isReady ? (
         <div className="flex justify-center items-center h-screen">
-      
+          <LoaderButton />
         </div>
-      ) : !walletData?.provider ? (
-        <p className="text-red-400 text-center mt-20 text-lg">
-          ❌ Please connect your wallet to access your profile.
-        </p>
       ) : (
         <UserDashboard />
       )}

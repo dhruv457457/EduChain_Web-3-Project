@@ -14,7 +14,7 @@ const UserBalance = ({ registeredName, provider }) => {
   );
 
   return (
-    <div className="bg-customDark border-y-4 border-customPurple rounded-md text-white p-5 shadow-custom-purple">
+    <div className="bg-customDark rounded-md text-white p-5 shadow-custom-purple">
       <p className="text-md lg:text-xl font-semibold mt-3">Wallet Address:</p>
       <p className="text-sm lg:text-lg break-all text-gray-300">{userAddress || "Not connected"}</p>
       <p className="text-md lg:text-xl font-semibold mt-3">ETH Balance:</p>
