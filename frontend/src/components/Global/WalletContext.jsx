@@ -21,7 +21,9 @@ export const WalletProvider = ({ children }) => {
         const accounts = await ethProvider.send("eth_accounts", []);
         if (accounts.length > 0) {
           setWalletData({ address: accounts[0], provider: ethProvider });
-          // console.log("Wallet initialized:", { address: accounts[0], provider: ethProvider });
+          console.log("✅ Wallet initialized with address:", accounts[0]);
+        } else {
+          console.log("❌ No connected accounts found.");
         }
       } catch (err) {
         console.error("WalletProvider initialization failed:", err);
@@ -29,6 +31,7 @@ export const WalletProvider = ({ children }) => {
     };
     initializeProvider();
   }, []);
+  
 
   return (
     <WalletContext.Provider value={{ walletData, setWalletData }}>

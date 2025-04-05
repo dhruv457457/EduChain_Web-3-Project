@@ -1,47 +1,65 @@
 module.exports = {
-  content: ['./src/**/*.{js,jsx,ts,tsx}'], // Specifies files for Tailwind to scan
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
-      // Box Shadow Customization
       boxShadow: {
-        'custom-purple': '0px 4px 50px rgba(175, 52, 255, 0.25)', // Existing custom shadow
-        'md-purple': '0px 4px 20px rgba(175, 52, 255, 0.15)', // Added for subtler effects
-        'navbar': '0px 2px 10px rgba(0, 0, 0, 0.5)', // For Navbar depth
+        'custom-purple': '0px 4px 50px rgba(175, 52, 255, 0.25)',
+        'md-purple': '0px 4px 20px rgba(175, 52, 255, 0.15)',
+        'navbar': '0px 2px 10px rgba(0, 0, 0, 0.5)',
+        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.2)', // glassmorphism
+        'soft': '0px 4px 20px rgba(255, 255, 255, 0.05)', // soft white glow
       },
-      // Text Shadow Customization
       textShadow: {
-        'custom': '0px 4px 50px rgba(175, 52, 255, 0.25)', // Existing shadow
-        'sm': '0px 2px 4px rgba(175, 52, 255, 0.2)', // Added for smaller text effects
+        'custom': '0px 4px 50px rgba(175, 52, 255, 0.25)',
+        'sm': '0px 2px 4px rgba(175, 52, 255, 0.2)',
+        'glow': '0px 0px 6px rgba(175, 52, 255, 0.4)',
       },
-      // Colors Customization
       colors: {
-        customDarkpurple: "#0E0618", // Dark background (Navbar)
-        customLightPurple: "#800080", // Light purple accent
-        customSemiPurple: "#1D0A2D", // Semi-dark purple (e.g., mobile menu)
-        customPurple: "#AF34FF", // Primary purple (gradients, buttons)
-        customBlue: "#6496FF", // Primary blue (gradients, links)
-        customBlue2: "#4C8FF5", // Secondary blue (hover states)
-        customInput: "#23053B", // Input fields
-        customDark: "#11021D", // Darker shade for contrast
-        customGray: "#D1D5DB", // Added for text (e.g., alert dismiss button)
+        customDarkpurple: "#0E0618",
+        customLightPurple: "#800080",
+        customSemiPurple: "#1D0A2D",
+        customPurple: "#AF34FF",
+        customBlue: "#6496FF",
+        customBlue2: "#4C8FF5",
+        customInput: "#23053B",
+        customDark: "#11021D",
+        customGray: "#D1D5DB",
+        customNeonGreen: "#39FF14",
+        customNeonPink: "#FF44CC",
       },
-      // Font Family Customization
       fontFamily: {
-        poppins: ["Poppins", "sans-serif"], // Primary font
+        poppins: ["Poppins", "sans-serif"],
+        orbitron: ["Orbitron", "sans-serif"], // futuristic
       },
-      // Animation for fade-in effect (used in alert)
       animation: {
         fadeIn: 'fadeIn 0.5s ease-in-out',
+        slideUp: 'slideUp 0.6s ease-out',
+        zoomIn: 'zoomIn 0.5s ease-in-out',
+        underlineGrow: 'underlineGrow 0.4s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0', transform: 'translateY(-10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        slideUp: {
+          '0%': { opacity: 0, transform: 'translateY(40px)' },
+          '100%': { opacity: 1, transform: 'translateY(0)' },
+        },
+        zoomIn: {
+          '0%': { opacity: 0, transform: 'scale(0.9)' },
+          '100%': { opacity: 1, transform: 'scale(1)' },
+        },
+        underlineGrow: {
+          '0%': { width: '0%' },
+          '100%': { width: '100%' },
+        },
       },
     },
   },
   plugins: [
-    require('tailwindcss-textshadow'), // Text shadow plugin
+    require('tailwindcss-textshadow'),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
   ],
 };

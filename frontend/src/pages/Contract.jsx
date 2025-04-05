@@ -27,7 +27,7 @@ const Contract = () => {
   const [loading, setLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showFetchForm, setShowFetchForm] = useState(false);
-   // const [showWorkPostForm, setShowWorkPostForm] = useState(false);
+  const [showWorkPostForm, setShowWorkPostForm] = useState(false); // optional
   const navigate = useNavigate();
   const location = useLocation();
   const tourStarted = useRef(false);
@@ -58,9 +58,8 @@ const Contract = () => {
       fetch: document.querySelector('[data-driver="fetch-contract"]'),
       // workPost: document.querySelector('[data-driver="work-post"]'),
     };
-    console.log("Elements:", elements);
 
-    if (!elements.intro || !elements.create || !elements.fetch /* || !elements.workPost */) {
+    if (!elements.intro || !elements.create || !elements.fetch) {
       console.error("❌ One or more elements not found:", elements);
       toast.error("Tour failed: Components not fully loaded.");
       return;
@@ -97,15 +96,6 @@ const Contract = () => {
             align: "center",
           },
         },
-        // {
-        //   element: '[data-driver="work-post"]',
-        //   popover: {
-        //     title: "Work Posts 💼",
-        //     description: "Post work opportunities.",
-        //     side: "bottom",
-        //     align: "center",
-        //   },
-        // },
         {
           popover: {
             title: "Tour Complete 🎉",
@@ -117,7 +107,6 @@ const Contract = () => {
         console.log("✅ Tour completed.");
         setShowCreateForm(false);
         setShowFetchForm(false);
-        // setShowWorkPostForm(false);
       },
     });
 
@@ -134,21 +123,19 @@ const Contract = () => {
       console.log("🔧 Setting up tour...");
       setShowCreateForm(true);
       setShowFetchForm(true);
-      // setShowWorkPostForm(true);
     }
   }, [location.pathname]);
 
   useEffect(() => {
-    if (showCreateForm && showFetchForm /* && showWorkPostForm */ && tourStarted.current) {
+    if (showCreateForm && showFetchForm && tourStarted.current) {
       console.log("⏳ All forms visible, starting tour...");
-      setTimeout(() => startTour(), 500); // Small delay to ensure DOM updates
+      setTimeout(() => startTour(), 500);
     }
-  }, [showCreateForm, showFetchForm/* , showWorkPostForm */]);
+  }, [showCreateForm, showFetchForm]);
 
   const handleManualTour = () => {
     setShowCreateForm(true);
     setShowFetchForm(true);
-    // setShowWorkPostForm(true);
     setTimeout(() => startTour(), 500);
   };
 
@@ -161,26 +148,17 @@ const Contract = () => {
       className="bg-customSemiPurple min-h-screen text-white"
     >
       <ToastContainer position="top-right" autoClose={5000} />
-      <div className="container mx-auto px-4 py-10 pt-32">
-        <h1 className="text-4xl font-extrabold mb-8 text-center">
-          Milestone-Based Contracts & Work Posts
-        </h1>
-
-        <button
-          onClick={handleManualTour}
-          className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md mb-4"
-        >
-          Start Tour Manually
-        </button>
+      <div className="max-w-6xl mx-auto px-6 py-20 pt-32 space-y-10">
 
         <ContractIntro
           data-driver="contract-intro"
           showCreateForm={showCreateForm}
           showFetchForm={showFetchForm}
-          // showWorkPostForm={showWorkPostForm}
+          showWorkPostForm={showWorkPostForm}
           onToggleCreateForm={() => setShowCreateForm(!showCreateForm)}
           onToggleFetchForm={() => setShowFetchForm(!showFetchForm)}
-          // onToggleWorkPostForm={() => setShowWorkPostForm(!showWorkPostForm)}
+          onToggleWorkPostForm={() => setShowWorkPostForm(!showWorkPostForm)}
+          onStartTour={handleManualTour}
         />
 
         {showCreateForm && (
@@ -206,6 +184,7 @@ const Contract = () => {
           />
         )}
 
+        {/* Uncomment this later if needed */}
         {/* {showWorkPostForm && (
           <WorkPostSection
             data-driver="work-post"

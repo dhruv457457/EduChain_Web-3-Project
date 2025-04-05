@@ -14,10 +14,9 @@ module.exports = {
   },
   networks: {
     hardhat: {}, // ✅ Local Hardhat network
-    linea_sepolia: {
-      url: `https://linea-sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`, // ✅ Linea Sepolia Testnet RPC
+    educhain: {
+      url: process.env.EDUCHAIN_RPC_URL, // ✅ Use EduChain RPC from .env
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [], // ✅ Load private key securely
-      chainId: 59141, // ✅ Linea Sepolia Testnet Chain ID
     },
   },
 };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import ContractCreatedModal from "./ContractCreatedModal";
+import { motion } from "framer-motion";
 
 const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
   const [formData, setFormData] = useState({
@@ -47,12 +48,21 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
 
   return (
     <>
-      <div data-driver="create-contract" className="bg-customDark p-6 rounded-lg mb-8">
-        <h2 className="text-2xl font-bold mb-6">Create New Contract</h2>
-        <form onSubmit={handleCreateContract} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <motion.div
+        data-driver="create-contract"
+        className="bg-customDark p-6 rounded-lg mb-8"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-2xl font-bold mb-6 text-white">Create New Contract</h2>
+        <form
+          onSubmit={handleCreateContract}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gradient-to-br from-customDark to-customInput p-6 rounded-xl shadow-md"
+        >
           {Object.entries(formData).map(([key, value]) => (
-            <div key={key} className="mb-4">
-              <label className="block text-sm font-medium mb-2 capitalize">
+            <div key={key} className="flex flex-col">
+              <label className="mb-1 text-sm font-semibold text-gray-300 capitalize">
                 {key === "receiverUsername" ? "Receiver Username" : key}
               </label>
               {key === "description" ? (
@@ -60,7 +70,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
                   name={key}
                   value={value}
                   onChange={handleChange}
-                  className="w-full bg-gray-100 p-3 rounded-md text-gray-800"
+                  className="bg-white text-gray-800 p-3 rounded-md shadow-sm focus:ring-2 focus:ring-purple-500 outline-none"
                   rows="3"
                   required
                 />
@@ -70,7 +80,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
                   name={key}
                   value={value}
                   onChange={handleChange}
-                  className="w-full bg-gray-100 p-3 rounded-md text-gray-800"
+                  className="bg-white text-gray-800 p-3 rounded-md shadow-sm focus:ring-2 focus:ring-purple-500 outline-none"
                   required
                 />
               )}
@@ -78,13 +88,13 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
           ))}
           <button
             type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-md mt-4"
+            className="w-full col-span-1 md:col-span-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 rounded-lg font-semibold shadow-md transition disabled:opacity-60 disabled:cursor-not-allowed mt-4"
             disabled={loading}
           >
             {loading ? "Creating..." : "Create Contract"}
           </button>
         </form>
-      </div>
+      </motion.div>
 
       {createdContractId && (
         <ContractCreatedModal

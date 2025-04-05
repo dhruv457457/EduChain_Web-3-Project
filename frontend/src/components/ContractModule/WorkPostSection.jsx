@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import LoaderButton from "../components/Global/LoaderButton"; // Add this import
 
 const WorkPostSection = ({ contractHooks, currentAccount, loading, setLoading }) => {
   const [postData, setPostData] = useState({
@@ -103,13 +104,12 @@ const WorkPostSection = ({ contractHooks, currentAccount, loading, setLoading })
               )}
             </div>
           ))}
-          <button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-md mt-4"
-            disabled={loading}
-          >
-            {loading ? "Creating..." : "Create Work Post"}
-          </button>
+          <LoaderButton
+            onClick={handleCreateWorkPost}
+            loading={loading}
+            text="Create Work Post"
+            color="green"
+          />
         </form>
       </div>
 
@@ -139,13 +139,12 @@ const WorkPostSection = ({ contractHooks, currentAccount, loading, setLoading })
               required
             />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md mt-4"
-            disabled={loading}
-          >
-            {loading ? "Submitting..." : "Submit Proposal"}
-          </button>
+          <LoaderButton
+            onClick={handleSubmitProposal}
+            loading={loading}
+            text="Submit Proposal"
+            color="blue"
+          />
         </form>
       </div>
 
@@ -186,13 +185,12 @@ const WorkPostSection = ({ contractHooks, currentAccount, loading, setLoading })
               required
             />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-md mt-4"
-            disabled={loading}
-          >
-            {loading ? "Accepting..." : "Accept Proposal"}
-          </button>
+          <LoaderButton
+            onClick={handleAcceptProposal}
+            loading={loading}
+            text="Accept Proposal"
+            color="purple"
+          />
         </form>
       </div>
     </div>

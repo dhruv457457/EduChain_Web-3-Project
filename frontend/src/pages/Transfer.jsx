@@ -8,7 +8,7 @@ import { useWallet } from "../components/Global/WalletContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import Loader from "../components/Global/Loader";
+import LoaderButton from "../components/Global/LoaderButton"; // Updated import
 
 const Transfer = () => {
   const { walletData } = useWallet();
@@ -26,7 +26,7 @@ const Transfer = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const [isTransactionsLoaded, setIsTransactionsLoaded] = useState(false); // New state
+  const [isTransactionsLoaded, setIsTransactionsLoaded] = useState(false);
 
   useEffect(() => {
     const loadTransactions = async () => {
@@ -152,9 +152,7 @@ const Transfer = () => {
   }, [navigate, location.pathname]);
 
   // Show loader if transactions aren't loaded yet or during a transfer
-  if (!isTransactionsLoaded || loading) {
-    return <Loader />;
-  }
+ 
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import UserBalance from "./UserBalance";
 import RegisterName from "./RegisterName";
@@ -7,36 +7,47 @@ import UserContracts from "./UserContracts";
 import { useWallet } from "../Global/WalletContext";
 import useContract2 from "../../hooks/useContract2";
 import useUsernameRegistry from "../../hooks/useUsernameRegistry";
+import LoaderButton from "../Global/LoaderButton";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
 const UserDashboard = () => {
   const { walletData } = useWallet();
-  const { username, isRegistered } = useUsernameRegistry(walletData?.provider);
-  const [registeredName, setRegisteredName] = useState(null);
-  const swc = useContract2(walletData?.provider);
   const navigate = useNavigate();
 
+  const { username, isRegistered } = useUsernameRegistry(walletData?.provider);
+  const swc = useContract2(walletData?.provider);
+
+  const [registeredName, setRegisteredName] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const reputation = swc.reputation || "500";
+
+  const isHookInitialized = useMemo(() => swc?.contract && swc?.signer, [swc]);
+
   useEffect(() => {
-    console.log("UserDashboard walletData:", walletData); // Debug
+    if (!walletData?.provider) {
+      setError("Wallet not connected.");
+      setLoading(false);
+      return;
+    }
+
+    if (isHookInitialized) {
+      setLoading(false);
+    }
+  }, [walletData, isHookInitialized]);
+
+  useEffect(() => {
     if (isRegistered && username) {
       setRegisteredName(username);
     }
-  }, [isRegistered, username, walletData]);
-
-  if (!walletData?.provider) {
-    return (
-      <p className="text-red-400 text-center mt-10">
-        Please connect your wallet.
-      </p>
-    );
-  }
+  }, [isRegistered, username]);
 
   useEffect(() => {
     const shouldStartTour = localStorage.getItem("startUserTour");
 
     if (shouldStartTour === "true") {
-      localStorage.removeItem("startUserTour"); // ✅ Remove only after confirmation
+      localStorage.removeItem("startUserTour");
 
       const profileTour = new driver({
         showProgress: true,
@@ -48,55 +59,54 @@ const UserDashboard = () => {
         steps: [
           {
             element: '[data-driver="user-balance"]',
-            popover: {
-              title: "Your Balance 💰",
-              description: "View your total balance and earnings here.",
-              position: "bottom",
-            },
+            popover: { title: "Your Balance 💰", description: "View your total balance and earnings here.", position: "bottom" },
           },
           {
             element: '[data-driver="register-name"]',
-            popover: {
-              title: "Register Your Name 🏷️",
-              description: "Set up a unique username for transactions.",
-              position: "bottom",
-            },
+            popover: { title: "Register Your Name 🏷️", description: "Set up a unique username for transactions.", position: "bottom" },
           },
           {
             element: '[data-driver="user-transactions"]',
-            popover: {
-              title: "Transaction History 📜",
-              description: "Check all your past transactions here.",
-              position: "bottom",
-            },
+            popover: { title: "Transaction History 📜", description: "Check all your past transactions here.", position: "bottom" },
           },
           {
             element: '[data-driver="user-contracts"]',
-            popover: {
-              title: "Your Contracts 📄",
-              description: "Manage your smart contracts easily.",
-              position: "bottom",
-            },
-          },
-          {
-            element: '[data-driver="transfer-button"]',
-            popover: {
-              title: "Transfer Funds 🔁",
-              description: "Click here to transfer funds securely.",
-              position: "bottom",
-            },
+            popover: { title: "Your Contracts 📄", description: "Manage your smart contracts easily.", position: "bottom" },
           },
         ],
         onDestroyed: () => {
-          console.log("Tour finished, navigating to transfer page...");
-          localStorage.setItem("startTransactionTour", "true"); // ✅ Only set transaction tour flag
+          localStorage.setItem("startTransactionTour", "true");
           setTimeout(() => navigate("/transfer"), 100);
         },
       });
 
-      setTimeout(() => profileTour.drive(), 500); // ✅ Ensure the tour starts after rendering
+      setTimeout(() => profileTour.drive(), 400);
     }
   }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <LoaderButton loading={true} text="Initializing Dashboard" />
+      </div>
+    );
+  }
+
+  if (error || !walletData?.provider) {
+    return (
+      <div className="text-center mt-10">
+        <p className="text-red-400 text-lg font-medium">
+          ❌ {error || "Wallet not connected. Please connect your wallet to continue."}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-customSemiPurple min-h-screen flex flex-col items-center justify-center px-6 py-12">
@@ -108,7 +118,7 @@ const UserDashboard = () => {
           Manage your profile and view your activity across Cryptify
         </p>
         <p className="text-slate-400 font-medium text-lg md:text-xl mt-2">
-          Reputation Score: {swc.reputation}
+          Reputation Score: {reputation}
         </p>
       </div>
 
@@ -117,7 +127,7 @@ const UserDashboard = () => {
           <UserBalance
             registeredName={registeredName}
             provider={walletData?.provider}
-            reputation={swc.reputation}
+            reputation={reputation}
           />
           <div data-driver="register-name">
             <RegisterName

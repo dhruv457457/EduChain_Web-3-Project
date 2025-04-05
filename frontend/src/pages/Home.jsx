@@ -1,4 +1,5 @@
-import React, { useRef, memo } from "react";
+// ✅ REFINED PAGE ENTRY ANIMATION WITH SLIDE-IN AND OPACITY
+import React, { memo } from "react";
 import { motion } from "framer-motion";
 import Header from "../components/HomeModule/Header";
 import Cards from "../components/HomeModule/Cards";
@@ -8,41 +9,53 @@ import LogoCloud from "../components/HomeModule/LogoCloud";
 import CommitmentStepsSection from "../components/HomeModule/CommitmentStepsSection";
 import Chatbot from "../components/Global/Chatbot";
 
-// Animation variants for page transitions
+// Slide-in + fade animation for better perceived performance
 const pageVariants = {
   initial: { opacity: 0, y: 50 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
-  exit: { opacity: 0, y: -50, transition: { duration: 0.3, ease: "easeIn" } },
-};
-
-// Card animation variants
-const cardContainerVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
+  animate: {
     opacity: 1,
     y: 0,
-    transition: { staggerChildren: 0.2 },
+    transition: {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1], // easeOutExpo feel
+    },
+  },
+  exit: { opacity: 0, y: 20, transition: { duration: 0.3 } },
+};
+
+const cardContainerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2,
+      ease: "easeOut",
+    },
   },
 };
 
 const cardItemVariants = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1 },
+  hidden: { opacity: 0, y: 30, scale: 0.96 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
 };
 
-// Memoized Feature Card Component to prevent unnecessary re-renders
 const FeatureCard = memo(({ title, description, icon }) => (
   <motion.div variants={cardItemVariants}>
     <Cards title={title} description={description} icon={icon} />
   </motion.div>
 ));
 
-// Feature data for cleaner separation
 const features = [
   {
     title: "Secure Transfers",
-    description:
-      "Encrypted transfers with multi-signature protection and real-time tracking.",
+    description: "Encrypted transfers with multi-signature protection and real-time tracking.",
     icon: (
       <div className="p-3 rounded-md border-b-4 border-green-500">
         <FaShieldAlt className="text-green-500" size={30} />
@@ -51,8 +64,7 @@ const features = [
   },
   {
     title: "Smart Work Commitment",
-    description:
-      "Escrow-based payments released only when commitments are met.",
+    description: "Escrow-based payments released only when commitments are met.",
     icon: (
       <div className="p-3 rounded-md border-b-4 border-yellow-500">
         <FaHandshake className="text-yellow-500" size={30} />
@@ -71,8 +83,6 @@ const features = [
 ];
 
 function Home() {
- 
-
   return (
     <motion.div
       variants={pageVariants}
@@ -84,13 +94,13 @@ function Home() {
       <Header />
 
       {/* Features Section */}
-      <section className="w-full px-4" >
+      <section className="w-full px-4">
         <div className="flex flex-col items-center text-center mx-4">
           <motion.h1
             className="text-customPurple text-3xl md:text-4xl lg:text-5xl font-bold"
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
           >
             Revolutionary Features
           </motion.h1>
