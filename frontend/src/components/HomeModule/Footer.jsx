@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <>
       <hr />
-      <div className="bg-customSemiPurple py-10 px-6 text-white">
+      <div className="bg-customDarkpurple py-10 px-6 text-white">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left">
       
           <div className="mb-6 md:mb-0">

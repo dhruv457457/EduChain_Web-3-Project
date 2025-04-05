@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import useContract2 from "../hooks/useContract2";
@@ -11,12 +10,6 @@ import { useWallet } from "../components/Global/WalletContext";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { useNavigate, useLocation } from "react-router-dom";
-
-const pageVariants = {
-  initial: { opacity: 0, y: 50 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
-  exit: { opacity: 0, y: -50, transition: { duration: 0.3, ease: "easeIn" } },
-};
 
 const Contract = () => {
   const { walletData } = useWallet();
@@ -140,52 +133,46 @@ const Contract = () => {
   };
 
   return (
-    <motion.div
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      className="bg-customSemiPurple min-h-screen text-white"
-    >
-      <ToastContainer position="top-right" autoClose={5000} />
-      <div className="max-w-6xl mx-auto px-6 py-20 pt-32 space-y-10">
-
-        <ContractIntro
-          data-driver="contract-intro"
-          showCreateForm={showCreateForm}
-          showFetchForm={showFetchForm}
-          showWorkPostForm={showWorkPostForm}
-          onToggleCreateForm={() => setShowCreateForm(!showCreateForm)}
-          onToggleFetchForm={() => setShowFetchForm(!showFetchForm)}
-          onToggleWorkPostForm={() => setShowWorkPostForm(!showWorkPostForm)}
-          onStartTour={handleManualTour}
-        />
-
-        {showCreateForm && (
-          <CreateContractForm
-            data-driver="create-contract"
-            contractHooks={contractHooks}
-            loading={loading}
-            setLoading={setLoading}
+    <>
+      <div className="bg-customInput min-h-screen text-white">
+        <ToastContainer position="top-right" autoClose={5000} />
+        <div className="max-w-6xl mx-auto px-6 py-20 pt-32 space-y-10 ">
+          <ContractIntro
+            data-driver="contract-intro"
+            showCreateForm={showCreateForm}
+            showFetchForm={showFetchForm}
+            showWorkPostForm={showWorkPostForm}
+            onToggleCreateForm={() => setShowCreateForm(!showCreateForm)}
+            onToggleFetchForm={() => setShowFetchForm(!showFetchForm)}
+            onToggleWorkPostForm={() => setShowWorkPostForm(!showWorkPostForm)}
+            onStartTour={handleManualTour}
           />
-        )}
 
-        {showFetchForm && (
-          <FetchContractSection
-            data-driver="fetch-contract"
-            contractId={contractId}
-            setContractId={setContractId}
-            contractDetails={contractDetails}
-            milestones={milestones}
-            currentAccount={walletData?.address}
-            loading={loading}
-            handleGetContractDetails={handleGetContractDetails}
-            contractHooks={contractHooks}
-          />
-        )}
+          {showCreateForm && (
+            <CreateContractForm
+              data-driver="create-contract"
+              contractHooks={contractHooks}
+              loading={loading}
+              setLoading={setLoading}
+            />
+          )}
 
-        {/* Uncomment this later if needed */}
-        {/* {showWorkPostForm && (
+          {showFetchForm && (
+            <FetchContractSection
+              data-driver="fetch-contract"
+              contractId={contractId}
+              setContractId={setContractId}
+              contractDetails={contractDetails}
+              milestones={milestones}
+              currentAccount={walletData?.address}
+              loading={loading}
+              handleGetContractDetails={handleGetContractDetails}
+              contractHooks={contractHooks}
+            />
+          )}
+
+          {/* Uncomment this later if needed */}
+          {/* {showWorkPostForm && (
           <WorkPostSection
             data-driver="work-post"
             contractHooks={contractHooks}
@@ -194,8 +181,9 @@ const Contract = () => {
             setLoading={setLoading}
           />
         )} */}
+        </div>
       </div>
-    </motion.div>
+    </>
   );
 };
 

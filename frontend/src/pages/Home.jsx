@@ -89,40 +89,43 @@ function Home() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="bg-customSemiPurple min-h-screen"
+      className="bg-customDarkpurple min-h-screen"
     >
       <Header />
 
       {/* Features Section */}
-      <section className="w-full px-4">
-        <div className="flex flex-col items-center text-center mx-4">
-          <motion.h1
-            className="text-customPurple text-3xl md:text-4xl lg:text-5xl font-bold"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-          >
-            Revolutionary Features
-          </motion.h1>
+      <section className="w-full px-4 py-10 text-white">
+      <div className="flex flex-col items-center text-center mx-4">
+        <motion.h1
+          className="text-customPurple text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+        >
+          Revolutionary Features
+        </motion.h1>
+        <p className="text-customGray text-lg max-w-xl mb-10">
+          Explore how Cryptify transforms the future of smart work commitments.
+        </p>
 
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 py-20"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: false, amount: 0.2 }}
-            variants={cardContainerVariants}
-          >
-            {features.map((feature, index) => (
-              <FeatureCard
-                key={index}
-                title={feature.title}
-                description={feature.description}
-                icon={feature.icon}
-              />
-            ))}
-          </motion.div>
-        </div>
-      </section>
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-6xl"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={cardContainerVariants}
+        >
+          {features.map((feature, index) => (
+            <FeatureCard
+              key={index}
+              title={feature.title}
+              description={feature.description}
+              icon={feature.icon}
+            />
+          ))}
+        </motion.div>
+      </div>
+    </section>
 
       <CommitmentStepsSection />
       <LogoCloud />

@@ -26,7 +26,7 @@ const TransactionList = ({
 
   return (
     <div className="px-4 sm:px-10 lg:pr-40" data-driver="transaction-list">
-      <div className="flex flex-col rounded-md bg-customDark py-5 px-6 sm:px-5 mt-10 sm:mt-14 shadow-custom-purple md:min-h-[450px] md:min-w-[470px]">
+      <div className="flex flex-col rounded-md bg-customDark py-5 px-6 sm:px-5 mt-10 sm:mt-14 md:min-h-[450px] md:min-w-[470px]">
         <div className="flex justify-between items-center">
           <h3 className="text-xl text-white font-bold">Recent Transactions</h3>
           <select

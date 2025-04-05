@@ -13,7 +13,7 @@ const ContractIntro = ({
   return (
     <div
       data-driver="contract-intro"
-      className="bg-gradient-to-br from-customDark to-customInput p-8 rounded-xl shadow-lg space-y-6"
+      className="bg-customDarkpurple p-8 rounded-xl shadow-lg space-y-6"
     >
       <div className="text-center">
         <h2 className="text-3xl font-extrabold text-white mb-2">

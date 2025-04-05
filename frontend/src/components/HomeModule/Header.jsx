@@ -54,7 +54,7 @@ function Header() {
   };
 
   return (
-    <div className="relative bg-customSemiPurple min-h-screen w-full flex flex-col items-center justify-center gap-6 px-4 md:px-8 lg:px-16">
+    <div className="relative bg-customDarkpurple min-h-screen w-full flex flex-col items-center justify-center gap-6 px-4 md:px-8 lg:px-16">
       <ParticleBackground />
       {/* Heading */}
       <div className="flex flex-col items-center text-center text-shadow-custom relative z-10">

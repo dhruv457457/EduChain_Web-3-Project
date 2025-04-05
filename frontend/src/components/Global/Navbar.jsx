@@ -87,7 +87,7 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 w-full h-16 z-50 backdrop-blur-md bg-customDarkpurple/80 border-b border-customPurple shadow-custom-purple px-6 py-3 flex justify-between items-center">
+    <nav className="fixed top-0 w-full h-16 z-50 backdrop-blur-md bg-customDarkpurple/80 px-6 py-3 flex justify-between items-center">
       {/* Brand */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}

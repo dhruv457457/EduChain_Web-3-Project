@@ -154,7 +154,7 @@ const Transfer = () => {
   // Show loader if transactions aren't loaded yet or during a transfer
   if (!isTransactionsLoaded || loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-customSemiPurple">
+      <div className="flex justify-center items-center min-h-screen bg-customDarkpurple">
         <div className="w-full max-w-md">
           <LoaderButton
             loading={true}
@@ -168,7 +168,7 @@ const Transfer = () => {
   return (
     <>
       <ToastContainer position="top-right" autoClose={5000} />
-      <div className="flex flex-col bg-customSemiPurple justify-between md:flex-row py-20">
+      <div className="flex flex-col bg-customInput justify-between md:flex-row py-20">
         <TransferForm
           data-driver="transfer-form"
           recipient={recipient}

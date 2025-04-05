@@ -1,73 +1,65 @@
 import React from "react";
-import Cards from "./Cards";
 import { Lock, Wallet, CheckCircle, Star } from "lucide-react";
 
 function CommitmentStepsSection() {
   return (
-    <div className="relative flex flex-col bg-customSemiPurple w-full px-4 pt-20">
-      <div className="flex flex-col items-center justify-center text-center gap-6">
-        <h1 className="text-customPurple text-xl md:text-4xl font-bold">
-          A Smarter Way to Work and Earn with Cryptify
+    <div className="relative w-full bg-customDarkpurple px-6 py-20 text-white">
+      <div className="text-center mb-16">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-customPurple mb-4">
+          Smart Work Commitment
         </h1>
-        <p className="text-slate-400 font-semibold text-xl w-full md:w-3/4 lg:w-1/2 py-4">
-          Get started with Cryptify in four simple steps
+        <p className="text-customGray text-lg md:text-xl font-medium max-w-2xl mx-auto">
+          A Smarter Way to Work and Earn with Cryptify, Get started with
+          Cryptify in four futuristic steps
         </p>
-
-        <div className="flex flex-col items-center gap-10">
-          {/* First Row */}
-          <div className="relative flex flex-col md:flex-row gap-10 items-center">
-            <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 w-[40px] h-1 bg-customPurple rounded-md"></div>
-            <Cards
-              icon={
-                <Lock
-                  size={50}
-                  className="text-green-500 p-2 rounded-md border-b-4 border-green-500"
-                />
-              }
-              title="Initiate the Contract"
-              description="Start a Smart Work Commitment (SWC) by locking the total project amount on-chain. The contract begins once both users confirm the project details."
-            />
-            <Cards
-              icon={
-                <Wallet
-                  size={50}
-                  className="text-amber-300 p-2 rounded-md border-b-4 border-amber-300"
-                />
-              }
-              title="Milestone-Based Progress"
-              description="Freelancers complete milestones to unlock partial payments. Each milestone approval releases a portion of the funds securely from escrow."
-            />
-          </div>
-
-          <div className="hidden md:block w-1 h-10 bg-customPurple rounded-md"></div>
-
-          <div className="relative flex flex-col md:flex-row gap-10 items-center">
-            <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 w-[40px] h-1 bg-customPurple rounded-md"></div>
-
-            <Cards
-              icon={
-                <CheckCircle
-                  size={50}
-                  className="text-customBlue p-2 rounded-md border-b-4 border-customBlue"
-                />
-              }
-              title="Final Confirmation & Payout"
-              description="At the end of the contract, both users confirm the project's completion and value. Upon agreement, the remaining funds are automatically released."
-            />
-
-            <Cards
-              icon={
-                <Star
-                  size={50}
-                  className="text-yellow-500 p-2 rounded-md border-b-4 border-yellow-500"
-                />
-              }
-              title="Build Your Crypto Credit Score"
-              description="Every successful contract improves your Blockchain-Based Credit Score, helping you unlock better financial opportunities in the crypto space."
-            />
-          </div>
-        </div>
       </div>
+
+      <div className="relative flex flex-col md:flex-row justify-center items-center gap-12 md:gap-16 px-2 md:px-10">
+        {/** Connector line for desktop */}
+        <div className="hidden md:block absolute top-1/2 transform -translate-y-1/2 left-16 right-16 h-[2px] bg-customPurple z-0" />
+
+        {/* Card 1 */}
+        <StepCard
+          icon={<Lock size={40} className="text-customNeonGreen" />}
+          title="Initiate the Contract"
+          description="Start an SWC by locking funds on-chain. Contract activates when both users confirm the details."
+        />
+
+        {/* Card 2 */}
+        <StepCard
+          icon={<Wallet size={40} className="text-customNeonPink" />}
+          title="Milestone-Based Progress"
+          description="Unlock partial payments as freelancers complete approved milestones."
+        />
+
+        {/* Card 3 */}
+        <StepCard
+          icon={<CheckCircle size={40} className="text-customBlue" />}
+          title="Final Confirmation & Payout"
+          description="Both users verify completion. Remaining funds get auto-released."
+        />
+
+        {/* Card 4 */}
+        <StepCard
+          icon={<Star size={40} className="text-yellow-400" />}
+          title="Build Crypto Credit Score"
+          description="Successful SWCs boost your Blockchain Credit Score and financial trust."
+        />
+      </div>
+    </div>
+  );
+}
+
+function StepCard({ icon, title, description }) {
+  return (
+    <div className="relative z-10 backdrop-blur-md bg-customSemiPurple/60 border border-customPurple/40 rounded-2xl p-6 w-[260px] md:w-[280px] hover:scale-105 transition-transform duration-300 ease-in-out shadow-lg hover:shadow-customPurple/50">
+      <div className="flex items-center justify-center mb-4">
+        <div className="bg-customInput rounded-full p-3">{icon}</div>
+      </div>
+      <h3 className="text-xl text-customPurple font-semibold text-center mb-2">
+        {title}
+      </h3>
+      <p className="text-customGray text-sm text-center">{description}</p>
     </div>
   );
 }

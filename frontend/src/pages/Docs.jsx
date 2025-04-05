@@ -286,7 +286,7 @@ function Docs() {
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row bg-customSemiPurple mt-20 border-t-2 border-customPurple border-opacity-25 min-h-screen">
+      <div className="flex flex-col lg:flex-row bg-customDarkpurple mt-20 border-t-2 border-customPurple border-opacity-25 min-h-screen">
         {/* Sidebar */}
         <div className="bg-customDarkpurple lg:h-screen w-full lg:w-80 border-b-2 lg:border-b-0 lg:border-r-2 border-customPurple border-opacity-25 flex flex-row lg:flex-col gap-5 py-5 px-4 overflow-x-auto lg:overflow-y-auto">
           <div className="flex items-center justify-center gap-2 w-full lg:justify-start">

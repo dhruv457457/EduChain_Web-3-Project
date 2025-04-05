@@ -3,14 +3,14 @@ import React from "react";
 function Cards({ title, description, icon }) {
   return (
     <div
-      className="w-full sm:w-96 min-h-[250px] bg-customDarkpurple lg:bg-transparent lg:hover:bg-customDarkpurple border-b-4 border-customPurple rounded-md lg:hover:border-t-4 lg:hover:border-b-0
-    flex flex-col justify-center items-center p-6 lg:shadow-custom-purple transition-all duration-75"
+      className="w-full sm:w-80 min-h-[250px] bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 hover:border-customPurple hover:shadow-lg 
+      shadow-customPurple/10 rounded-2xl p-6 flex flex-col justify-center items-center text-center transition-all duration-300 hover:scale-105"
     >
-      <div className="flex items-center space-x-3 lg:hover:scale-110 transition-all duration-150">
+      <div className="flex items-center justify-center w-16 h-16 rounded-full bg-customInput text-customNeonGreen mb-4 shadow-md">
         {icon}
-        <h1 className="text-white text-xl font-bold ">{title}</h1>
       </div>
-      <p className="text-white mt-3 text-md text-center">{description}</p>
+      <h2 className="text-xl font-bold text-customPurple mb-2">{title}</h2>
+      <p className="text-sm text-customGray">{description}</p>
     </div>
   );
 }

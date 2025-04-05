@@ -26,6 +26,7 @@ module.exports = {
         customGray: "#D1D5DB",
         customNeonGreen: "#39FF14",
         customNeonPink: "#FF44CC",
+        
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
