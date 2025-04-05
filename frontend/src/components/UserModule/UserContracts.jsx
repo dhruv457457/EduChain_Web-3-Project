@@ -1,89 +1,124 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useContract2 from "../../hooks/useContract2";
-import LoaderButton from "../Global/LoaderButton";
+import Loader from "../Global/Loader";
+import { FaCopy } from "react-icons/fa";
 
 const UserContracts = ({ provider }) => {
   const { getUserContracts, signer } = useContract2(provider);
   const [contracts, setContracts] = useState([]);
-  const [error, setError] = useState(null);
   const [userAddress, setUserAddress] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false);
+  const [copiedId, setCopiedId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    let mounted = true;
+
     const loadContracts = async () => {
-      // Check if all required dependencies are available
-      if (!provider) {
-        setError("Wallet provider not connected.");
-        setLoading(false);
-        return;
-      }
-      if (!signer) {
-        setError("Signer not initialized.");
-        setLoading(false);
-        return;
-      }
-      if (!getUserContracts) {
-        setError("Contract function not available.");
-        setLoading(false);
+      if (!provider || !signer || !getUserContracts) {
+        setTimeout(() => {
+          if (mounted) setReady(true);
+        }, 500);
         return;
       }
 
       try {
         const address = await signer.getAddress();
-        setUserAddress(address);
         const userContracts = await getUserContracts();
-        
-        // Validate the response
-        if (!userContracts || !Array.isArray(userContracts)) {
-          throw new Error("Invalid contracts data received");
-        }
 
-        setContracts(userContracts);
-        setError(null);
+        if (mounted) {
+          setUserAddress(address);
+          setContracts(Array.isArray(userContracts) ? userContracts : []);
+        }
       } catch (err) {
-        console.error("Error loading contracts:", err);
-        setError(`Failed to load contracts: ${err.message}`);
+        console.warn("⚠️ Non-blocking load error:", err.message);
+        if (mounted) setContracts([]);
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setReady(true);
+          setLoading(false);
+        }
       }
     };
 
-    // Only call loadContracts if we haven't already errored out
-    if (!error) {
-      loadContracts();
+    loadContracts();
+    return () => (mounted = false);
+  }, [provider, getUserContracts, signer]);
+
+  const handleCopy = (id) => {
+    navigator.clipboard.writeText(id);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case 0:
+        return "bg-yellow-600";
+      case 1:
+        return "bg-blue-600";
+      case 2:
+        return "bg-indigo-600";
+      case 3:
+        return "bg-green-600";
+      case 4:
+        return "bg-red-500";
+      case 5:
+        return "bg-pink-500";
+      default:
+        return "bg-gray-500";
     }
-  }, [provider, getUserContracts, signer, error]);
+  };
+
+  const statusLabels = [
+    "Pending",
+    "Approved",
+    "InProgress",
+    "Completed",
+    "Cancelled",
+    "Disputed",
+  ];
 
   return (
-    <div className="border-t-4 border-customPurple rounded-md bg-customDark p-5 shadow-custom-purple text-white max-h-64 overflow-y-auto custom-scrollbar min-h-40">
-      <h2 className="text-xl font-semibold mb-4">Your Contracts</h2>
+<div className="border-t-4 border-customPurple rounded-md bg-customDark p-5 shadow-custom-purple text-white min-h-48 max-h-80 overflow-y-auto custom-scrollbar transition-all">
+<h2 className="text-xl font-semibold mb-4">Your Contracts</h2>
 
-      {loading ? (
-        <div className="flex justify-center items-center h-32">
-          <LoaderButton loading={true} text="Loading Contracts" />
-        </div>
-      ) : error ? (
-        <div className="text-red-400">
-          <p>{error}</p>
-          <button
-            onClick={() => {
-              setLoading(true);
-              setError(null);
-            }}
-            className="mt-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded"
-          >
-            Retry
-          </button>
+      {!ready || loading ? (
+        <div className="h-32 flex justify-center items-center">
+          <Loader />
         </div>
       ) : contracts.length === 0 ? (
-        <p className="text-gray-400">No contracts found.</p>
+        <div className="text-center text-gray-400">
+          <p>No contracts found yet.</p>
+          <p className="text-xs mt-1 opacity-50">Contracts you create or receive will show here.</p>
+        </div>
       ) : (
         <ul className="space-y-4">
           {contracts.map((contract) => (
             <li
               key={contract.contractId}
-              className="p-4 border border-gray-700 rounded-lg bg-gray-800"
+              onClick={() => navigate(`/contract?id=${contract.contractId}`)}
+              className="p-4 border border-gray-700 rounded-lg bg-gray-800 hover:bg-gray-700 transition cursor-pointer relative"
             >
+              <div className="flex justify-between items-center mb-2">
+                <p className="font-mono text-sm text-purple-400">
+                  ID: #{contract.contractId}
+                </p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopy(contract.contractId);
+                  }}
+                  title="Copy Contract ID"
+                  className="text-purple-300 hover:text-white transition text-sm flex items-center gap-1"
+                >
+                  <FaCopy className="w-3 h-3" />
+                  {copiedId === contract.contractId ? "Copied!" : "Copy"}
+                </button>
+              </div>
+
               <p><strong>Title:</strong> {contract.title}</p>
               <p>
                 <strong>Role:</strong>{" "}
@@ -92,9 +127,13 @@ const UserContracts = ({ provider }) => {
                   : "Receiver"}
               </p>
               <p><strong>Amount:</strong> {contract.amount} ETH</p>
-              <p>
-                <strong>Status:</strong>{" "}
-                {["Pending", "Approved", "InProgress", "Completed", "Cancelled", "Disputed"][contract.status]}
+              <p className="flex items-center gap-2">
+                <strong>Status:</strong>
+                <span
+                  className={`text-white text-xs px-2 py-1 rounded-full ${getStatusStyle(contract.status)}`}
+                >
+                  {statusLabels[contract.status]}
+                </span>
               </p>
             </li>
           ))}

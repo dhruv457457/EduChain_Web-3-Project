@@ -8,7 +8,7 @@ import { useWallet } from "../components/Global/WalletContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import LoaderButton from "../components/Global/LoaderButton"; // Updated import
+import LoaderButton from "../components/Global/Loader"; // Updated import
 
 const Transfer = () => {
   const { walletData } = useWallet();
@@ -152,7 +152,18 @@ const Transfer = () => {
   }, [navigate, location.pathname]);
 
   // Show loader if transactions aren't loaded yet or during a transfer
- 
+  if (!isTransactionsLoaded || loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-customSemiPurple">
+        <div className="w-full max-w-md">
+          <LoaderButton
+            loading={true}
+            text={loading ? "Processing Transfer..." : "Loading Transactions..."}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
