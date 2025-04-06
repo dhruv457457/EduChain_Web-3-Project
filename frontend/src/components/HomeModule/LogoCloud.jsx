@@ -20,14 +20,9 @@ function LogoCloud() {
   return (
     <section className="relative w-full bg-customDarkpurple py-24 sm:pb-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
-        <motion.h2
-          className="text-3xl md:text-4xl font-bold text-customPurple drop-shadow-md"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
+        <h2 className="text-3xl md:text-4xl font-bold text-customPurple drop-shadow-md">
           Powered by Leading Web3 Chains & Innovators
-        </motion.h2>
+        </h2>
 
         <motion.div
           className="mt-16 grid grid-cols-2 md:grid-cols-3 gap-8 place-items-center"

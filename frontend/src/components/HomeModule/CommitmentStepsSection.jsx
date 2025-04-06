@@ -1,58 +1,104 @@
 import React from "react";
 import { Lock, Wallet, CheckCircle, Star } from "lucide-react";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 40, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
 
 function CommitmentStepsSection() {
   return (
-    <div className="relative w-full bg-customDarkpurple px-6 py-20 text-white">
+    <motion.div
+      className="relative w-full bg-customDarkpurple px-6 py-20 text-white"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      variants={containerVariants}
+    >
       <div className="text-center mb-16">
-        <h1 className="text-3xl md:text-5xl font-extrabold text-customPurple mb-4">
+        <motion.h1
+          className="text-3xl md:text-5xl font-extrabold text-customPurple mb-4"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           Smart Work Commitment
-        </h1>
-        <p className="text-customGray text-lg md:text-xl font-medium max-w-2xl mx-auto">
+        </motion.h1>
+        <motion.p
+          className="text-customGray text-lg md:text-xl font-medium max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        >
           A Smarter Way to Work and Earn with Cryptify, Get started with
           Cryptify in four futuristic steps
-        </p>
+        </motion.p>
       </div>
 
-      <div className="relative flex flex-col md:flex-row justify-center items-center gap-12 md:gap-16 px-2 md:px-10">
-        {/** Connector line for desktop */}
-        <div className="hidden md:block absolute top-1/2 transform -translate-y-1/2 left-16 right-16 h-[2px] bg-customPurple z-0" />
+      <motion.div
+        className="relative flex flex-col md:flex-row justify-center items-center gap-12 md:gap-16 px-2 md:px-10"
+        variants={containerVariants}
+      >
+        {/* Connector line for desktop */}
+        <motion.div
+          className="hidden md:block absolute top-1/2 transform -translate-y-1/2 left-20 right-20 h-[2px] bg-customPurple z-0 origin-left"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ delay: 1, duration: 0.8, ease: "easeOut" }}
+        />
 
-        {/* Card 1 */}
+        {/* Cards */}
         <StepCard
           icon={<Lock size={40} className="text-customNeonGreen" />}
           title="Initiate the Contract"
           description="Start an SWC by locking funds on-chain. Contract activates when both users confirm the details."
         />
-
-        {/* Card 2 */}
         <StepCard
           icon={<Wallet size={40} className="text-customNeonPink" />}
           title="Milestone-Based Progress"
           description="Unlock partial payments as freelancers complete approved milestones."
         />
-
-        {/* Card 3 */}
         <StepCard
           icon={<CheckCircle size={40} className="text-customBlue" />}
           title="Final Confirmation & Payout"
           description="Both users verify completion. Remaining funds get auto-released."
         />
-
-        {/* Card 4 */}
         <StepCard
           icon={<Star size={40} className="text-yellow-400" />}
           title="Build Crypto Credit Score"
           description="Successful SWCs boost your Blockchain Credit Score and financial trust."
         />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
 function StepCard({ icon, title, description }) {
   return (
-    <div className="relative z-10 backdrop-blur-md bg-customSemiPurple/60 border border-customPurple/40 rounded-2xl p-6 w-[260px] md:w-[280px] hover:scale-105 transition-transform duration-300 ease-in-out shadow-lg hover:shadow-customPurple/50">
+    <motion.div
+      variants={cardVariants}
+      className="relative z-10 backdrop-blur-md bg-customSemiPurple/60 border border-customPurple/40 rounded-2xl p-6 w-[260px] md:w-[280px] hover:scale-105 transition-transform duration-300 ease-in-out shadow-lg hover:shadow-customPurple/50"
+    >
       <div className="flex items-center justify-center mb-4">
         <div className="bg-customInput rounded-full p-3">{icon}</div>
       </div>
@@ -60,7 +106,7 @@ function StepCard({ icon, title, description }) {
         {title}
       </h3>
       <p className="text-customGray text-sm text-center">{description}</p>
-    </div>
+    </motion.div>
   );
 }
 

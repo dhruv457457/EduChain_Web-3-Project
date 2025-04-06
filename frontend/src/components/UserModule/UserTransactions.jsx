@@ -24,8 +24,10 @@ const UserTransactions = ({ provider }) => {
 
 
   return (
-    <div className="rounded-md bg-customDark p-5 shadow-custom-purple text-white max-h-64 overflow-y-auto custom-scrollbar">
-      <h2 className="text-xl font-semibold mb-4">Your Transactions</h2>
+    <div className="rounded-md bg-customDark p-5 shadow-custom-purple text-white">
+    <h2 className="text-xl font-semibold mb-4">Your Transactions</h2>
+
+    <div className="max-h-44 overflow-y-auto custom-scrollbar">
       {loading ? (
         <div className="flex justify-center items-center h-24">
           <LoaderButton loading={true} text="Loading Transactions" />
@@ -51,7 +53,8 @@ const UserTransactions = ({ provider }) => {
         </ul>
       )}
     </div>
-  );
+  </div>
+);
 };
 
 export default UserTransactions;

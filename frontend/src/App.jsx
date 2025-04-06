@@ -1,8 +1,15 @@
 import React, { Suspense, lazy, Component } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { WalletProvider } from "./components/Global/WalletContext";
 import Navbar from "./components/Global/Navbar";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Error Boundary Component
 class ErrorBoundary extends Component {
@@ -51,14 +58,17 @@ function AnimatedRoutes() {
 
 function App() {
   return (
-    <WalletProvider>
-      <Router>
-        <ErrorBoundary>
-          <Navbar />
-        </ErrorBoundary>
-        <AnimatedRoutes />
-      </Router>
-    </WalletProvider>
+    <>
+    <ToastContainer position="top-right" autoClose={5000} />
+      <WalletProvider>
+        <Router>
+          <ErrorBoundary>
+            <Navbar />
+          </ErrorBoundary>
+          <AnimatedRoutes />
+        </Router>
+      </WalletProvider>
+    </>
   );
 }
 

@@ -1,4 +1,3 @@
-// ✅ REFINED PAGE ENTRY ANIMATION WITH SLIDE-IN AND OPACITY
 import React, { memo } from "react";
 import { motion } from "framer-motion";
 import Header from "../components/HomeModule/Header";

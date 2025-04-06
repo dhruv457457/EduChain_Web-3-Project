@@ -2,7 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ethers } from "ethers";
 import MetaMaskSDK from "@metamask/sdk";
-import { FaBars, FaTimes, FaWallet, FaSignOutAlt, FaCopy } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaWallet,
+  FaSignOutAlt,
+  FaCopy,
+} from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useWallet } from "./WalletContext";
 import { motion } from "framer-motion";
@@ -31,12 +37,33 @@ const Navbar = () => {
         const accounts = await ethProvider.send("eth_accounts", []);
         if (accounts.length > 0) {
           setWalletData({ address: accounts[0], provider: ethProvider });
+        } else {
+          setWalletData({ address: null, provider: null });
         }
+
+        provider.on("accountsChanged", (accounts) => {
+          if (accounts.length === 0) {
+            setWalletData({ address: null, provider: null });
+          } else {
+            const updatedProvider = new ethers.BrowserProvider(provider);
+            setWalletData({ address: accounts[0], provider: updatedProvider });
+          }
+        });
+
+        provider.on("chainChanged", () => window.location.reload());
       } catch (err) {
         setError("MetaMask initialization failed");
       }
     };
     init();
+  
+    return () => {
+      const provider = MMSDK.getProvider();
+      if (provider?.removeListener) {
+        provider.removeListener("accountsChanged", () => {});
+        provider.removeListener("chainChanged", () => {});
+      }
+    };
   }, [setWalletData]);
 
   useEffect(() => {
@@ -83,7 +110,7 @@ const Navbar = () => {
     { path: "/contract", label: "Contract" },
     { path: "/docs", label: "Docs" },
     { path: "/transfer", label: "Transfer" },
-    { path: "/user", label: "Profile" },
+    ...(walletData.address ? [{ path: "/user", label: "Profile" }] : []),
   ];
 
   return (
@@ -117,7 +144,9 @@ const Navbar = () => {
         {walletData.address ? (
           <div className="flex items-center gap-2 px-4 py-2 rounded-md text-sm shadow-md border border-customPurple bg-gradient-to-r from-customPurple to-customBlue">
             <FaWallet />
-            <span className="font-mono">{walletData.address.slice(0, 6)}...{walletData.address.slice(-4)}</span>
+            <span className="font-mono">
+              {walletData.address.slice(0, 6)}...{walletData.address.slice(-4)}
+            </span>
             <button onClick={copyAddress} title="Copy Address">
               <FaCopy className="hover:text-customGray transition" />
             </button>
@@ -140,16 +169,28 @@ const Navbar = () => {
 
       {/* Mobile Menu Toggle */}
       <div className="md:hidden">
-        <button onClick={() => setIsOpen(!isOpen)} className="text-white text-2xl">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-white text-2xl"
+        >
           {isOpen ? <FaTimes /> : <FaBars />}
         </button>
       </div>
 
       {/* Mobile Dropdown */}
-      <div className={`absolute top-full left-0 w-full bg-customSemiPurple backdrop-blur-md transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "max-h-96" : "max-h-0"}`}>
+      <div
+        className={`absolute top-full left-0 w-full bg-customSemiPurple backdrop-blur-md transition-all duration-300 ease-in-out overflow-hidden ${
+          isOpen ? "max-h-96" : "max-h-0"
+        }`}
+      >
         <div className="flex flex-col gap-4 text-white font-medium px-6 py-4">
           {navLinks.map((link) => (
-            <Link key={link.path} to={link.path} onClick={() => setIsOpen(false)} className={getLinkClass(link.path)}>
+            <Link
+              key={link.path}
+              to={link.path}
+              onClick={() => setIsOpen(false)}
+              className={getLinkClass(link.path)}
+            >
               {link.label}
             </Link>
           ))}
@@ -158,13 +199,23 @@ const Navbar = () => {
             <div className="flex flex-col items-start gap-2 px-4 py-2 text-sm bg-gradient-to-r from-customPurple to-customBlue rounded-xl shadow-md">
               <div className="flex items-center gap-2">
                 <FaWallet />
-                <span className="font-mono">{walletData.address.slice(0, 6)}...{walletData.address.slice(-4)}</span>
+                <span className="font-mono">
+                  {walletData.address.slice(0, 6)}...
+                  {walletData.address.slice(-4)}
+                </span>
               </div>
-              <button onClick={copyAddress}><FaCopy /> Copy</button>
-              <button onClick={disconnectWallet} className="text-red-400"><FaSignOutAlt /> Disconnect</button>
+              <button onClick={copyAddress}>
+                <FaCopy /> Copy
+              </button>
+              <button onClick={disconnectWallet} className="text-red-400">
+                <FaSignOutAlt /> Disconnect
+              </button>
             </div>
           ) : (
-            <button onClick={connectWallet} className="flex items-center gap-2 bg-customPurple hover:bg-customBlue text-white px-4 py-2 rounded-md">
+            <button
+              onClick={connectWallet}
+              className="flex items-center gap-2 bg-customPurple hover:bg-customBlue text-white px-4 py-2 rounded-md"
+            >
               <FaWallet /> Connect Wallet
             </button>
           )}

@@ -6,7 +6,6 @@ import "driver.js/dist/driver.css";
 import { toast } from "react-toastify";
 import { useWallet } from "../Global/WalletContext";
 
-
 function Header() {
   const navigate = useNavigate(); // ✅ Initialize navigate
   const { walletData } = useWallet();

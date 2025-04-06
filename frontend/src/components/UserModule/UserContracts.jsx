@@ -82,63 +82,72 @@ const UserContracts = ({ provider }) => {
   ];
 
   return (
-<div className="rounded-md bg-customDark p-5 shadow-custom-purple text-white min-h-48 max-h-60 overflow-y-auto custom-scrollbar transition-all">
-<h2 className="text-xl font-semibold mb-4">Your Contracts</h2>
+    <div className="rounded-md bg-customDark p-5 shadow-custom-purple text-white transition-all">
+      <h2 className="text-xl font-semibold mb-4">Your Contracts</h2>
+      <div className="max-h-40 overflow-y-auto custom-scrollbar">
+        {!ready || loading ? (
+          <div className="h-32 flex justify-center items-center">
+            <Loader />
+          </div>
+        ) : contracts.length === 0 ? (
+          <div className="text-center text-gray-400">
+            <p>No contracts found yet.</p>
+            <p className="text-xs mt-1 opacity-50">
+              Contracts you create or receive will show here.
+            </p>
+          </div>
+        ) : (
+          <ul className="space-y-4">
+            {contracts.map((contract) => (
+              <li
+                key={contract.contractId}
+                onClick={() => navigate(`/contract?id=${contract.contractId}`)}
+                className="p-4 border border-gray-700 rounded-lg bg-gray-800 hover:bg-gray-700 transition cursor-pointer relative"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <p className="font-mono text-sm text-purple-400">
+                    ID: #{contract.contractId}
+                  </p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCopy(contract.contractId);
+                    }}
+                    title="Copy Contract ID"
+                    className="text-purple-300 hover:text-white transition text-sm flex items-center gap-1"
+                  >
+                    <FaCopy className="w-3 h-3" />
+                    {copiedId === contract.contractId ? "Copied!" : "Copy"}
+                  </button>
+                </div>
 
-      {!ready || loading ? (
-        <div className="h-32 flex justify-center items-center">
-          <Loader />
-        </div>
-      ) : contracts.length === 0 ? (
-        <div className="text-center text-gray-400">
-          <p>No contracts found yet.</p>
-          <p className="text-xs mt-1 opacity-50">Contracts you create or receive will show here.</p>
-        </div>
-      ) : (
-        <ul className="space-y-4">
-          {contracts.map((contract) => (
-            <li
-              key={contract.contractId}
-              onClick={() => navigate(`/contract?id=${contract.contractId}`)}
-              className="p-4 border border-gray-700 rounded-lg bg-gray-800 hover:bg-gray-700 transition cursor-pointer relative"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <p className="font-mono text-sm text-purple-400">
-                  ID: #{contract.contractId}
+                <p>
+                  <strong>Title:</strong> {contract.title}
                 </p>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCopy(contract.contractId);
-                  }}
-                  title="Copy Contract ID"
-                  className="text-purple-300 hover:text-white transition text-sm flex items-center gap-1"
-                >
-                  <FaCopy className="w-3 h-3" />
-                  {copiedId === contract.contractId ? "Copied!" : "Copy"}
-                </button>
-              </div>
-
-              <p><strong>Title:</strong> {contract.title}</p>
-              <p>
-                <strong>Role:</strong>{" "}
-                {contract.creator.toLowerCase() === userAddress?.toLowerCase()
-                  ? "Creator"
-                  : "Receiver"}
-              </p>
-              <p><strong>Amount:</strong> {contract.amount} ETH</p>
-              <p className="flex items-center gap-2">
-                <strong>Status:</strong>
-                <span
-                  className={`text-white text-xs px-2 py-1 rounded-full ${getStatusStyle(contract.status)}`}
-                >
-                  {statusLabels[contract.status]}
-                </span>
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
+                <p>
+                  <strong>Role:</strong>{" "}
+                  {contract.creator.toLowerCase() === userAddress?.toLowerCase()
+                    ? "Creator"
+                    : "Receiver"}
+                </p>
+                <p>
+                  <strong>Amount:</strong> {contract.amount} ETH
+                </p>
+                <p className="flex items-center gap-2">
+                  <strong>Status:</strong>
+                  <span
+                    className={`text-white text-xs px-2 py-1 rounded-full ${getStatusStyle(
+                      contract.status
+                    )}`}
+                  >
+                    {statusLabels[contract.status]}
+                  </span>
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
