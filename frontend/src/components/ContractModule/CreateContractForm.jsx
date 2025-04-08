@@ -50,7 +50,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
     <>
       <motion.div
         data-driver="create-contract"
-        className="bg-customDark p-6 rounded-lg mb-8"
+        className="bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 p-6 rounded-lg mb-8"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -58,7 +58,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
         <h2 className="text-2xl font-bold mb-6 text-white">Create New Contract</h2>
         <form
           onSubmit={handleCreateContract}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gradient-to-br from-customDark to-customInput p-6 rounded-xl shadow-md"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 rounded-xl "
         >
           {Object.entries(formData).map(([key, value]) => (
             <div key={key} className="flex flex-col">

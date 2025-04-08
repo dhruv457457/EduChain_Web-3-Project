@@ -8,7 +8,7 @@ const TransactionItem = ({ tx, userAddress, pending, loading }) => {
   };
 
   return (
-    <div className="p-2 mt-3 text-white border border-gray-700 bg-gray-800 rounded-md w-auto flex flex-col items-start">
+    <div className="p-4 mt-4 rounded-xl w-auto bg-customPurple/10 backdrop-blur-md border border-customPurple/20 shadow-lg text-white">
       <p>
         <strong>Sender:</strong> {shortenAddress(tx.sender)}
       </p>

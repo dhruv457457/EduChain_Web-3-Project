@@ -82,7 +82,7 @@ const UserContracts = ({ provider }) => {
   ];
 
   return (
-    <div className="rounded-md bg-customDark p-5  text-white transition-all">
+    <div className="rounded-md bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 shadow-custom-purple p-5  text-white transition-all">
       <h2 className="text-xl font-semibold mb-4">Your Contracts</h2>
       <div className="max-h-40 lg:min-h-40 overflow-y-auto custom-scrollbar">
         {!ready || loading ? (
@@ -102,7 +102,7 @@ const UserContracts = ({ provider }) => {
               <li
                 key={contract.contractId}
                 onClick={() => navigate(`/contract?id=${contract.contractId}`)}
-                className="p-4 border border-gray-700 rounded-lg bg-gray-800 hover:bg-gray-700 transition cursor-pointer relative"
+                className="p-4 rounded-lg bg-customPurple/10 backdrop-blur-md border border-customPurple/20 cursor-pointer relative"
               >
                 <div className="flex justify-between items-center mb-2">
                   <p className="font-mono text-sm text-purple-400">

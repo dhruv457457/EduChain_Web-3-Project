@@ -24,7 +24,7 @@ const UserTransactions = ({ provider }) => {
 
 
   return (
-    <div className="rounded-md bg-customDark p-5 text-white">
+    <div className="rounded-md bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 shadow-custom-purple p-5 text-white">
     <h2 className="text-xl font-semibold mb-4">Your Transactions</h2>
 
     <div className="max-h-44 lg:min-h-44 overflow-y-auto custom-scrollbar">
@@ -39,7 +39,7 @@ const UserTransactions = ({ provider }) => {
       ) : (
         <ul className="space-y-4">
           {userTransactions.map((tx, index) => (
-            <li key={index} className="p-4 border border-gray-700 rounded-lg bg-gray-800">
+            <li key={index} className="p-4 rounded-lg bg-customPurple/10 backdrop-blur-md border border-customPurple/20 ">
               <p><strong>From:</strong> {tx.senderName}</p>
               <p><strong>To:</strong> {tx.receiverName}</p>
               <p><strong>Amount:</strong> {tx.amount} ETH</p>

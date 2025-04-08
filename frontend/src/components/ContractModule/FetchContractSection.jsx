@@ -86,7 +86,7 @@ const FetchContractSection = ({
   return (
     <motion.div
       data-driver="fetch-contract"
-      className="bg-customDark p-6 rounded-lg mb-8"
+      className="bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 p-6 rounded-lg mb-8"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

@@ -20,7 +20,7 @@ const TransferForm = ({
       className="px-4 sm:px-10 lg:pl-36 py-20 w-full flex justify-center"
       data-driver="transfer-form"
     >
-      <div className="rounded-md px-6 sm:px-10 py-10 bg-customDark flex flex-col items-center gap-5 w-full max-w-lg">
+      <div className="rounded-md px-6 sm:px-10 py-10 bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 shadow-custom-purple flex flex-col items-center gap-5 w-full max-w-lg">
         <h2 className="text-2xl font-bold mb-4 text-white text-center">
           Transfer Funds
         </h2>
@@ -33,7 +33,7 @@ const TransferForm = ({
             }
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
-            className="border border-customPurple p-2 rounded-md w-full bg-customInput text-cyan-50"
+            className="border border-customPurple/30 p-2 rounded-md w-full bg-customInput text-cyan-50"
           />
           <button
             onClick={() => setIsAddress(!isAddress)}
@@ -48,7 +48,7 @@ const TransferForm = ({
           placeholder="Amount (ETH)"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="border border-customPurple p-2 rounded-md w-full bg-customInput text-cyan-50"
+          className="border border-customPurple/30 p-2 rounded-md w-full bg-customInput text-cyan-50"
         />
 
         <input
@@ -56,7 +56,7 @@ const TransferForm = ({
           placeholder="Remark/Message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="border border-customPurple p-2 rounded-md w-full bg-customInput text-cyan-50"
+          className="border border-customPurple/30 p-2 rounded-md w-full bg-customInput text-cyan-50"
         />
 
         <LoaderButton

@@ -134,7 +134,7 @@ const Contract = () => {
 
   return (
     <>
-      <div className="bg-customInput min-h-screen text-white">
+      <div className="bg-customDarkpurple min-h-screen text-white">
         <ToastContainer position="top-right" autoClose={5000} />
         <div className="max-w-6xl mx-auto px-6 py-20 pt-32 space-y-10 ">
           <ContractIntro

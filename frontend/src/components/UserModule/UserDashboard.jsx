@@ -109,9 +109,9 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="bg-customInput min-h-screen flex flex-col items-center justify-center px-6 py-12">
+    <div className="bg-customDarkpurple min-h-screen flex flex-col items-center justify-center px-6 py-12">
       <div className="text-center max-w-2xl pt-10">
-        <h1 className="text-customPurple text-2xl md:text-4xl font-bold">
+        <h1 className="text-customPurple text-2xl md:text-4xl font-bold text-shadow-custom">
           Welcome, {registeredName || "User"}
         </h1>
       </div>

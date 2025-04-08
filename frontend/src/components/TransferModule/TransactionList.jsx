@@ -26,7 +26,7 @@ const TransactionList = ({
 
   return (
     <div className="px-4 sm:px-10 lg:pr-40" data-driver="transaction-list">
-      <div className="flex flex-col rounded-md bg-customDark py-5 px-6 sm:px-5 mt-10 sm:mt-14 md:min-h-[450px] md:min-w-[470px]">
+      <div className="flex flex-col rounded-md bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 shadow-custom-purple py-5 px-6 sm:px-5 mt-10 sm:mt-14 md:min-h-[450px] md:min-w-[470px]">
         <div className="flex justify-between items-center">
           <h3 className="text-xl text-white font-bold">Recent Transactions</h3>
           <select
@@ -54,7 +54,7 @@ const TransactionList = ({
               />
             ))
           ) : (
-            <p className="text-white">No recent transactions</p>
+            <p className="text-white">Please Connect the Wallet to Show Recent Transactions</p>
           )}
         </div>
       </div>

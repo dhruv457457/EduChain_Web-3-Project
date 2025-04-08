@@ -168,7 +168,7 @@ const Transfer = () => {
   return (
     <>
       <ToastContainer position="top-right" autoClose={5000} />
-      <div className="flex flex-col bg-customInput justify-between md:flex-row py-20">
+      <div className="flex flex-col bg-customDarkpurple justify-between md:flex-row py-20">
         <TransferForm
           data-driver="transfer-form"
           recipient={recipient}
