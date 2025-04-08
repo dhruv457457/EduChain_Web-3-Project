@@ -24,7 +24,7 @@ const UserTransactions = ({ provider }) => {
 
 
   return (
-    <div className="rounded-md bg-customDark p-5 shadow-custom-purple text-white">
+    <div className="rounded-md bg-customDark p-5 text-white">
     <h2 className="text-xl font-semibold mb-4">Your Transactions</h2>
 
     <div className="max-h-44 lg:min-h-44 overflow-y-auto custom-scrollbar">

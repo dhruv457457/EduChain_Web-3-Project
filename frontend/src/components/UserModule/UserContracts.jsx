@@ -82,7 +82,7 @@ const UserContracts = ({ provider }) => {
   ];
 
   return (
-    <div className="rounded-md bg-customDark p-5 shadow-custom-purple text-white transition-all">
+    <div className="rounded-md bg-customDark p-5  text-white transition-all">
       <h2 className="text-xl font-semibold mb-4">Your Contracts</h2>
       <div className="max-h-40 lg:min-h-40 overflow-y-auto custom-scrollbar">
         {!ready || loading ? (

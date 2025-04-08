@@ -142,8 +142,14 @@ const Contract = () => {
             showCreateForm={showCreateForm}
             showFetchForm={showFetchForm}
             showWorkPostForm={showWorkPostForm}
-            onToggleCreateForm={() => setShowCreateForm(!showCreateForm)}
-            onToggleFetchForm={() => setShowFetchForm(!showFetchForm)}
+            onToggleCreateForm={() => {
+              setShowCreateForm((prev) => !prev);
+              setShowFetchForm(false);
+            }}
+            onToggleFetchForm={() => {
+              setShowFetchForm((prev) => !prev);
+              setShowCreateForm(false);
+            }}
             onToggleWorkPostForm={() => setShowWorkPostForm(!showWorkPostForm)}
             onStartTour={handleManualTour}
           />
