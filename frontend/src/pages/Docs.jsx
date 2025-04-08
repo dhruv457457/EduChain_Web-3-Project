@@ -81,7 +81,7 @@ function Docs() {
             </div>
           </>
         );
-     
+
         return (
           <>
             <h1 className="text-2xl md:text-3xl font-bold mb-4">
@@ -288,20 +288,25 @@ function Docs() {
     <>
       <div className="flex flex-col lg:flex-row bg-customDarkpurple mt-20 border-t-2 border-customPurple border-opacity-25 min-h-screen">
         {/* Sidebar */}
-        <div className="bg-customDarkpurple lg:h-screen w-full lg:w-80 border-b-2 lg:border-b-0 lg:border-r-2 border-customPurple border-opacity-25 flex flex-row lg:flex-col gap-5 py-5 px-4 overflow-x-auto lg:overflow-y-auto">
-          <div className="flex items-center justify-center gap-2 w-full lg:justify-start">
-            <Wallet
-              size={30}
-              className="text-purple-500 p-1 rounded-md border-b-2 border-purple-500"
-            />
-            <h1 className="font-bold text-lg lg:text-xl text-white">
-              Cryptify Docs
-            </h1>
+        <div
+          className="bg-customDarkpurple w-full lg:w-80 border-b-2 lg:border-b-0 lg:border-r-2 border-customPurple border-opacity-25 
+  flex flex-col lg:h-screen  top-0 left-0 z-10"
+        >
+          <div className="flex items-center justify-between lg:justify-start gap-2 p-4 border-b border-purple-800">
+            <div className="flex items-center gap-2">
+              <Wallet
+                size={30}
+                className="text-purple-500 p-1 rounded-md border-b-2 border-purple-500"
+              />
+              <h1 className="font-bold text-lg lg:text-xl text-white">
+                Cryptify Docs
+              </h1>
+            </div>
           </div>
-          <div className="flex lg:flex-col items-start w-full gap-2 text-white">
+
+          <div className="flex overflow-x-auto lg:overflow-y-auto lg:flex-col flex-row lg:flex-grow gap-2 px-4 py-3 text-white">
             {[
               "Installing MetaMask",
-             
               "Getting Test Tokens",
               "Making Transactions",
               "Register as User",
@@ -315,7 +320,7 @@ function Docs() {
                   activeSection === section
                     ? "bg-purple-700 bg-opacity-70"
                     : "hover:bg-purple-700 hover:bg-opacity-30"
-                } px-3 py-2 rounded-md w-full text-left font-semibold text-sm md:text-base`}
+                } px-3 py-2 rounded-md whitespace-nowrap text-left font-semibold text-sm md:text-base`}
               >
                 {section}
               </button>
