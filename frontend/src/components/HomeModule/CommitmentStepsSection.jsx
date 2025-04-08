@@ -97,7 +97,9 @@ function StepCard({ icon, title, description }) {
   return (
     <motion.div
       variants={cardVariants}
-      className="relative z-10 backdrop-blur-md bg-customSemiPurple/60 border border-customPurple/40 rounded-2xl p-6 w-[260px] md:w-[280px] hover:scale-105 transition-transform duration-300 ease-in-out shadow-lg hover:shadow-customPurple/50"
+      whileHover={{ scale: 1.08 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+       className="relative z-10 backdrop-blur-md bg-customSemiPurple/60 border border-customPurple/40 hover:border-customPurple rounded-2xl p-6 w-[260px] md:w-[280px] shadow-lg cursor-pointer"
     >
       <div className="flex items-center justify-center mb-4">
         <div className="bg-customInput rounded-full p-3">{icon}</div>

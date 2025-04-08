@@ -13,6 +13,7 @@
     "@coinbase/wallet-sdk": "^4.3.0",
     "@fontsource/poppins": "^5.1.1",
     "@fontsource/roboto": "^5.1.1",
+    "@lottiefiles/dotlottie-react": "^0.13.3",
     "@metamask/sdk": "^0.32.1",
     "@openzeppelin/contracts": "^5.2.0",
     "@tailwindcss/forms": "^0.5.10",
