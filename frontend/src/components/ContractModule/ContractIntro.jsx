@@ -33,7 +33,7 @@ const ContractIntro = ({
       <ul className="list-disc list-inside text-gray-400 text-xl px-4">
         <li>Create contracts with milestones</li>
         <li>Fetch and manage existing contracts</li>
-        <li>Post work opportunities and accept proposals</li>
+        <li>Check user reliability with their Reputation Score.</li>
       </ul>
 
       <div className="flex flex-wrap justify-center gap-4 pt-2">
