@@ -5,7 +5,8 @@ import { ethers } from "ethers";
 import useUsernameRegistry from "../../hooks/useUsernameRegistry";
 
 const ReputationFetcher = ({ contractHooks, walletProvider }) => {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(""); // Current input value
+  const [fetchedUsername, setFetchedUsername] = useState(null); // Username that was fetched
   const [reputationScore, setReputationScore] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -21,10 +22,6 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
       toast.error("Username must be between 3 and 32 characters");
       return;
     }
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      toast.error("Username can only contain letters, numbers, and underscores");
-      return;
-    }
     if (!contractHooks || !walletProvider || !contract) {
       toast.error("Wallet or contract not connected");
       return;
@@ -33,6 +30,7 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
     setLoading(true);
     setError(null);
     setReputationScore(null);
+    setFetchedUsername(null); // Reset fetched username until successful fetch
 
     try {
       const address = await getAddressFromUsername(username);
@@ -45,6 +43,7 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
         throw new Error("Reputation score not found for this username");
       }
       setReputationScore(ethers.formatUnits(score, 0));
+      setFetchedUsername(username); // Store the fetched username
       toast.success(`Reputation score fetched for ${username}`);
     } catch (err) {
       setError(err.message || "Failed to fetch reputation score");
@@ -86,7 +85,7 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
     }
   };
 
-  const reputationStatus = getReputationStatus(reputationScore); // Fixed typo here
+  const reputationStatus = getReputationStatus(reputationScore);
 
   return (
     <div className="mt-6 p-6 bg-customDark/90 backdrop-blur-lg border border-customPurple/40 rounded-xl shadow-glass transition-all duration-300 hover:shadow-lg">
@@ -133,14 +132,14 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
           </button>
         </div>
 
-        {reputationScore !== null && (
+        {reputationScore !== null && fetchedUsername && (
           <div
             className={`p-4 rounded-lg ${reputationStatus.bgColor} border ${reputationStatus.color.replace("text-", "border-")}/30 transition-all duration-300`}
           >
             <div className="flex items-center gap-2 justify-center">
               {reputationStatus.icon}
               <p className={`text-lg font-semibold ${reputationStatus.color}`}>
-                Reputation Score for "{username}": {reputationScore}
+                Reputation Score for "{fetchedUsername}": {reputationScore}
               </p>
             </div>
             <p className={`text-center mt-2 ${reputationStatus.color}`}>
