@@ -1,132 +1,131 @@
-# 🚀 Cryptify: Revolutionizing Web3 Payments
+# 🚀 Cryptify – Simplifying Web3 Payments with Human-Readable Usernames
 
-Cryptify is a next-gen Web3 payment platform that eliminates the need for long wallet addresses by introducing human-readable usernames for crypto transactions. Built on Linea L2 and powered by MetaMask SDK, Cryptify ensures secure, efficient, and user-friendly decentralized payments.  
-
-### 🔹 Key Features  
-- Smart contract security (SWC compliance)  
-- On-chain credit scoring  
-- Username-Based Payments
-- AI Chatbot (Help Center)
-- Control on Claim Funds
-- Multi-Chain Support 
+**Built for EDU Chain Hackathon: Semester 3**  
+**Track:** DeFi  
+**Team:** Dhruv Pancholi, Nitin Jain, Shaurya Upadhyay, Gaurav Jain  
+**Deployed On:** EDU Chain Testnet  
+🔗 [Live Demo](https://cryptify-defi.vercel.app/)  
+🐦 [Twitter/X](https://x.com/CryptifySecure)
 
 ---
 
-## 🔹 What is Cryptify?  
-Cryptify is a next-generation Web3 payment platform that brings trust, security, and simplicity to crypto transactions. It enables seamless digital payments using human-readable usernames, a trust-based credit scoring system, and secure smart contracts—all while ensuring complete transparency and decentralization.
+## 💡 What is Cryptify?
 
-### ✅ Core Benefits  
-- Faster & cheaper transactions with Layer-2 scaling (Linea L2)  
-- SWC-compliant smart contracts for maximum security  
-- Cross-platform support for mobile & desktop Web3 interactions  
+**Cryptify** is a next-gen Web3 payment dApp that replaces complex wallet addresses with **human-readable usernames**, introduces **trust-based on-chain credit scores**, and leverages **SWC-compliant smart contracts** for milestone-based freelance payments. Fully deployed on the **EDU Chain Testnet**, Cryptify is secure, fast, and fully decentralized.
 
 ---
 
-## 🎯 AIM  
-- To simplify Web3 transactions using usernames instead of long wallet addresses  
-- To build trust with an on-chain credit score system that reflects transaction reliability  
-- To ensure seamless wallet connectivity via MetaMask SDK on Linea L2  
-- To maintain top-tier security by complying with SWC security standards  
+## 🔥 Why Cryptify?
+
+- ✅ Username-Based Transactions  
+- ✅ Secure Escrow Smart Contracts with Milestones  
+- ✅ On-Chain Credit Reputation System  
+- ✅ User Freindly Tour  
+- ✅ AI Chatbot Assistant (Botpress)  
+- ✅ Cross-Platform Wallet Support with MetaMask SDK  
+- ✅ Built with Vite + React + Tailwind + Hardhat 
 
 ---
 
-## 📜 Project Description  
-Cryptify redefines Web3 payments by integrating MetaMask SDK for effortless wallet authentication, deploying smart contracts on Linea L2, and introducing a trust-based credit score system for secure, transparent transactions.  
+## 🧠 Hackathon Judging Fit
 
-- Smart Contracts on Linea L2 – Low fees & high-speed transactions  
-- On-Chain Credit Score System – Builds trust in Web3 transactions  
-- Username-Based Transactions – No more confusing wallet addresses  
-- MetaMask SDK Integration – Secure & seamless wallet authentication  
+| **Criteria**              | **Cryptify Alignment**                                                        |
+|---------------------------|-------------------------------------------------------------------------------|
+| Ecosystem Impact          | Drives real users to EDU Chain via username UX & credit scores               |
+| Community Engagement      | Proposals, public contracts, user reputation builds trust & activity         |
+| Innovation & Originality  | Combines  usernames + smart escrow + reputation in a novel way           |
+| Feasibility & Scalability | L3-based gas costs + modular smart contract architecture                     |
+| Team Strength             | 4 full-stack devs covering Solidity, React, wallets                      |
+| Traction                  | Live demo, Twitter page, bot-based support, hackathon-ready product          |
+
+---
+## 🔐 Smart Contracts
+
+### 🔸 `UsernameRegistry.sol`
+
+- Maps wallet addresses to usernames and vice-versa  
+- Prevents duplicate usernames  
+- Emits registration events  
+
+### 🔸 `FundTransferWithRegistry.sol`
+
+- Enables transfers using usernames or wallet addresses  
+- Funds can be claimed or refunded  
+- All transactions logged with metadata  
+
+### 🔸 `CryptifySWC.sol`
+
+- SWC-compliant milestone-based freelance contract system  
+- Includes:
+  - Escrow protection
+  - Contract approval process
+  - Milestone management
+  - WorkPost + Proposal flow
+  - On-chain reputation system  
 
 ---
 
-## 🚀 Why MetaMask SDK Over window.ethereum?  
-Using MetaMask SDK instead of `window.ethereum` unlocks next-level security and user experience:  
+## 🌐 Frontend Modules
 
-- **Better Security** – Eliminates phishing risks & unauthorized access  
-- **Multi-Platform Support** – Works across mobile, web, and dApps effortlessly  
-- **Optimized Performance on Linea** – Faster, low-cost transactions with Layer-2 scaling   
-
-With MetaMask SDK, we’ve completely solved wallet connection issues!  
-
----
-
-## 💳 On-Chain Credit Score System  
-Similar to traditional credit scores, Cryptify assigns a trust score based on:  
-
-- **Transaction History** – Regular, successful transactions improve scores  
-- **Timely Payments** – Completing payments on time boosts credibility  
-- **Network Trust** – User ratings & decentralized trust factors enhance scoring  
-
-### 🔹 Why It Matters?  
-- Fraud Prevention – Helps users assess the credibility of other wallet holders  
-- Decentralized Trust Layer – Builds a reputation system in Web3  
-- Transparent & Fair – Scores are publicly verifiable on-chain
-  
----
-
-## 🧠 AI Chatbot – Your Personal Web3 Assistant!
-Need help? Don’t worry—Cryptify’s built-in AI chatbot is here! 🚀
-
-Our AI-powered help center provides:
-- **Instant Answers** – Get real-time responses to all your Web3-related questions
-- **Seamless Support** – No need to browse external guides; get help directly within Cryptify
-- **Smarter Experience** – Enhances user onboarding by offering automated assistance
-
-With Cryptify’s AI chatbot, navigating Web3 has never been easier!
+- Register & Login with MetaMask SDK  
+- User Dashboard with balances, transaction history, and contracts  
+- Username-based fund transfers  
+- Freelance workflow: post work → receive proposals → accept & auto-create contracts  
+- AI Chatbot integrated via Botpress API  
+- Guided onboarding using Driver.js  
 
 ---
 
-## 🔑 Key Features & Innovations  
-- **Username-Based Transactions** – No need to copy/paste long wallet addresses  
-- **Deployed on Linea L2** – High-speed, low-cost Ethereum Layer-2 scaling  
-- **MetaMask SDK Integration** – Secure, effortless wallet authentication  
-- **On-Chain Credit Score System** – Build & view your Web3 credit history  
-- **Smart Contract Security (SWC) Compliance** – Prevents exploits & vulnerabilities  
-- **Guided Wallet Connection Tour** – Interactive onboarding for new users  
-- **Cross-Platform Support** – Works smoothly across mobile & desktop  
+## ⚙️ Tech Stack
+
+| Layer     | Tech Used                                                                     |
+|-----------|--------------------------------------------------------------------------------|
+| Frontend  | React.js, Vite, Tailwind CSS, Framer Motion, Driver.js, React Icons           |
+| Blockchain| Solidity, Hardhat, EDU Chain Testnet                                          |
+| Wallets   | MetaMask SDK                 |
+| AI/UX     | Botpress (AI Chatbot), Lottie Animations Framer Motion                                     |
 
 ---
 
-## 🛡️ Smart Contract Security (SWC) Compliance  
-Cryptify follows **SWC Registry** (Smart Contract Weakness Classification) standards to ensure maximum security.  
+## 📜 Features
 
-### 🚀 How SWC Compliance Enhances Security:  
-- **Prevents Reentrancy Attacks** – Secures funds against recursive withdrawal exploits  
-- **Protects Against Integer Overflows** – Ensures accurate arithmetic in transactions  
-- **Secure Access Control** – Prevents unauthorized contract modifications  
-- **Prevents Unprotected SELFDESTRUCT** – Avoids accidental contract destruction  
+### ✅ Username-Based Transfers
 
-By following **SWC security guidelines**, Cryptify ensures safe, immutable, and trustable transactions.  
+Forget wallet addresses. Just send ETH to `@jane` using our global registry.
 
----
+### ✅ Freelance Smart Contracts (SWC Compliant)
 
-## 💻 Technology Stack  
-- **Frontend:** ReactJS and Tailwind CSS (Fast, responsive UI)  
-- **Backend & Smart Contracts:** Solidity and Hardhat (For blockchain automation & interactions)  
-- **Blockchain Ecosystem:** Linea Sepolia, Solidity, Hardhat, and MetaMask SDK (Decentralization, security, transparency)  
-- **Wallet Integration:** MetaMask (Seamless Web3 transactions & user authentication)  
+Escrow-based contracts between two users:
+- Milestone-based or single-payment
+- Requires approval from both parties
+- Handles deadlines and secure payments
 
----
 
-## 📜 Deploying Contracts on Linea  
-Cryptify smart contracts are deployed on **Linea L2**, providing:  
 
-- **Lower Gas Fees** – Significantly reduced transaction costs  
-- **Faster Transactions** – Near-instant transaction finality  
-- **Scalability & Security Enhancements** – Improved blockchain efficiency  
+### ✅ On-Chain Credit Scores
 
-Using **MetaMask SDK**, wallet connections are automated, ensuring a secure and frictionless experience. Our contracts are **SWC-compliant**, making transactions robust and trustworthy.  
+- Reputation increases with successful transactions and contract completions.
+
+### ✅ AI Chatbot Assistant
+
+- Powered by Botpress API  
+- Offers guided help to users  
+- Assists with onboarding and FAQ
 
 ---
 
-## 🚀 Getting Started  
+## 🚀 Getting Started
 
-### Installation & Setup  
-```sh
+### Prerequisites
+
+- Node.js ≥ 18  
+- MetaMask browser extension  
+
+### Run Frontend Locally
+
+```bash
 git clone https://github.com/dhruv457457/EduChain_Web-3-Project.git
-cd Cryptify
-cd frontend
+cd Cryptify/frontend
 npm install
 npm run dev
 ```
@@ -164,6 +163,3 @@ For any inquiries, support, or collaboration opportunities, feel free to reach o
 🚀 Join our Web3 revolution!
 
 🔥 Built for the Future of Web3 Payments! 🔥
-
---------
-
