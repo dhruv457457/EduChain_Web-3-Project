@@ -12,36 +12,45 @@ const TransactionList = ({
 
   // Sorting logic
   const sortedTransactions = [...transactions].sort((a, b) => {
-    if (sortType === "newest") {
-      return Number(b.timestamp) - Number(a.timestamp); // Newest first
-    } else if (sortType === "oldest") {
-      return Number(a.timestamp) - Number(b.timestamp); // Oldest first
-    } else if (sortType === "highest") {
-      return Number(b.amount) - Number(a.amount); // Highest amount first
-    } else if (sortType === "lowest") {
-      return Number(a.amount) - Number(b.amount); // Lowest amount first
-    }
+    if (sortType === "newest") return Number(b.timestamp) - Number(a.timestamp);
+    if (sortType === "oldest") return Number(a.timestamp) - Number(b.timestamp);
+    if (sortType === "highest") return Number(b.amount) - Number(a.amount);
+    if (sortType === "lowest") return Number(a.amount) - Number(b.amount);
     return 0;
   });
+
+  const sortOptions = [
+    { label: "🕒 Newest", value: "newest" },
+    { label: "⏳ Oldest", value: "oldest" },
+    { label: "💰 Highest", value: "highest" },
+    { label: "💵 Lowest", value: "lowest" },
+  ];
 
   return (
     <div className="px-4 sm:px-10 lg:pr-40" data-driver="transaction-list">
       <div className="flex flex-col rounded-md bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 shadow-custom-purple py-5 px-6 sm:px-5 mt-10 sm:mt-14 md:min-h-[450px] md:min-w-[470px]">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:items-center sm:justify-between gap-3">
           <h3 className="text-xl text-white font-bold">Recent Transactions</h3>
-          <select
-            className="p-2 bg-customPurple text-white rounded-md outline-none cursor-pointer"
-            onChange={(e) => setSortType(e.target.value)}
-            value={sortType}
-          >
-            <option value="newest">🕒 Newest First</option>
-            <option value="oldest">⏳ Oldest First</option>
-            <option value="highest">💰 Highest Amount</option>
-            <option value="lowest">💵 Lowest Amount</option>
-          </select>
+
+          {/* Styled Sort Buttons */}
+          <div className="flex flex-wrap gap-2">
+            {sortOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => setSortType(option.value)}
+                className={`px-3 py-1 rounded-full text-sm border transition-all ${
+                  sortType === option.value
+                    ? "bg-purple-600 border-purple-400 text-white"
+                    : "bg-transparent border-purple-300 text-purple-200 hover:bg-purple-500/20"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Scrollable Transaction List */}
+        {/* Transaction List */}
         <div className="mt-4 max-h-96 overflow-y-auto pr-2 custom-scrollbar w-full">
           {sortedTransactions.length > 0 ? (
             sortedTransactions.map((tx, index) => (
@@ -54,7 +63,9 @@ const TransactionList = ({
               />
             ))
           ) : (
-            <p className="text-white">Please Connect the Wallet to Show Recent Transactions</p>
+            <p className="text-white">
+              Please connect the wallet to show recent transactions.
+            </p>
           )}
         </div>
       </div>

@@ -149,7 +149,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
               value={formData.receiverUsername}
               onChange={handleChange}
               placeholder="Enter receiver username"
-              className={`p-3 rounded-md bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+              className={`p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
                 errors.receiverUsername ? "border-red-500 border" : ""
               }`}
               required
@@ -168,7 +168,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
               value={formData.title}
               onChange={handleChange}
               placeholder="Enter contract title"
-              className={`p-3 rounded-md bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+              className={`p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
                 errors.title ? "border-red-500 border" : ""
               }`}
               required
@@ -186,7 +186,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
               value={formData.description}
               onChange={handleChange}
               placeholder="Describe the contract details"
-              className={`p-3 rounded-md bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+              className={`p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
                 errors.description ? "border-red-500 border" : ""
               }`}
               rows="4"
@@ -204,7 +204,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
               name="coinType"
               value={formData.coinType}
               onChange={handleChange}
-              className="p-3 rounded-md bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all"
+              className="p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all"
               required
             >
               {coinTypes.map((coin) => (
@@ -226,7 +226,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
               placeholder="Enter amount"
               step="0.01"
               min="0"
-              className={`p-3 rounded-md bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+              className={`p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
                 errors.amount ? "border-red-500 border" : ""
               }`}
               required
@@ -245,7 +245,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
               value={formData.deadline}
               onChange={handleChange}
               placeholder="DD/MM/YYYY (e.g., 9/12/2025)"
-              className={`p-3 rounded-md bg-white text-gray-800 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
+              className={`p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
                 errors.deadline ? "border-red-500 border" : ""
               }`}
               required
@@ -259,7 +259,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
           <div className="md:col-span-2">
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 rounded-lg font-semibold shadow-lg transition-transform transform hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-customPurple hover:bg-customPurple/90 text-white py-3 rounded-lg font-semibold shadow-lg transition-transform transform disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
               disabled={loading}
             >
               {loading ? "Creating..." : "Create Contract"}

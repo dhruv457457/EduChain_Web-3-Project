@@ -11,6 +11,7 @@ const UserContracts = ({ provider }) => {
   const [loading, setLoading] = useState(true);
   const [ready, setReady] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
+  const [filter, setFilter] = useState("all");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,24 +82,47 @@ const UserContracts = ({ provider }) => {
     "Disputed",
   ];
 
+  // 🔍 Filter logic
+  const filteredContracts = contracts.filter((contract) => {
+    if (filter === "all") return true;
+    if (filter === "pending") return contract.status === 0;
+    if (filter === "done") return contract.status === 3;
+    return true;
+  });
+
   return (
-    <div className="rounded-md bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 shadow-custom-purple p-5  text-white transition-all">
+    <div className="rounded-md bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 shadow-custom-purple p-5 text-white transition-all">
       <h2 className="text-xl font-semibold mb-4">Your Contracts</h2>
+
+      {/* 🧠 Filter Buttons */}
+      <div className="flex gap-3 mb-4">
+        {["all", "pending", "done"].map((type) => (
+          <button
+            key={type} 
+            onClick={() => setFilter(type)}
+            className={`px-3 py-1 rounded-full text-sm font-medium border ${
+              filter === type
+               ? "bg-purple-600 border-purple-400 text-white"
+                : "bg-transparent border-purple-300 text-purple-200 hover:bg-purple-500/20"
+            }`}
+          >
+            {type === "all" ? "All" : type === "pending" ? "Pending" : "Done"}
+          </button>
+        ))}
+      </div>
+
       <div className="max-h-40 lg:min-h-40 overflow-y-auto custom-scrollbar">
         {!ready || loading ? (
           <div className="h-32 flex justify-center items-center">
             <Loader />
           </div>
-        ) : contracts.length === 0 ? (
+        ) : filteredContracts.length === 0 ? (
           <div className="text-center text-gray-400">
-            <p>No contracts found yet.</p>
-            <p className="text-xs mt-1 opacity-50">
-              Contracts you create or receive will show here.
-            </p>
+            <p>No contracts found.</p>
           </div>
         ) : (
           <ul className="space-y-4">
-            {contracts.map((contract) => (
+            {filteredContracts.map((contract) => (
               <li
                 key={contract.contractId}
                 onClick={() => navigate(`/contract?id=${contract.contractId}`)}

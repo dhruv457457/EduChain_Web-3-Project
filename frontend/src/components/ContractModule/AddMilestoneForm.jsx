@@ -62,7 +62,7 @@ const AddMilestoneForm = ({ contractId, contractHooks, handleGetContractDetails,
             placeholder="Enter milestone title"
             value={milestoneData.title}
             onChange={(e) => setMilestoneData({ ...milestoneData, title: e.target.value })}
-            className="w-full bg-white p-3 rounded-md text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
         </div>
@@ -73,7 +73,7 @@ const AddMilestoneForm = ({ contractId, contractHooks, handleGetContractDetails,
             placeholder="Enter milestone amount"
             value={milestoneData.amount}
             onChange={(e) => setMilestoneData({ ...milestoneData, amount: e.target.value })}
-            className="w-full bg-white p-3 rounded-md text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 p-3 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
             min="0"
             step="0.01"
             required
@@ -87,7 +87,7 @@ const AddMilestoneForm = ({ contractId, contractHooks, handleGetContractDetails,
             showTimeSelect
             dateFormat="Pp" // e.g., "10/15/2025 2:30 PM"
             minDate={new Date()} // Prevents past dates
-            className="w-full bg-white p-3 rounded-md text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 p-3 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
             placeholderText="Select deadline"
             required
           />
@@ -99,7 +99,7 @@ const AddMilestoneForm = ({ contractId, contractHooks, handleGetContractDetails,
             placeholder="Enter deliverables"
             value={milestoneData.deliverables}
             onChange={(e) => setMilestoneData({ ...milestoneData, deliverables: e.target.value })}
-            className="w-full bg-white p-3 rounded-md text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 p-3 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
         </div>

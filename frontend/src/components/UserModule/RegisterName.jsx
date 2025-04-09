@@ -36,7 +36,7 @@ const RegisterName = ({ setGlobalRegisteredName, provider }) => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter your name"
-            className="border border-gray-600 p-2 rounded-md w-full bg-gray-800 text-white mt-2"
+            className="border border-gray-600 p-2 rounded-md w-full bg-gray-800 text-white mt-2 mb-5"
           />
           <LoaderButton
             onClick={handleRegisterName}

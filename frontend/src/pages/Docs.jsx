@@ -257,6 +257,33 @@ function Docs() {
                 Ensures transparency and eliminates the need for intermediaries.
               </li>
             </ul>
+            <h2 className="text-xl md:text-2xl font-semibold mt-6 mb-3">
+              Reputation Score in SWC
+            </h2>
+            <p className="text-gray-300 mb-4">
+              The Reputation Score is a key component in Smart Work Commitment
+              (SWC) that reflects a user’s trustworthiness and history of
+              commitments. It's visible to other users and helps them evaluate
+              potential collaborators before initiating contracts.
+            </p>
+            <ul className="list-disc pl-5 text-gray-300 space-y-2">
+              <li>
+                Scores are calculated based on contract completions, approval
+                ratings, and timely releases of funds.
+              </li>
+              <li>
+                Users with higher scores are more trusted within the Cryptify
+                ecosystem.
+              </li>
+              <li>
+                You can check another user's Reputation Score by searching their
+                username.
+              </li>
+              <li>
+                Helps promote accountability and reliability in Web3 freelancing
+                and agreements.
+              </li>
+            </ul>
           </>
         );
 

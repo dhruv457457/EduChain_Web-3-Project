@@ -24,7 +24,9 @@ const ContractIntro = ({
           🚀 Welcome to the SWC System
         </h2>
         <p className="text-gray-300 max-w-3xl text-xl mx-auto">
-          Manage milestone-based contracts and work posts securely on the blockchain. You can create new contracts, manage existing ones, and handle proposals in one place.
+          Manage milestone-based contracts and work posts securely on the
+          blockchain. You can create new contracts, manage existing ones, handle
+          proposals, and check anyone's reputation score using their username.
         </p>
       </div>
 

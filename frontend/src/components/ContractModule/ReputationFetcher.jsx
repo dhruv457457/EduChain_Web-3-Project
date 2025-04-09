@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { Search, Loader2, AlertCircle, CheckCircle, Star } from "lucide-react";
 import { ethers } from "ethers";
+import { motion, AnimatePresence } from "framer-motion";
 import useUsernameRegistry from "../../hooks/useUsernameRegistry";
 
 const ReputationFetcher = ({ contractHooks, walletProvider }) => {
-  const [username, setUsername] = useState(""); // Current input value
-  const [fetchedUsername, setFetchedUsername] = useState(null); // Username that was fetched
+  const [username, setUsername] = useState("");
+  const [fetchedUsername, setFetchedUsername] = useState(null);
   const [reputationScore, setReputationScore] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -30,7 +31,7 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
     setLoading(true);
     setError(null);
     setReputationScore(null);
-    setFetchedUsername(null); // Reset fetched username until successful fetch
+    setFetchedUsername(null);
 
     try {
       const address = await getAddressFromUsername(username);
@@ -42,8 +43,9 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
       if (score === undefined || score === null) {
         throw new Error("Reputation score not found for this username");
       }
+
       setReputationScore(ethers.formatUnits(score, 0));
-      setFetchedUsername(username); // Store the fetched username
+      setFetchedUsername(username);
       toast.success(`Reputation score fetched for ${username}`);
     } catch (err) {
       setError(err.message || "Failed to fetch reputation score");
@@ -54,7 +56,6 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
     }
   };
 
-  // Determine reputation status and styling
   const getReputationStatus = (score) => {
     if (score === null || score === undefined) return null;
     const numericScore = parseInt(score, 10);
@@ -63,7 +64,7 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
         label: "Bad Reputation",
         description: "This user has a history of unreliable payments.",
         color: "text-red-500",
-        bgColor: "bg-red-500/10",
+        bgColor: "bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/40",
         icon: <AlertCircle size={20} />,
       };
     } else if (numericScore === 500) {
@@ -71,7 +72,7 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
         label: "Trustworthy",
         description: "You can trust this user for standard transactions.",
         color: "text-yellow-400",
-        bgColor: "bg-yellow-400/10",
+        bgColor: "bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/40",
         icon: <CheckCircle size={20} />,
       };
     } else {
@@ -79,7 +80,7 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
         label: "Elite League",
         description: "This user is highly reliable and excels in performance.",
         color: "text-customNeonGreen",
-        bgColor: "bg-customNeonGreen/10",
+        bgColor: "bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/40",
         icon: <Star size={20} />,
       };
     }
@@ -88,9 +89,13 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
   const reputationStatus = getReputationStatus(reputationScore);
 
   return (
-    <div className="mt-6 p-6 bg-customDark/90 backdrop-blur-lg border border-customPurple/40 rounded-xl shadow-glass transition-all duration-300 hover:shadow-lg">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="mt-6 p-6 bg-customDark/90 backdrop-blur-lg border border-customPurple/40 rounded-xl shadow-glass"
+    >
       <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
-        <Star size={24} className="text-customNeonGreen" />
         Fetch Reputation Score
       </h3>
 
@@ -132,30 +137,46 @@ const ReputationFetcher = ({ contractHooks, walletProvider }) => {
           </button>
         </div>
 
-        {reputationScore !== null && fetchedUsername && (
-          <div
-            className={`p-4 rounded-lg ${reputationStatus.bgColor} border ${reputationStatus.color.replace("text-", "border-")}/30 transition-all duration-300`}
-          >
-            <div className="flex items-center gap-2 justify-center">
-              {reputationStatus.icon}
-              <p className={`text-lg font-semibold ${reputationStatus.color}`}>
-                Reputation Score for "{fetchedUsername}": {reputationScore}
+        <AnimatePresence>
+          {reputationScore !== null && fetchedUsername && (
+            <motion.div
+              key="score-card"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4 }}
+              className={`p-4 rounded-lg ${reputationStatus.bgColor} border ${reputationStatus.color.replace("text-", "border-")}/30`}
+            >
+              <div className="flex items-center gap-2 justify-center">
+                {reputationStatus.icon}
+                <p className={`text-lg font-semibold ${reputationStatus.color}`}>
+                  Reputation Score for "{fetchedUsername}": {reputationScore}
+                </p>
+              </div>
+              <p className={`text-center mt-2 ${reputationStatus.color}`}>
+                <span className="font-bold">{reputationStatus.label}</span>: {reputationStatus.description}
               </p>
-            </div>
-            <p className={`text-center mt-2 ${reputationStatus.color}`}>
-              <span className="font-bold">{reputationStatus.label}</span>: {reputationStatus.description}
-            </p>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {error && (
-          <div className="flex items-center justify-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <AlertCircle size={20} className="text-red-500" />
-            <p className="text-red-400 text-center">{error}</p>
-          </div>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              key="error-card"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              className="flex items-center justify-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg"
+            >
+              <AlertCircle size={20} className="text-red-500" />
+              <p className="text-red-400 text-center">{error}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

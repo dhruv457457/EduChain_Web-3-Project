@@ -47,11 +47,11 @@ const FetchContractSection = ({
           value={contractId}
           onChange={(e) => setContractId(e.target.value)}
           placeholder="Enter Contract ID"
-          className="flex-1 bg-gray-100 p-3 rounded-md text-gray-800"
+          className="flex-1 bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 p-3 rounded-md"
         />
         <button
           onClick={handleGetContractDetails}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md transition"
+          className="bg-customPurple hover:bg-customPurple/90 text-white px-6 py-3 rounded-lg transition"
           disabled={loading}
         >
           {loading ? "Loading..." : "Fetch Details"}
