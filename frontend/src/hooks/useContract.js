@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import FundTransferWithRegistryABI from "../contracts/FundTransferWithRegistry.json";
 
-const FUND_TRANSFER_ADDRESS = "0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c";
+const FUND_TRANSFER_ADDRESS = "0x139d2363009E583Bfbe52124F2569e39a576b87C";
 
 const useContract = (provider) => {
   const [userAddress, setUserAddress] = useState("");

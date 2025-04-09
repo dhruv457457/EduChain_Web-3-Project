@@ -3,12 +3,15 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+/// @title UsernameRegistry interface for mapping usernames to addresses
 interface UsernameRegistry {
     function getAddressFromUsername(string memory _username) external view returns (address);
     function getUsernameFromAddress(address _user) external view returns (string memory);
     function isRegistered(address _user) external view returns (bool);
 }
 
+/// @title FundTransferWithRegistry
+/// @notice A contract for sending, claiming, and managing escrowed funds using a username registry
 contract FundTransferWithRegistry is Ownable {
     struct Transaction {
         address sender;
@@ -22,9 +25,11 @@ contract FundTransferWithRegistry is Ownable {
         bool refunded;
     }
 
-    UsernameRegistry public registry; // Reference to shared username registry
+    UsernameRegistry public registry;
     Transaction[] public allTransactions;
+
     mapping(address => uint256) public pendingBalances;
+    mapping(address => uint256[]) private receivedTransactionIndexes;
 
     event FundsSent(address indexed sender, address indexed receiver, uint256 amount, string message);
     event FundsClaimed(address indexed receiver, uint256 amount);
@@ -32,16 +37,19 @@ contract FundTransferWithRegistry is Ownable {
     event FundsDeposited(address indexed user, uint256 amount);
     event EscrowReleased(address indexed recipient, uint256 amount);
 
+    /// @notice Initializes the contract with a username registry
     constructor(address _registryAddress) Ownable(msg.sender) {
         registry = UsernameRegistry(_registryAddress);
     }
 
+    /// @notice Allows users to deposit funds into their pending balance
     function depositFunds() external payable {
         require(msg.value > 0, "Amount must be greater than 0");
         pendingBalances[msg.sender] += msg.value;
         emit FundsDeposited(msg.sender, msg.value);
     }
 
+    /// @notice Send funds to a registered user via username
     function sendFunds(string memory _receiverUsername, string memory _message) external payable {
         require(msg.value > 0, "Amount must be greater than 0");
         require(registry.isRegistered(msg.sender), "Sender must be registered");
@@ -52,6 +60,7 @@ contract FundTransferWithRegistry is Ownable {
         _processTransaction(msg.sender, receiver, msg.value, _message);
     }
 
+    /// @notice Send funds to a registered user directly by address
     function sendFundsToAddress(address _receiver, string memory _message) external payable {
         require(msg.value > 0, "Amount must be greater than 0");
         require(registry.isRegistered(msg.sender), "Sender must be registered");
@@ -60,8 +69,9 @@ contract FundTransferWithRegistry is Ownable {
         _processTransaction(msg.sender, _receiver, msg.value, _message);
     }
 
+    /// @dev Internal function to log and store a transaction
     function _processTransaction(address _sender, address _receiver, uint256 _amount, string memory _message) internal {
-        allTransactions.push(Transaction({
+        Transaction memory txn = Transaction({
             sender: _sender,
             receiver: _receiver,
             senderName: registry.getUsernameFromAddress(_sender),
@@ -71,22 +81,27 @@ contract FundTransferWithRegistry is Ownable {
             timestamp: block.timestamp,
             claimed: false,
             refunded: false
-        }));
+        });
+
+        allTransactions.push(txn);
+        receivedTransactionIndexes[_receiver].push(allTransactions.length - 1);
 
         pendingBalances[_receiver] += _amount;
         emit FundsSent(_sender, _receiver, _amount, _message);
     }
 
+    /// @notice Claim all unclaimed funds received by the caller
     function claimFunds() external {
         uint256 amount = pendingBalances[msg.sender];
         require(amount > 0, "No funds to claim");
 
         pendingBalances[msg.sender] = 0;
 
-        for (uint256 i = 0; i < allTransactions.length; i++) {
-            if (allTransactions[i].receiver == msg.sender && !allTransactions[i].claimed && !allTransactions[i].refunded) {
-                allTransactions[i].claimed = true;
-                break;
+        uint256[] storage indexes = receivedTransactionIndexes[msg.sender];
+        for (uint256 i = 0; i < indexes.length; i++) {
+            uint256 txnIndex = indexes[i];
+            if (!allTransactions[txnIndex].claimed && !allTransactions[txnIndex].refunded) {
+                allTransactions[txnIndex].claimed = true;
             }
         }
 
@@ -96,6 +111,7 @@ contract FundTransferWithRegistry is Ownable {
         emit FundsClaimed(msg.sender, amount);
     }
 
+    /// @notice Release escrow funds manually as the contract owner
     function releaseEscrow(address _recipient, uint256 _amount) external onlyOwner {
         require(pendingBalances[_recipient] >= _amount, "Insufficient escrow funds");
 
@@ -106,10 +122,12 @@ contract FundTransferWithRegistry is Ownable {
         emit EscrowReleased(_recipient, _amount);
     }
 
+    /// @notice Returns all transactions stored on the contract
     function getAllTransactions() external view returns (Transaction[] memory) {
         return allTransactions;
     }
 
+    /// @notice Returns all transactions related to a specific user
     function getUserTransactions(address user) external view returns (Transaction[] memory) {
         uint256 count = 0;
         for (uint256 i = 0; i < allTransactions.length; i++) {

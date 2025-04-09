@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import CryptifySWCABI from "../contracts/CryptifySWC.json";
 
-const CONTRACT_ADDRESS = "0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A";
+const CONTRACT_ADDRESS = "0x3766EFeDCd3445A07d3a1107c956808d3A1B0103";
 
 const useContract2 = (provider) => {
   const [contract, setContract] = useState(null);
