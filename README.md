@@ -11,137 +11,123 @@
 
 ## 💡 What is Cryptify?
 
-**Cryptify** is a next-gen Web3 payment dApp that replaces complex wallet addresses with **human-readable usernames**, introduces **trust-based on-chain credit scores**, and leverages **SWC-compliant smart contracts** for milestone-based freelance payments. Fully deployed on the **EDU Chain Testnet**, Cryptify is secure, fast, and fully decentralized.
+Cryptify is a next-generation Web3 payment dApp that replaces cumbersome wallet addresses with **human-readable usernames**, integrates **trust-based on-chain credit scores**, and uses **milestone-based smart contracts** for secure freelance payments. Built and deployed on the **EDU Chain Testnet**, Cryptify offers a seamless, decentralized payment experience.
 
 ---
 
 ## 🔥 Why Cryptify?
 
-- ✅ Username-Based Transactions  
-- ✅ Secure Escrow Smart Contracts with Milestones  
-- ✅ On-Chain Credit Reputation System  
-- ✅ User Freindly Tour  
-- ✅ AI Chatbot Assistant (Botpress)  
-- ✅ Cross-Platform Wallet Support with MetaMask SDK  
-- ✅ Built with Vite + React + Tailwind + Hardhat 
+- **Username-Based Transactions**: Send funds to `@jane` instead of 0x... addresses.
+- **Secure Escrow Contracts**: Milestone-based payments with SWC compliance.
+- **On-Chain Reputation**: Trust scores based on transaction history.
+- **User-Friendly Onboarding**: Interactive tour powered by Driver.js.
+- **AI Chatbot**: Real-time support via Botpress integration.
+- **Cross-Platform**: Works with MetaMask SDK across devices.
+- **Tech Stack**: Vite, React, Tailwind CSS, Hardhat, Solidity.
 
 ---
 
 ## 🧠 Hackathon Judging Fit
 
-| **Criteria**              | **Cryptify Alignment**                                                        |
-|---------------------------|-------------------------------------------------------------------------------|
-| Ecosystem Impact          | Drives real users to EDU Chain via username UX & credit scores               |
-| Community Engagement      | Proposals, public contracts, user reputation builds trust & activity         |
-| Innovation & Originality  | Combines  usernames + smart escrow + reputation in a novel way           |
-| Feasibility & Scalability | L3-based gas costs + modular smart contract architecture                     |
-| Team Strength             | 4 full-stack devs covering Solidity, React, wallets                      |
-| Traction                  | Live demo, Twitter page, bot-based support, hackathon-ready product          |
-
-
+| **Criteria**              | **Cryptify Alignment**                                                                 |
+|---------------------------|---------------------------------------------------------------------------------------|
+| Ecosystem Impact          | Boosts EDU Chain adoption with intuitive UX and reputation incentives                |
+| Community Engagement      | Fosters trust via public contracts, proposals, and visible user reputation           |
+| Innovation & Originality  | Merges usernames, escrow contracts, and credit scores into a unique DeFi solution    |
+| Feasibility & Scalability | Leverages EDU Chain’s Layer 3 for low gas costs; modular contracts for growth        |
+| Team Strength             | Four full-stack devs skilled in Solidity, React, and wallet integrations             |
+| Traction                  | Live demo, active Twitter, chatbot support, and hackathon-ready deliverables         |
 
 ---
 
-## 🎨 Modern UI & UX Design
-- Cryptify features a sleek dark purple theme with a clean, modern layout designed for Web3 users.
+## 🎨 UI & UX Design
 
-- Framer Motion animations for smooth transitions and interactions
-
-- Poppins & Roboto fonts for a sharp, readable interface
-
-- Glassmorphism-style cards and clean spacing for visual appeal
-
-- Fully responsive design across desktop and mobile
-
-- Driver.js onboarding tour for easy wallet setup
-
-- AI chatbot drawer for real-time in-app support
+- **Theme**: Sleek dark purple with glassmorphism cards.
+- **Animations**: Smooth transitions via Framer Motion.
+- **Typography**: Poppins and Roboto for clarity and style.
+- **Responsiveness**: Optimized for desktop and mobile.
+- **Onboarding**: Guided setup tour with Driver.js.
+- **Support**: AI chatbot drawer for instant help.
 
 ---
+
 ## 🔐 Smart Contracts
 
-### 🔸 `UsernameRegistry.sol`
+Deployed on **EDU Chain Testnet**:
 
-- Maps wallet addresses to usernames and vice-versa  
-- Prevents duplicate usernames  
-- Emits registration events  
+### `UsernameRegistry.sol`
+- **Address**: [`0x55C5C1991714595969c66F0b55DFF740f3031Cb4`](https://edu-chain-testnet-explorer.com/address/0x55C5C1991714595969c66F0b55DFF740f3031Cb4)  
+- Maps wallet addresses to unique usernames and vice versa.
+- Ensures no duplicate usernames.
+- Emits events for registration tracking.
 
-### 🔸 `FundTransferWithRegistry.sol`
+### `FundTransferWithRegistry.sol`
+- **Address**: [`0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c`](https://edu-chain-testnet-explorer.com/address/0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c)  
+- Supports transfers via usernames or addresses.
+- Features claimable or refundable funds.
+- Logs all transactions with metadata.
 
-- Enables transfers using usernames or wallet addresses  
-- Funds can be claimed or refunded  
-- All transactions logged with metadata  
-
-### 🔸 `CryptifySWC.sol`
-
-- SWC-compliant milestone-based freelance contract system  
-- Includes:
+### `CryptifySWC.sol`
+- **Address**: [`0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A`](https://edu-chain-testnet-explorer.com/address/0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A)  
+- Implements SWC-compliant freelance contracts with:
   - Escrow protection
-  - Contract approval process
-  - Milestone management
-  - WorkPost + Proposal flow
-  - On-chain reputation system  
+  - Approval workflows
+  - Milestone tracking
+  - On-chain reputation updates
+
+*SWC = Standard Work Contract specification for secure freelance payments.*
 
 ---
 
 ## 🌐 Frontend Modules
 
-- Register & Login with MetaMask SDK  
-- User Dashboard with balances, transaction history, and contracts  
-- Username-based fund transfers  
-- Freelance workflow: post work → receive proposals → accept & auto-create contracts  
-- AI Chatbot integrated via Botpress API  
-- Guided onboarding using Driver.js  
+- **Register/Login**: MetaMask SDK integration.
+- **Dashboard**: Balances, transaction history, and contracts.
+- **Fund Transfers**: Send via usernames.
+- **Freelance Workflow**: Post work, receive proposals, auto-generate contracts.
+- **AI Chatbot**: Botpress-powered assistance.
+- **Onboarding Tour**: Driver.js for user guidance.
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Layer     | Tech Used                                                                     |
-|-----------|--------------------------------------------------------------------------------|
-| Frontend  | React.js, Vite, Tailwind CSS, Framer Motion, Driver.js, React Icons           |
-| Blockchain| Solidity, Hardhat, EDU Chain Testnet                                          |
-| Wallets   | MetaMask SDK                 |
-| AI/UX     | Botpress (AI Chatbot), Lottie Animations Framer Motion                                     |
+| **Layer**     | **Technologies**                                                      |
+|---------------|----------------------------------------------------------------------|
+| Frontend      | React.js, Vite, Tailwind CSS, Framer Motion, Driver.js, Lucide Icons |
+| Blockchain    | Solidity, Hardhat, EDU Chain Testnet                                 |
+| Wallets       | MetaMask SDK                                                 |
+| AI/UX         | Botpress, Lottie Animations                                  |
 
 ---
 
 ## 📜 Features
 
-### ✅ Username-Based Transfers
+### Username-Based Transfers
+Send ETH or tokens to `@username` via a global registry.
 
-Forget wallet addresses. Just send ETH to `@jane` using our global registry.
+### Freelance Smart Contracts
+- Escrow-protected payments (milestone-based or single).
+- Mutual approval process.
+- Deadline enforcement.
 
-### ✅ Freelance Smart Contracts (SWC Compliant)
+### On-Chain Credit Scores
+Reputation grows with successful transactions and contract completions.
 
-Escrow-based contracts between two users:
-- Milestone-based or single-payment
-- Requires approval from both parties
-- Handles deadlines and secure payments
-
-
-
-### ✅ On-Chain Credit Scores
-
-- Reputation increases with successful transactions and contract completions.
-
-### ✅ AI Chatbot Assistant
-
-- Powered by Botpress API  
-- Offers guided help to users  
-- Assists with onboarding and FAQ
+### AI Chatbot Assistant
+- Guides users through setup and FAQs.
+- Embedded via Botpress API.
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+- Node.js ≥ 18
+- MetaMask browser extension
+- EDU Chain Testnet added to MetaMask ([Guide](https://docs.educhain.io))
 
-- Node.js ≥ 18  
-- MetaMask browser extension  
-
-### Run Frontend Locally
-
+### Run Locally
 ```bash
 git clone https://github.com/dhruv457457/EduChain_Web-3-Project.git
 cd Cryptify/frontend
@@ -149,7 +135,7 @@ npm install
 npm run dev
 ```
 
-Ensure you have MetaMask installed and Linea network added for a smooth experience.
+Ensure you have MetaMask installed and EDU Chain network added for a smooth experience.
 
 ---
 
