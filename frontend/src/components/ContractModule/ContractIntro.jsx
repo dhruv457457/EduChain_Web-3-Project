@@ -1,14 +1,18 @@
 import React from "react";
-import { FilePlus, Search, Compass } from "lucide-react";
+import { FilePlus, Search, Compass, Star } from "lucide-react";
 
 const ContractIntro = ({
   showCreateForm,
   showFetchForm,
+  showReputationFetcher, // New prop
   showWorkPostForm,
   onToggleCreateForm,
   onToggleFetchForm,
+  onToggleReputationFetcher, // New callback
   onToggleWorkPostForm,
-  onStartTour, // ⬅️ New prop for manual tour
+  onStartTour,
+  contractHooks,
+  walletProvider,
 }) => {
   return (
     <div
@@ -46,9 +50,17 @@ const ContractIntro = ({
           <Search size={18} />
           {showFetchForm ? "Hide Fetch Form" : "Fetch Contract"}
         </button>
+
+        <button
+          onClick={onToggleReputationFetcher}
+          className="flex items-center gap-2 bg-customNeonGreen hover:bg-customNeonGreen/80 text-black px-5 py-2 rounded-full font-semibold shadow transition"
+        >
+          <Star size={18} />
+          {showReputationFetcher ? "Hide Reputation" : "See Reputation Score"}
+        </button>
       </div>
 
-      {/* ✅ Start Tour Button */}
+      {/* Start Tour Button */}
       <div className="flex justify-center pt-4">
         <button
           onClick={onStartTour}

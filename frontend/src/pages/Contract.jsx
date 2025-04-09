@@ -5,6 +5,7 @@ import useContract2 from "../hooks/useContract2";
 import ContractIntro from "../components/ContractModule/ContractIntro";
 import CreateContractForm from "../components/ContractModule/CreateContractForm";
 import FetchContractSection from "../components/ContractModule/FetchContractSection";
+import ReputationFetcher from "../components/ContractModule/ReputationFetcher"; // Import ReputationFetcher
 // import WorkPostSection from "../components/ContractModule/WorkPostSection";
 import { useWallet } from "../components/Global/WalletContext";
 import { driver } from "driver.js";
@@ -20,6 +21,7 @@ const Contract = () => {
   const [loading, setLoading] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showFetchForm, setShowFetchForm] = useState(false);
+  const [showReputationFetcher, setShowReputationFetcher] = useState(false); // New state for ReputationFetcher
   const [showWorkPostForm, setShowWorkPostForm] = useState(false); // optional
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,7 +39,16 @@ const Contract = () => {
       setContractDetails(details);
       setMilestones(milestones);
     } catch (err) {
-      toast.error(`Failed to fetch details: ${err.message}`);
+      let errorMessage = "Failed to fetch contract details";
+      if (err.message.includes("invalid contract ID")) {
+        errorMessage = "Invalid contract ID";
+      } else if (err.message.includes("network")) {
+        errorMessage = "Network error, please try again later";
+      } else if (err.message.includes("not found")) {
+        errorMessage = "Contract not found";
+      }
+      toast.error(errorMessage);
+      console.error("Fetch contract details error:", err);
     } finally {
       setLoading(false);
     }
@@ -100,6 +111,7 @@ const Contract = () => {
         console.log("✅ Tour completed.");
         setShowCreateForm(false);
         setShowFetchForm(false);
+        setShowReputationFetcher(false); // Reset reputation fetcher too
       },
     });
 
@@ -136,22 +148,32 @@ const Contract = () => {
     <>
       <div className="bg-customDarkpurple min-h-screen text-white">
         <ToastContainer position="top-right" autoClose={5000} />
-        <div className="max-w-6xl mx-auto px-6 py-20 pt-32 space-y-10 ">
+        <div className="max-w-6xl mx-auto px-6 py-20 pt-32 space-y-10">
           <ContractIntro
             data-driver="contract-intro"
             showCreateForm={showCreateForm}
             showFetchForm={showFetchForm}
+            showReputationFetcher={showReputationFetcher} // Pass new prop
             showWorkPostForm={showWorkPostForm}
             onToggleCreateForm={() => {
               setShowCreateForm((prev) => !prev);
               setShowFetchForm(false);
+              setShowReputationFetcher(false); // Close others when toggling
             }}
             onToggleFetchForm={() => {
               setShowFetchForm((prev) => !prev);
               setShowCreateForm(false);
+              setShowReputationFetcher(false); // Close others when toggling
+            }}
+            onToggleReputationFetcher={() => {
+              setShowReputationFetcher((prev) => !prev); // New toggle function
+              setShowCreateForm(false);
+              setShowFetchForm(false);
             }}
             onToggleWorkPostForm={() => setShowWorkPostForm(!showWorkPostForm)}
             onStartTour={handleManualTour}
+            contractHooks={contractHooks}
+            walletProvider={walletData?.provider}
           />
 
           {showCreateForm && (
@@ -177,16 +199,23 @@ const Contract = () => {
             />
           )}
 
+          {showReputationFetcher && (
+            <ReputationFetcher
+              contractHooks={contractHooks}
+              walletProvider={walletData?.provider}
+            />
+          )}
+
           {/* Uncomment this later if needed */}
           {/* {showWorkPostForm && (
-          <WorkPostSection
-            data-driver="work-post"
-            contractHooks={contractHooks}
-            currentAccount={walletData?.address}
-            loading={loading}
-            setLoading={setLoading}
-          />
-        )} */}
+            <WorkPostSection
+              data-driver="work-post"
+              contractHooks={contractHooks}
+              currentAccount={walletData?.address}
+              loading={loading}
+              setLoading={setLoading}
+            />
+          )} */}
         </div>
       </div>
     </>

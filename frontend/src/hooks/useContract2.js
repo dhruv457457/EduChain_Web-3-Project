@@ -198,6 +198,18 @@ const useContract2 = (provider) => {
     return rep.toString();
   };
 
+  const getReputationByAddress = async (address) => {
+    if (!contract) throw new Error("Contract not initialized");
+    if (!ethers.isAddress(address)) throw new Error("Invalid address");
+    try {
+      const rep = await contract.getReputation(address);
+      return rep;
+    } catch (error) {
+      console.error("Get Reputation By Address Error:", error);
+      throw error;
+    }
+  };
+
   const getContractDetails = async (contractId) => {
     if (!contract) throw new Error("Contract not initialized");
     try {
@@ -268,6 +280,7 @@ const useContract2 = (provider) => {
     acceptProposal,
     getUserContracts,
     fetchReputation,
+    getReputationByAddress,
     getContractDetails,
     getMilestones,
   };
