@@ -2,13 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ethers } from "ethers";
 import MetaMaskSDK from "@metamask/sdk";
-import {
-  FaBars,
-  FaTimes,
-  FaWallet,
-  FaSignOutAlt,
-  FaCopy,
-} from "react-icons/fa";
+import { FaBars, FaTimes, FaWallet, FaSignOutAlt, FaCopy } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useWallet } from "./WalletContext";
 import { motion } from "framer-motion";
@@ -56,7 +50,7 @@ const Navbar = () => {
       }
     };
     init();
-  
+
     return () => {
       const provider = MMSDK.getProvider();
       if (provider?.removeListener) {
@@ -72,6 +66,17 @@ const Navbar = () => {
       setError(null);
     }
   }, [error]);
+
+  // Close mobile menu when switching to desktop resolution
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && isOpen) {
+        setIsOpen(false); // Close mobile menu on desktop resolution
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isOpen]);
 
   const getLinkClass = (path) =>
     location.pathname === path
@@ -114,19 +119,19 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 w-full h-16 z-50 backdrop-blur-md bg-customDarkpurple/80 px-6 py-3 flex justify-between items-center">
+    <nav className="fixed top-0 w-full h-16 z-50 backdrop-blur-md bg-customDarkpurple/80 px-4 py-3 flex justify-between items-center shadow-navbar">
       {/* Brand */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-customPurple to-customBlue font-poppins"
+        className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-customPurple to-customBlue font-poppins"
       >
         Cryptify
       </motion.h1>
 
       {/* Desktop Nav */}
-      <div className="hidden md:flex items-center gap-8 text-white font-medium">
+      <div className="hidden md:flex items-center gap-6 text-white font-poppins font-medium">
         {navLinks.map((link, i) => (
           <motion.div
             key={link.path}
@@ -142,9 +147,9 @@ const Navbar = () => {
 
         {/* Wallet Buttons */}
         {walletData.address ? (
-          <div className="flex items-center gap-2 px-4 py-2 rounded-md text-sm shadow-md border border-customPurple bg-gradient-to-r from-customPurple to-customBlue">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm shadow-md-purple border border-customPurple bg-gradient-to-r from-customPurple to-customBlue">
             <FaWallet />
-            <span className="font-mono">
+            <span className="font-mono hidden lg:inline">
               {walletData.address.slice(0, 6)}...{walletData.address.slice(-4)}
             </span>
             <button onClick={copyAddress} title="Copy Address">
@@ -160,9 +165,9 @@ const Navbar = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
-            className="flex items-center gap-2 bg-customPurple hover:bg-customBlue text-white px-5 py-2 rounded-full shadow-md transition"
+            className="flex items-center gap-2 bg-customPurple hover:bg-customBlue text-white px-3 py-1.5 rounded-full shadow-md-purple transition text-sm"
           >
-            <FaWallet /> Connect Wallet
+            <FaWallet /> Connect
           </motion.button>
         )}
       </div>
@@ -171,56 +176,64 @@ const Navbar = () => {
       <div className="md:hidden">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="text-white text-2xl"
+          className="text-white text-2xl focus:outline-none"
         >
           {isOpen ? <FaTimes /> : <FaBars />}
         </button>
       </div>
 
       {/* Mobile Dropdown */}
-      <div
-        className={`absolute top-full left-0 w-full bg-customSemiPurple backdrop-blur-md transition-all duration-300 ease-in-out overflow-hidden ${
-          isOpen ? "max-h-96" : "max-h-0"
-        }`}
-      >
-        <div className="flex flex-col gap-4 text-white font-medium px-6 py-4">
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              onClick={() => setIsOpen(false)}
-              className={getLinkClass(link.path)}
-            >
-              {link.label}
-            </Link>
-          ))}
+      {isOpen && (
+        <div className="absolute top-16 left-0 w-full bg-customSemiPurple backdrop-blur-md shadow-glass md:hidden">
+          <div className="flex flex-col items-center gap-4 text-white font-poppins font-medium px-6 py-4">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setIsOpen(false)}
+                className={`${getLinkClass(
+                  link.path
+                )} w-full text-center py-2 hover:bg-customDark/50 rounded-md transition`}
+              >
+                {link.label}
+              </Link>
+            ))}
 
-          {walletData.address ? (
-            <div className="flex flex-col items-start gap-2 px-4 py-2 text-sm bg-gradient-to-r from-customPurple to-customBlue rounded-xl shadow-md">
-              <div className="flex items-center gap-2">
-                <FaWallet />
-                <span className="font-mono">
-                  {walletData.address.slice(0, 6)}...
-                  {walletData.address.slice(-4)}
-                </span>
+            {walletData.address ? (
+              <div className="flex flex-col items-center gap-2 px-4 py-3 text-sm bg-gradient-to-r from-customPurple to-customBlue rounded-xl shadow-soft w-full">
+                <div className="flex items-center gap-2">
+                  <FaWallet />
+                  <span className="font-mono">
+                    {walletData.address.slice(0, 6)}...
+                    {walletData.address.slice(-4)}
+                  </span>
+                </div>
+                <div className="flex gap-6">
+                  <button
+                    onClick={copyAddress}
+                    className="flex items-center gap-1 hover:text-customGray transition"
+                  >
+                    <FaCopy /> Copy
+                  </button>
+                  <button
+                    onClick={disconnectWallet}
+                    className="flex items-center gap-1 text-red-400 hover:text-red-500 transition"
+                  >
+                    <FaSignOutAlt /> Disconnect
+                  </button>
+                </div>
               </div>
-              <button onClick={copyAddress}>
-                <FaCopy /> Copy
+            ) : (
+              <button
+                onClick={connectWallet}
+                className="flex items-center justify-center gap-2 bg-customPurple hover:bg-customBlue text-white px-4 py-2 rounded-md shadow-soft w-full text-sm transition"
+              >
+                <FaWallet /> Connect Wallet
               </button>
-              <button onClick={disconnectWallet} className="text-red-400">
-                <FaSignOutAlt /> Disconnect
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={connectWallet}
-              className="flex items-center gap-2 bg-customPurple hover:bg-customBlue text-white px-4 py-2 rounded-md"
-            >
-              <FaWallet /> Connect Wallet
-            </button>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 };
