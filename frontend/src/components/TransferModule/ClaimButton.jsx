@@ -18,7 +18,13 @@ const ClaimButton = ({ claimFunds }) => {
       toast.success(`✅ Funds claimed successfully! TX: ${txHash}`);
     } catch (error) {
       console.error("Claim error:", error);
-      toast.error(`❌ Claim failed: ${error.message || "Unknown error"}`);
+      // Extract the revert reason from the error object
+      const errorMessage =
+        error.reason || // For ethers.js v6
+        error.data?.message || // For some providers
+        error.message || // Fallback to generic message
+        "Unknown error";
+      toast.error(`❌ Claim failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }

@@ -198,12 +198,17 @@ const useContract = (provider) => {
       return tx.hash;
     } catch (error) {
       console.error("Error claiming funds:", error);
-      throw error.message || "Failed to claim funds";
+      // Extract the revert reason from the error object
+      const revertReason =
+        error.reason || // ethers.js v6
+        error.data?.message || // Some providers
+        error.message || // Generic fallback
+        "Failed to claim funds";
+      throw new Error(revertReason); // Throw the specific reason
     } finally {
       setIsLoading(false);
     }
   };
-
   return {
     getContract,
     userAddress,
