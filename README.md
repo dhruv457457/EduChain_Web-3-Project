@@ -56,19 +56,19 @@ Cryptify is a next-generation Web3 payment dApp that replaces cumbersome wallet 
 Deployed on **EDU Chain Testnet**:
 
 ### `UsernameRegistry.sol`
-- **Address**: [`0x55C5C1991714595969c66F0b55DFF740f3031Cb4`](https://edu-chain-testnet-explorer.com/address/0x55C5C1991714595969c66F0b55DFF740f3031Cb4)  
+- **Address**: [`0x55C5C1991714595969c66F0b55DFF740f3031Cb4`](https://edu-chain-testnet.blockscout.com/address/0x55C5C1991714595969c66F0b55DFF740f3031Cb4)  
 - Maps wallet addresses to unique usernames and vice versa.
 - Ensures no duplicate usernames.
 - Emits events for registration tracking.
 
 ### `FundTransferWithRegistry.sol`
-- **Address**: [`0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c`](https://edu-chain-testnet-explorer.com/address/0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c)  
+- **Address**: [`0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c`](https://edu-chain-testnet.blockscout.com/address/0x31bCF4cC0c6c7F13Ab92260FAdc8BCeFFBfEef5c)  
 - Supports transfers via usernames or addresses.
 - Features claimable or refundable funds.
 - Logs all transactions with metadata.
 
 ### `CryptifySWC.sol`
-- **Address**: [`0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A`](https://edu-chain-testnet-explorer.com/address/0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A)  
+- **Address**: [`0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A`](https://edu-chain-testnet.blockscout.com/address/0x6114B9FA1f90e6DDFea9fD8f8e7427F43B00F70A)  
 - Implements SWC-compliant freelance contracts with:
   - Escrow protection
   - Approval workflows
