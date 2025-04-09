@@ -161,9 +161,6 @@ For any inquiries, support, or collaboration opportunities, feel free to reach o
 
 ---
 
-## 🐦 Follow us on X (Twitter): [@CryptifySecure](https://x.com/CryptifySecure)
-
-## 🌎 Website: [Cryptify](https://cryptify-defi.vercel.app/)
 
 🚀 Join our Web3 revolution!
 
