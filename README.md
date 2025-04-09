@@ -1,4 +1,4 @@
-# 🚀 Cryptify – Simplifying Web3 Payments with Human-Readable Usernames
+# 🚀 Cryptify – Revolutionizing Web3 Payments
 
 **Built for EDU Chain Hackathon: Semester 3**  
 **Track:** DeFi  
