@@ -1,44 +1,18 @@
-import React, { useState } from "react";
-import { toast } from "react-toastify";
+import React from "react";
 
-const ClaimButton = ({ claimFunds }) => {
-  const [loading, setLoading] = useState(false);
-
-  const handleClaimFunds = async () => {
-    if (!claimFunds) {
-      toast.error("❌ Claim functionality not available!");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      console.log("Attempting to claim funds..."); // Debug
-      const txHash = await claimFunds();
-      console.log("Claim transaction hash:", txHash); // Debug
-      toast.success(`✅ Funds claimed successfully! TX: ${txHash}`);
-    } catch (error) {
-      console.error("Claim error:", error);
-      // Use the error message directly, as it now includes the revert reason
-      const errorMessage = error.message || "Unknown error";
-      toast.error(`❌ ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+function Cards({ title, description, icon }) {
   return (
-    <button
-      onClick={handleClaimFunds}
-      className={`w-full px-4 py-2 rounded text-white transition-all ${
-        loading
-          ? "bg-gray-500 cursor-not-allowed"
-          : "bg-customPurple hover:bg-customLightPurple"
-      }`}
-      disabled={loading}
+    <div
+      className="w-full sm:w-80 min-h-[250px] bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 hover:border-customPurple hover:shadow-lg 
+      shadow-customPurple/10 rounded-2xl p-6 flex flex-col justify-center items-center text-center transition-all duration-300 hover:scale-105"
     >
-      {loading ? "Processing..." : "Claim Funds"}
-    </button>
+      <div className="flex items-center justify-center w-16 h-16 rounded-full bg-customInput text-customNeonGreen mb-4 shadow-md">
+        {icon}
+      </div>
+      <h2 className="text-xl font-bold text-customPurple mb-2">{title}</h2>
+      <p className="text-sm text-customGray">{description}</p>
+    </div>
   );
-};
+}
 
-export default ClaimButton;
+export default Cards;
