@@ -38,6 +38,25 @@
 | Team Strength             | 4 full-stack devs covering Solidity, React, wallets                      |
 | Traction                  | Live demo, Twitter page, bot-based support, hackathon-ready product          |
 
+
+
+---
+
+## 🎨 Modern UI & UX Design
+- Cryptify features a sleek dark purple theme with a clean, modern layout designed for Web3 users.
+
+- Framer Motion animations for smooth transitions and interactions
+
+- Poppins & Roboto fonts for a sharp, readable interface
+
+- Glassmorphism-style cards and clean spacing for visual appeal
+
+- Fully responsive design across desktop and mobile
+
+- Driver.js onboarding tour for easy wallet setup
+
+- AI chatbot drawer for real-time in-app support
+
 ---
 ## 🔐 Smart Contracts
 
