@@ -8,7 +8,6 @@ import { useWallet } from "../components/Global/WalletContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import LoaderButton from "../components/Global/Loader"; // Updated import
 
 const Transfer = () => {
   const { walletData } = useWallet();
@@ -19,29 +18,28 @@ const Transfer = () => {
     sendFunds,
     sendFundsToAddress,
   } = useContract(walletData?.provider);
+
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
   const [message, setMessage] = useState("");
   const [isAddress, setIsAddress] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isTransactionsLoaded, setIsTransactionsLoaded] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
-  const [isTransactionsLoaded, setIsTransactionsLoaded] = useState(false);
 
   useEffect(() => {
     const loadTransactions = async () => {
       if (walletData?.address) {
         try {
           await fetchTransactions();
-          setIsTransactionsLoaded(true);
         } catch (error) {
           console.error("Error loading transactions:", error);
           toast.error("Failed to load transactions!");
-          setIsTransactionsLoaded(true); // Still set to true to prevent infinite loading
         }
-      } else {
-        setIsTransactionsLoaded(true); // If no wallet, mark as loaded
       }
+      setIsTransactionsLoaded(true); // Always set to true
     };
     loadTransactions();
   }, [walletData?.address, fetchTransactions]);
@@ -71,29 +69,38 @@ const Transfer = () => {
 
     try {
       setLoading(true);
-      const amountInWei = ethers.parseEther(amount);
-      let tx;
 
+      let tx;
       if (isAddress) {
-        console.log(`💰 Sending ${amount} ETH to address ${recipient}...`);
         tx = await sendFundsToAddress(recipient, amount, message);
       } else {
-        console.log(`💰 Sending ${amount} ETH to username ${recipient}...`);
         tx = await sendFunds(recipient, amount, message);
       }
 
-      console.log("🔍 Transaction object:", tx);
-      console.log("🔄 Transaction sent. Waiting for confirmation...");
-      const receipt = await tx.wait();
-      console.log("🔍 Transaction receipt:", receipt);
-      const txHash = receipt.transactionHash || receipt.hash || tx.hash; // Fallbacks
+      if (!tx || typeof tx.wait !== "function") {
+        throw new Error("Invalid transaction response. Could not wait for confirmation.");
+      }
 
-      toast.success(`✅ Transfer successful! TX: ${txHash}`);
+      const waitingToastId = toast.info("⏳ Waiting for transaction confirmation...", {
+        autoClose: false,
+      });
+
+      const receipt = await tx.wait();
+      toast.dismiss(waitingToastId);
+
+      const txHash = receipt?.transactionHash || tx.hash || "N/A";
+
       setRecipient("");
       setAmount("");
       setMessage("");
-      fetchTransactions();
+
+      await fetchTransactions();
+
+      toast.success(`✅ Transfer successful! TX: ${txHash}`, {
+        autoClose: 7000,
+      });
     } catch (error) {
+      toast.dismiss();
       console.error("❌ Transaction error:", error);
       toast.error(
         `❌ Transaction failed! ${
@@ -106,9 +113,7 @@ const Transfer = () => {
   };
 
   useEffect(() => {
-    const shouldStartTransactionTour = localStorage.getItem(
-      "startTransactionTour"
-    );
+    const shouldStartTransactionTour = localStorage.getItem("startTransactionTour");
     if (shouldStartTransactionTour === "true") {
       localStorage.removeItem("startTransactionTour");
 
@@ -124,8 +129,7 @@ const Transfer = () => {
             element: '[data-driver="transfer-form"]',
             popover: {
               title: "Transfer Funds Form 📝",
-              description:
-                "Fill in the recipient, amount, and message to send funds.",
+              description: "Fill in the recipient, amount, and message to send funds.",
               position: "bottom",
             },
           },
@@ -133,15 +137,13 @@ const Transfer = () => {
             element: '[data-driver="transaction-list"]',
             popover: {
               title: "Your Transactions 📂",
-              description: "View all the transactions anyone have made.",
+              description: "View all the transactions anyone has made.",
               position: "bottom",
             },
           },
         ],
         onDestroyed: () => {
-          console.log(
-            "Transaction tour finished, navigating to contract page..."
-          );
+          console.log("Transaction tour finished, navigating to contract page...");
           localStorage.setItem("startContractTour", "true");
           setTimeout(() => navigate("/contract"), 100);
         },
@@ -150,20 +152,6 @@ const Transfer = () => {
       setTimeout(() => transactionTour.drive(), 1000);
     }
   }, [navigate, location.pathname]);
-
-  // Show loader if transactions aren't loaded yet or during a transfer
-  if (!isTransactionsLoaded || loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-customDarkpurple">
-        <div className="w-full max-w-md">
-          <LoaderButton
-            loading={true}
-            text={loading ? "Processing Transfer..." : "Loading Transactions..."}
-          />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>

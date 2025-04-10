@@ -80,12 +80,13 @@ const TransferForm = ({
           className="border border-customPurple/30 p-2 rounded-md w-full bg-customInput text-cyan-50"
         />
 
-        <LoaderButton
-          onClick={sendFunds}
-          loading={loading}
-          text="Send Funds"
-          color="customPurple"
-        />
+<LoaderButton
+  onClick={sendFunds}
+  loading={loading}
+  text="Send Funds"
+  color="customPurple"
+/>
+
 
         <ClaimButton claimFunds={claimFunds} />
       </div>

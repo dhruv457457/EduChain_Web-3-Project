@@ -28,7 +28,6 @@ const useContract = (provider) => {
     };
     fetchAccount();
 
-    // Setup event listeners
     const contract = getContract();
     if (contract) {
       contract.then((c) => {
@@ -137,9 +136,7 @@ const useContract = (provider) => {
       const contract = await getContract();
       const amountInWei = ethers.parseEther(amount.toString());
       const tx = await contract.depositFunds({ value: amountInWei });
-      await tx.wait();
-      fetchPendingBalance(userAddress);
-      return tx.hash;
+      return tx;
     } catch (error) {
       console.error("Error depositing funds:", error);
       throw error.message || "Failed to deposit funds";
@@ -155,10 +152,7 @@ const useContract = (provider) => {
       const contract = await getContract();
       const amountInWei = ethers.parseEther(amount.toString());
       const tx = await contract.sendFunds(receiverUsername, message, { value: amountInWei });
-      await tx.wait();
-      fetchUserTransactions(userAddress);
-      fetchPendingBalance(userAddress);
-      return tx.hash;
+      return tx;
     } catch (error) {
       console.error("Error sending funds:", error);
       throw error.message || "Failed to send funds";
@@ -174,10 +168,7 @@ const useContract = (provider) => {
       const contract = await getContract();
       const amountInWei = ethers.parseEther(amount.toString());
       const tx = await contract.sendFundsToAddress(receiverAddress, message, { value: amountInWei });
-      await tx.wait();
-      fetchUserTransactions(userAddress);
-      fetchPendingBalance(userAddress);
-      return tx.hash;
+      return tx;
     } catch (error) {
       console.error("Error sending funds to address:", error);
       throw error.message || "Failed to send funds to address";
@@ -192,23 +183,20 @@ const useContract = (provider) => {
     try {
       const contract = await getContract();
       const tx = await contract.claimFunds();
-      await tx.wait();
-      fetchUserTransactions(userAddress);
-      fetchPendingBalance(userAddress);
-      return tx.hash;
+      return tx;
     } catch (error) {
       console.error("Error claiming funds:", error);
-      // Extract the revert reason from the error object
       const revertReason =
-        error.reason || // ethers.js v6
-        error.data?.message || // Some providers
-        error.message || // Generic fallback
+        error.reason ||
+        error.data?.message ||
+        error.message ||
         "Failed to claim funds";
-      throw new Error(revertReason); // Throw the specific reason
+      throw new Error(revertReason);
     } finally {
       setIsLoading(false);
     }
   };
+
   return {
     getContract,
     userAddress,
