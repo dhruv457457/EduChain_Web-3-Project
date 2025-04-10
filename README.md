@@ -125,7 +125,7 @@ Reputation grows with successful transactions and contract completions.
 ### Prerequisites
 - Node.js ≥ 18
 - MetaMask browser extension
-- EDU Chain Testnet added to MetaMask ([Guide](https://docs.educhain.io))
+- EDU Chain Testnet added to MetaMask
 
 ### Run Locally
 ```bash
