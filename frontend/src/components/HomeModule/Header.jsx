@@ -67,8 +67,9 @@ function Header() {
           Secure DEFI
         </h1>
         <p className="text-slate-400 font-semibold text-lg md:text-xl lg:text-xl w-full md:w-3/4 lg:w-1/2 py-4">
-          Experience next-generation secure transfers, group payments, and smart
-          savings features with unmatched security and seamless user experience.
+          Cryptify – Experience next-generation secure crypto transfers with
+          personalized usernames, smart work commitments, and a transparent
+          reputation system. Built for trust, speed, and simplicity.
         </p>
       </div>
       {/* Buttons */}
