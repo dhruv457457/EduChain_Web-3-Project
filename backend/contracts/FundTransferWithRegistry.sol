@@ -1,18 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-
-/// @title UsernameRegistry interface for mapping usernames to addresses
 interface UsernameRegistry {
     function getAddressFromUsername(string memory _username) external view returns (address);
     function getUsernameFromAddress(address _user) external view returns (string memory);
     function isRegistered(address _user) external view returns (bool);
 }
 
-/// @title FundTransferWithRegistry
-/// @notice A contract for sending, claiming, and managing escrowed funds using a username registry
-contract FundTransferWithRegistry is Ownable {
+contract FundTransferWithRegistry {
     struct Transaction {
         address sender;
         address receiver;
@@ -35,10 +30,9 @@ contract FundTransferWithRegistry is Ownable {
     event FundsClaimed(address indexed receiver, uint256 amount);
     event RefundIssued(address indexed sender, uint256 amount);
     event FundsDeposited(address indexed user, uint256 amount);
-    event EscrowReleased(address indexed recipient, uint256 amount);
 
     /// @notice Initializes the contract with a username registry
-    constructor(address _registryAddress) Ownable(msg.sender) {
+    constructor(address _registryAddress) {
         registry = UsernameRegistry(_registryAddress);
     }
 
@@ -109,17 +103,6 @@ contract FundTransferWithRegistry is Ownable {
         require(success, "Claim failed");
 
         emit FundsClaimed(msg.sender, amount);
-    }
-
-    /// @notice Release escrow funds manually as the contract owner
-    function releaseEscrow(address _recipient, uint256 _amount) external onlyOwner {
-        require(pendingBalances[_recipient] >= _amount, "Insufficient escrow funds");
-
-        pendingBalances[_recipient] -= _amount;
-        (bool success, ) = _recipient.call{value: _amount}("");
-        require(success, "Escrow release failed");
-
-        emit EscrowReleased(_recipient, _amount);
     }
 
     /// @notice Returns all transactions stored on the contract
