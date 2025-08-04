@@ -17,7 +17,7 @@ const Navbar = () => {
 
   const MMSDK = useRef(
     new MetaMaskSDK({
-      dappMetadata: { name: "Cryptify" },
+      dappMetadata: { name: "Dkarma" },
       logging: { developerMode: true },
     })
   ).current;
@@ -119,15 +119,15 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 w-full h-16 z-50 backdrop-blur-md bg-customDarkpurple/80 px-4 py-3 flex justify-between items-center shadow-navbar">
+    <nav className="fixed top-0 w-full h-16 z-50 backdrop-blur-md px-4 py-3 flex justify-between items-center">
       {/* Brand */}
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-customPurple to-customBlue font-poppins"
+        className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-primary_hover font-poppins"
       >
-        Cryptify
+        Dkarma
       </motion.h1>
 
       {/* Desktop Nav */}

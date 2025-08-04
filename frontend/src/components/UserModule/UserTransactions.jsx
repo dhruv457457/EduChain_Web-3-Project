@@ -14,10 +14,10 @@ const UserTransactions = ({ provider }) => {
       try {
         if (userAddress) {
           await fetchUserTransactions(userAddress);
-          setLoading(false);
         }
       } catch (err) {
         setError("Failed to load transactions.");
+      } finally {
         setLoading(false);
       }
     };
@@ -31,20 +31,22 @@ const UserTransactions = ({ provider }) => {
     return true;
   });
 
-  return (
-    <div className="rounded-md bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 shadow-custom-purple p-5 text-white">
-      <h2 className="text-xl font-semibold mb-4">Your Transactions</h2>
+  const shortenAddress = (address) =>
+    address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "N/A";
 
-      {/* Filter Buttons */}
+  return (
+    <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50 text-white h-full">
+      <h2 className="text-xl font-bold mb-4">Activity Feed</h2>
+
       <div className="flex gap-2 mb-4">
         {["All", "Claimed", "Pending"].map((btn) => (
           <button
             key={btn}
             onClick={() => setFilter(btn)}
-            className={`px-4 py-1 rounded-full text-sm border transition ${
+            className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
               filter === btn
-                ? "bg-purple-600 border-purple-400 text-white"
-                : "bg-transparent border-purple-300 text-purple-200 hover:bg-purple-500/20"
+                ? "bg-primary text-white"
+                : "bg-gray-700/80 text-gray-300 hover:bg-gray-600"
             }`}
           >
             {btn}
@@ -52,8 +54,7 @@ const UserTransactions = ({ provider }) => {
         ))}
       </div>
 
-      {/* Transaction List */}
-      <div className="max-h-44 lg:min-h-44 overflow-y-auto custom-scrollbar">
+      <div className="max-h-96 overflow-y-auto custom-scrollbar pr-2">
         {loading ? (
           <div className="flex justify-center items-center h-24">
             <LoaderButton loading={true} text="Loading Transactions" />
@@ -61,35 +62,58 @@ const UserTransactions = ({ provider }) => {
         ) : error ? (
           <p className="text-red-400">{error}</p>
         ) : filteredTransactions.length === 0 ? (
-          <p className="text-gray-400">No transactions found.</p>
+          <p className="text-gray-400 text-center py-10">
+            No transactions found.
+          </p>
         ) : (
-          <ul className="space-y-4">
+          <ul className="space-y-3">
             {filteredTransactions.map((tx, index) => (
               <li
                 key={index}
-                className="p-4 rounded-lg bg-customPurple/10 backdrop-blur-md border border-customPurple/20"
+                className="flex items-center justify-between p-3 rounded-md bg-black/20 hover:bg-black/40 transition-colors"
               >
-                <p>
-                  <strong>From:</strong> {tx.senderName}
-                </p>
-                <p>
-                  <strong>To:</strong> {tx.receiverName}
-                </p>
-                <p>
-                  <strong>Amount:</strong> {tx.amount} ETH
-                </p>
-                <p>
-                  <strong>Message:</strong> {tx.message}
-                </p>
-                <p>
-                  <strong>Timestamp:</strong>{" "}
-                  {new Date(tx.timestamp * 1000).toLocaleString()}
-                </p>
-                <p
-                  className={tx.claimed ? "text-green-400" : "text-yellow-400"}
-                >
-                  {tx.claimed ? "✅ Claimed" : "⏳ Pending"}
-                </p>
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`w-2.5 h-2.5 rounded-full ${
+                      tx.claimed ? "bg-green-500" : "bg-yellow-500"
+                    }`}
+                  ></div>
+                  <div>
+                    <p className="font-semibold text-sm text-gray-200">
+                      {tx.sender.toLowerCase() === userAddress.toLowerCase()
+                        ? `Sent to ${
+                            tx.receiverName || shortenAddress(tx.receiver)
+                          }`
+                        : `Received from ${
+                            tx.senderName || shortenAddress(tx.sender)
+                          }`}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {new Date(tx.timestamp * 1000).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p
+                    className={`font-bold text-sm ${
+                      tx.sender.toLowerCase() === userAddress.toLowerCase()
+                        ? "text-red-400"
+                        : "text-green-400"
+                    }`}
+                  >
+                    {tx.sender.toLowerCase() === userAddress.toLowerCase()
+                      ? "-"
+                      : "+"}
+                    {tx.amount} ETH
+                  </p>
+                  <p
+                    className={`text-xs font-semibold ${
+                      tx.claimed ? "text-green-400" : "text-yellow-400"
+                    }`}
+                  >
+                    {tx.claimed ? "Completed" : "Pending"}
+                  </p>
+                </div>
               </li>
             ))}
           </ul>

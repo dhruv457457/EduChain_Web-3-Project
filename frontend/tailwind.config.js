@@ -3,7 +3,7 @@ module.exports = {
   theme: {
     extend: {
       boxShadow: {
-        'custom-purple': '0px 4px 50px rgba(175, 52, 255, 0.25)',
+        'custom-purple': '0px 4px 50px rgba(128, 0, 128, 0.25)',
         'md-purple': '0px 4px 20px rgba(175, 52, 255, 0.15)',
         'navbar': '0px 2px 10px rgba(0, 0, 0, 0.5)',
         'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.2)', // glassmorphism
@@ -15,18 +15,19 @@ module.exports = {
         'glow': '0px 0px 6px rgba(175, 52, 255, 0.4)',
       },
       colors: {
-        customDarkpurple: "#0E0618",
-        customLightPurple: "#800080",
-        customSemiPurple: "#1D0A2D",
-        customPurple: "#AF34FF",
-        customBlue: "#6496FF",
-        customBlue2: "#4C8FF5",
-        customInput: "#23053B",
-        customDark: "#11021D",
-        customGray: "#D1D5DB",
-        customNeonGreen: "#39FF14",
-        customNeonPink: "#FF44CC",
-        
+        background: "#000000",
+        surface: "#0d1117",
+        foreground: "#e5e7eb",
+        muted: "#9ca3af",
+        border: "#2c2f36",
+        primary: "#3b82f6",
+        primary_hover: "#93c5fd",
+        primary_hover1: "#2563eb",
+        secondary: "#94a3b8",
+        success: "#10b981",
+        error: "#ef4444"
+
+
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
@@ -37,6 +38,9 @@ module.exports = {
         slideUp: 'slideUp 0.6s ease-out',
         zoomIn: 'zoomIn 0.5s ease-in-out',
         underlineGrow: 'underlineGrow 0.4s ease-out forwards',
+         'spin-slow': 'spin 3s linear infinite',
+        'spin-medium': 'spin 2s linear infinite reverse',
+        'spin-fast': 'spin 1s linear infinite',
       },
       keyframes: {
         fadeIn: {
@@ -64,3 +68,5 @@ module.exports = {
     require('@tailwindcss/typography'),
   ],
 };
+
+

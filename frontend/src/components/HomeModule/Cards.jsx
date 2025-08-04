@@ -2,15 +2,12 @@ import React from "react";
 
 function Cards({ title, description, icon }) {
   return (
-    <div
-      className="w-full sm:w-80 min-h-[250px] bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 hover:border-customPurple hover:shadow-lg 
-      shadow-customPurple/10 rounded-2xl p-6 flex flex-col justify-center items-center text-center transition-all duration-300 hover:scale-105"
-    >
-      <div className="flex items-center justify-center w-16 h-16 rounded-full bg-customInput text-customNeonGreen mb-4 shadow-md">
+    <div className="bg-[#16192E] p-8 rounded-lg border border-gray-700/50 text-center transition-all duration-300 hover:-translate-y-2 hover:border-purple-500/50 shadow-lg">
+      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-purple-600/20">
         {icon}
       </div>
-      <h2 className="text-xl font-bold text-customPurple mb-2">{title}</h2>
-      <p className="text-sm text-customGray">{description}</p>
+      <h2 className="text-xl font-bold text-white mb-2">{title}</h2>
+      <p className="text-sm text-gray-400">{description}</p>
     </div>
   );
 }

@@ -1,74 +1,54 @@
 import React from "react";
-import { FilePlus, Search, Compass, Star } from "lucide-react";
+import { FilePlus, Search, Star, Compass } from "lucide-react";
 
-const ContractIntro = ({
-  showCreateForm,
-  showFetchForm,
-  showReputationFetcher, // New prop
-  showWorkPostForm,
-  onToggleCreateForm,
-  onToggleFetchForm,
-  onToggleReputationFetcher, // New callback
-  onToggleWorkPostForm,
-  onStartTour,
-  contractHooks,
-  walletProvider,
-}) => {
+const ContractIntro = ({ onToggleView, activeView, onStartTour }) => {
+  const getButtonClass = (viewName) =>
+    `flex items-center gap-2 px-5 py-2.5 rounded-md font-semibold shadow-md transition-all duration-300 ${
+      activeView === viewName
+        ? "bg-purple-600 text-white"
+        : "bg-gray-700/80 text-gray-300 hover:bg-gray-700"
+    }`;
+
   return (
     <div
       data-driver="contract-intro"
-      className="bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 p-8 rounded-xl space-y-6"
+      className="bg-[#16192E] p-8 rounded-lg border border-gray-700/50"
     >
       <div className="text-center">
-        <h2 className="text-3xl font-extrabold text-white mb-2">
-          🚀 Welcome to the SWC System
+        <h2 className="text-3xl font-extrabold text-white mb-3">
+          Smart Work Commitment (SWC)
         </h2>
-        <p className="text-gray-300 max-w-3xl text-xl mx-auto">
-          Manage milestone-based contracts and work posts securely on the
-          blockchain. You can create new contracts, manage existing ones, handle
-          proposals, and check anyone's reputation score using their username.
+        <p className="text-gray-400 max-w-3xl mx-auto">
+          Manage secure, milestone-based contracts on the blockchain. Create
+          new agreements, track existing ones, and verify user reputation.
         </p>
       </div>
 
-      <ul className="list-disc list-inside text-gray-400 text-xl px-4">
-        <li>Create contracts with milestones</li>
-        <li>Fetch and manage existing contracts</li>
-        <li>Check user reliability with their Reputation Score.</li>
-      </ul>
-
-      <div className="flex flex-wrap justify-center gap-4 pt-2">
+      <div className="flex flex-wrap justify-center gap-4 pt-6">
         <button
-          onClick={onToggleCreateForm}
-          className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-full font-semibold shadow transition"
+          onClick={() => onToggleView(activeView === "create" ? null : "create")}
+          className={getButtonClass("create")}
+          data-driver="create-contract"
         >
           <FilePlus size={18} />
-          {showCreateForm ? "Hide Create Form" : "Create Contract"}
+          Create Contract
         </button>
 
         <button
-          onClick={onToggleFetchForm}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full font-semibold shadow transition"
+          onClick={() => onToggleView(activeView === "fetch" ? null : "fetch")}
+          className={getButtonClass("fetch")}
+          data-driver="fetch-contract"
         >
           <Search size={18} />
-          {showFetchForm ? "Hide Fetch Form" : "Fetch Contract"}
+          Fetch Contract
         </button>
 
         <button
-          onClick={onToggleReputationFetcher}
-          className="flex items-center gap-2 bg-customNeonGreen hover:bg-customNeonGreen/80 text-black px-5 py-2 rounded-full font-semibold shadow transition"
+          onClick={() => onToggleView(activeView === "reputation" ? null : "reputation")}
+          className={getButtonClass("reputation")}
         >
           <Star size={18} />
-          {showReputationFetcher ? "Hide Reputation" : "See Reputation Score"}
-        </button>
-      </div>
-
-      {/* Start Tour Button */}
-      <div className="flex justify-center pt-4">
-        <button
-          onClick={onStartTour}
-          className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-5 py-2 rounded-full shadow transition"
-        >
-          <Compass size={18} /> Start Tour Manually
+          Check Reputation
         </button>
       </div>
     </div>

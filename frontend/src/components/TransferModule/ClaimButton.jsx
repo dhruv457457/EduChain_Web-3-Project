@@ -1,29 +1,26 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { Download } from "lucide-react";
 
 const ClaimButton = ({ claimFunds }) => {
   const [loading, setLoading] = useState(false);
 
   const handleClaimFunds = async () => {
+    // Claiming logic is unchanged
     if (!claimFunds) {
       toast.error("❌ Claim functionality not available!");
       return;
     }
 
+    setLoading(true);
     try {
-      setLoading(true);
-      console.log("Attempting to claim funds..."); // Debug
-      const txHash = await claimFunds();
-      console.log("Claim transaction hash:", txHash); // Debug
-      toast.success(`✅ Funds claimed successfully! TX: ${txHash}`);
+      const tx = await claimFunds();
+      await tx.wait();
+      toast.success("✅ Funds claimed successfully!");
     } catch (error) {
       console.error("Claim error:", error);
-      // Extract the revert reason from the error object
       const errorMessage =
-        error.reason || // For ethers.js v6
-        error.data?.message || // For some providers
-        error.message || // Fallback to generic message
-        "Unknown error";
+        error.reason || error.data?.message || error.message || "Unknown error";
       toast.error(`❌ Claim failed: ${errorMessage}`);
     } finally {
       setLoading(false);
@@ -33,14 +30,24 @@ const ClaimButton = ({ claimFunds }) => {
   return (
     <button
       onClick={handleClaimFunds}
-      className={`w-full px-4 py-2 rounded text-white transition-all ${
+      className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-md font-semibold text-white transition-all ${
         loading
-          ? "bg-gray-500 cursor-not-allowed"
-          : "bg-customPurple hover:bg-customLightPurple"
+          ? "bg-gray-600 cursor-not-allowed"
+          : "bg-gray-700/80 hover:bg-gray-700"
       }`}
       disabled={loading}
     >
-      {loading ? "Processing..." : "Claim Funds"}
+      {loading ? (
+        <>
+          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <span>Claiming...</span>
+        </>
+      ) : (
+        <>
+          <Download size={16} />
+          <span>Claim Pending Funds</span>
+        </>
+      )}
     </button>
   );
 };

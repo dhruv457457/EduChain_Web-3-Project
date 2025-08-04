@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import ContractCreatedModal from "./ContractCreatedModal";
-import { motion } from "framer-motion";
+import LoaderButton from "../Global/LoaderButton";
 
 const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
   const [formData, setFormData] = useState({
@@ -124,23 +124,24 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
     }
   };
 
+  const inputClass = (hasError) =>
+    `w-full p-3 rounded-md bg-gray-900/50 text-white border ${
+      hasError ? "border-red-500" : "border-gray-700"
+    } focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none`;
+
+
   return (
     <>
-      <motion.div
-        data-driver="create-contract"
-        className="bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 p-8 rounded-xl shadow-lg mb-8"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="text-3xl font-bold mb-8 text-white text-center">Create New Contract</h2>
+      <div className="bg-[#16192E] p-8 rounded-lg border border-gray-700/50">
+        <h2 className="text-2xl font-bold mb-6 text-white text-center">
+          Create New Contract
+        </h2>
         <form
           onSubmit={handleCreateContract}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {/* Receiver Username */}
-          <div className="flex flex-col">
-            <label className="mb-2 text-sm font-semibold text-gray-300">
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
               Receiver Username
             </label>
             <input
@@ -148,47 +149,37 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
               name="receiverUsername"
               value={formData.receiverUsername}
               onChange={handleChange}
-              placeholder="Enter receiver username"
-              className={`p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
-                errors.receiverUsername ? "border-red-500 border" : ""
-              }`}
+              placeholder="Enter receiver's username"
+              className={inputClass(errors.receiverUsername)}
               required
             />
             {errors.receiverUsername && (
               <p className="text-red-500 text-xs mt-1">{errors.receiverUsername}</p>
             )}
           </div>
-
-          {/* Title */}
-          <div className="flex flex-col">
-            <label className="mb-2 text-sm font-semibold text-gray-300">Title</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Title</label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="Enter contract title"
-              className={`p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
-                errors.title ? "border-red-500 border" : ""
-              }`}
+              placeholder="e.g., Website Development"
+              className={inputClass(errors.title)}
               required
             />
             {errors.title && (
               <p className="text-red-500 text-xs mt-1">{errors.title}</p>
             )}
           </div>
-
-          {/* Description */}
-          <div className="flex flex-col md:col-span-2">
-            <label className="mb-2 text-sm font-semibold text-gray-300">Description</label>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Describe the contract details"
-              className={`p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
-                errors.description ? "border-red-500 border" : ""
-              }`}
+              placeholder="Describe the terms of the contract"
+              className={inputClass(errors.description)}
               rows="4"
               required
             />
@@ -196,77 +187,48 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
               <p className="text-red-500 text-xs mt-1">{errors.description}</p>
             )}
           </div>
-
-          {/* Coin Type */}
-          <div className="flex flex-col">
-            <label className="mb-2 text-sm font-semibold text-gray-300">Coin Type</label>
-            <select
-              name="coinType"
-              value={formData.coinType}
-              onChange={handleChange}
-              className="p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all"
-              required
-            >
-              {coinTypes.map((coin) => (
-                <option key={coin} value={coin}>
-                  {coin}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Amount */}
-          <div className="flex flex-col">
-            <label className="mb-2 text-sm font-semibold text-gray-300">Amount</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Amount</label>
             <input
               type="number"
               name="amount"
               value={formData.amount}
               onChange={handleChange}
-              placeholder="Enter amount"
+              placeholder="Enter total amount"
               step="0.01"
               min="0"
-              className={`p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
-                errors.amount ? "border-red-500 border" : ""
-              }`}
+              className={inputClass(errors.amount)}
               required
             />
             {errors.amount && (
               <p className="text-red-500 text-xs mt-1">{errors.amount}</p>
             )}
           </div>
-
-          {/* Deadline (Text Input) */}
-          <div className="flex flex-col">
-            <label className="mb-2 text-sm font-semibold text-gray-300">Deadline</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Deadline</label>
             <input
               type="text"
               name="deadline"
               value={formData.deadline}
               onChange={handleChange}
-              placeholder="DD/MM/YYYY (e.g., 9/12/2025)"
-              className={`p-3 rounded-md bg-customInput/80 text-white placeholder-gray-400 border border-customPurple/60 shadow-sm focus:ring-2 focus:ring-purple-500 outline-none transition-all ${
-                errors.deadline ? "border-red-500 border" : ""
-              }`}
+              placeholder="DD/MM/YYYY"
+              className={inputClass(errors.deadline)}
               required
             />
             {errors.deadline && (
               <p className="text-red-500 text-xs mt-1">{errors.deadline}</p>
             )}
           </div>
-
-          {/* Submit Button */}
-          <div className="md:col-span-2">
-            <button
-              type="submit"
-              className="w-full bg-customPurple hover:bg-customPurple/90 text-white py-3 rounded-lg font-semibold shadow-lg transition-transform transform disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
-              disabled={loading}
-            >
-              {loading ? "Creating..." : "Create Contract"}
-            </button>
+          <div className="md:col-span-2 mt-4">
+            <LoaderButton
+              onClick={handleCreateContract}
+              loading={loading}
+              text="Create Contract"
+              color="purple"
+            />
           </div>
         </form>
-      </motion.div>
+      </div>
 
       {createdContractId && (
         <ContractCreatedModal

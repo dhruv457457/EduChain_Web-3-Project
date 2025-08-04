@@ -1,97 +1,89 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
-import ParticleBackground from "./ParticleBackground";
-import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
-import { toast } from "react-toastify";
-import { useWallet } from "../Global/WalletContext";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ArrowRightIcon, SparklesIcon } from "@heroicons/react/24/solid";
 
-function Header() {
-  const navigate = useNavigate(); // ✅ Initialize navigate
-  const { walletData } = useWallet();
 
-  const startTour = () => {
-    if (!walletData?.address) {
-      toast.warning("⚠️ Please connect your wallet to start the tour.");
-      return;
-    }
-    const tour = new driver({
-      showProgress: true,
-      showButtons: true,
-      allowClose: true,
-      opacity: 0.1,
-      doneBtnText: "Next Page →",
-      steps: [
-        {
-          element: '[data-driver="step1"]',
-          popover: {
-            title: "Secure DEFI 🔒",
-            description:
-              "Experience next-gen secure transfers with full transparency.",
-            position: "bottom",
-          },
-        },
+const Header = () => {
+  const navigate = useNavigate();
 
-        {
-          element: '[data-driver="step3"]',
-          popover: {
-            title: "Connect with us on Twitter",
-            description: "Enjoy our content on twitter",
-            position: "bottom",
-          },
-        },
-      ],
-      onDestroyed: () => {
-        // ✅ Ensures navigation happens when the tour is fully closed
-        console.log("Tour finished, navigating to transaction page...");
-        localStorage.setItem("startUserTour", "true"); // ✅ Set flag
-        navigate("/user");
-      },
-    });
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2, delayChildren: 0.3 },
+    },
+  };
 
-    tour.drive();
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
   };
 
   return (
-    <div className="relative bg-customDarkpurple min-h-screen w-full flex flex-col items-center justify-center gap-6 px-4 md:px-8 lg:px-16">
-      <ParticleBackground />
-      {/* Heading */}
-      <div className="flex flex-col items-center text-center text-shadow-custom relative z-10">
-        <h1 className="text-customPurple text-5xl md:text-6xl lg:text-8xl font-bold">
-          The Future of{" "}
-        </h1>
-        <h1
-          data-driver="step1"
-          className="text-customBlue text-5xl md:text-6xl lg:text-7xl font-bold"
-        >
-          Secure DEFI
-        </h1>
-        <p className="text-slate-400 font-semibold text-lg md:text-xl lg:text-xl w-full md:w-3/4 lg:w-1/2 py-4">
-          Cryptify – Experience next-generation secure crypto transfers with
-          personalized usernames, smart work commitments, and a transparent
-          reputation system. Built for trust, speed, and simplicity.
-        </p>
-      </div>
-      {/* Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 md:gap-8 relative z-10">
-        <button
-          data-driver="startTour"
-          onClick={startTour}
-          className="text-white bg-customPurple px-6 py-3 md:px-8 md:py-3 rounded-md font-semibold shadow-custom-purple transition-all duration-300 ease-in-out hover:bg-customBlue"
-        >
-          Start Tour 🚀
-        </button>
+    <header className="relative w-full h-screen flex items-center justify-center overflow-hidden">
 
-        <button
-          data-driver="step3"
-          onClick={() => window.open("https://x.com/CryptifySecure", "_blank")}
-          className="text-customBlue bg-white px-6 py-3 md:px-8 md:py-3 rounded-md font-semibold border-b-4 border-customBlue shadow-custom-purple transition-all duration-300 ease-in-out hover:bg-customBlue hover:text-white hover:border-white"
+
+      {/* Content */}
+      <div className="relative z-10 text-center px-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col items-center"
         >
-          Connect with us
-        </button>
+          <motion.div
+            variants={itemVariants}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6"
+          >
+            <SparklesIcon className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-slate-300">
+              The Future of Decentralized Work is Here
+            </span>
+          </motion.div>
+
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl md:text-7xl font-extrabold text-white"
+          >
+            Secure Payments,
+            <br />
+            <span className="bg-gradient-to-r from-primary to-primary_hover1 bg-clip-text text-transparent">
+              Verified Trust.
+            </span>
+          </motion.h1>
+
+          <motion.p
+            variants={itemVariants}
+            className="max-w-2xl mx-auto mt-6 text-lg text-slate-400 leading-relaxed"
+          >
+            Cryptify leverages blockchain for transparent, secure, and
+            efficient transactions. Manage contracts and build your on-chain
+            reputation with confidence.
+          </motion.p>
+
+          <motion.div
+            variants={itemVariants}
+            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <button
+              onClick={() => navigate("/transfer")}
+              className="group relative w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-primary to-primary_hover1 text-white font-semibold rounded-lg shadow-lg transition-transform duration-300 hover:scale-105"
+            >
+              Get Started
+              <ArrowRightIcon className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" />
+            </button>
+            <button
+              onClick={() => navigate("/docs")}
+              className="w-full sm:w-auto px-8 py-3 bg-white/5 border border-white/20 text-slate-300 font-semibold rounded-lg backdrop-blur-sm transition-colors duration-300 hover:bg-white/10 hover:border-white/30"
+            >
+              Read Docs
+            </button>
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </header>
   );
-}
+};
 
 export default Header;

@@ -13,80 +13,66 @@ const TransferForm = ({
   loading,
   claimFunds,
   isAddress,
-  setIsAddress, // Add toggle props
+  setIsAddress,
 }) => {
   return (
     <div
-      className="px-4 sm:px-10 lg:pl-36 pt-16 w-full flex justify-center"
+      className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50 text-white h-full"
       data-driver="transfer-form"
     >
-      <div className="rounded-md px-6 sm:px-10 py-10 bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 shadow-custom-purple flex flex-col items-center gap-5 w-full max-w-lg">
-        <h2 className="text-2xl font-bold mb-4 text-white text-center">
-          Transfer Funds
-        </h2>
+      <h2 className="text-xl font-bold mb-6">Send Funds</h2>
 
+      <div className="space-y-5">
         {/* Toggle Section */}
-        <div className="w-full mb-2">
-          <div className="bg-customPurple/20 rounded-full p-1 flex justify-between items-center w-full relative">
-            <button
-              className={`w-1/2 py-2 z-10 font-semibold transition-colors duration-300 rounded-full ${
-                isAddress ? "text-white" : "text-customPurple"
-              }`}
-              onClick={() => setIsAddress(true)}
-            >
-              Address
-            </button>
-            <button
-              className={`w-1/2 py-2 z-10 font-semibold transition-colors duration-300 rounded-full ${
-                !isAddress ? "text-white" : "text-customPurple"
-              }`}
-              onClick={() => setIsAddress(false)}
-            >
-              Username
-            </button>
-
-            {/* Animated Toggle Background */}
-            <div
-              className={`absolute top-1 left-1 h-[calc(100%-0.5rem)] w-1/2 rounded-full bg-customPurple transition-all duration-300 ${
-                isAddress ? "translate-x-0" : "translate-x-full"
-              }`}
-            ></div>
-          </div>
+        <div className="bg-gray-900/60 rounded-md p-1 flex">
+          <button
+            onClick={() => setIsAddress(false)}
+            className={`w-1/2 py-2 text-sm font-semibold rounded transition-all duration-300 ${
+              !isAddress ? "bg-primary text-white" : "text-gray-400"
+            }`}
+          >
+            Username
+          </button>
+          <button
+            onClick={() => setIsAddress(true)}
+            className={`w-1/2 py-2 text-sm font-semibold rounded transition-all duration-300 ${
+              isAddress ? "bg-primary text-white" : "text-gray-400"
+            }`}
+          >
+            Address
+          </button>
         </div>
 
         <input
           type="text"
-          placeholder={
-            isAddress ? "Receiver Address (0x...)" : "Receiver UserName"
-          }
+          placeholder={isAddress ? "Receiver Address (0x...)" : "Receiver Username"}
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
-          className="border border-customPurple/30 p-2 rounded-md w-full bg-customInput text-cyan-50"
+          className="w-full p-3 rounded-md bg-gray-900/50 text-white border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none"
         />
 
         <input
-          type="text"
+          type="text" // Keep as text to allow for easier validation of numeric/non-numeric input
           placeholder="Amount (ETH)"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="border border-customPurple/30 p-2 rounded-md w-full bg-customInput text-cyan-50"
+          className="w-full p-3 rounded-md bg-gray-900/50 text-white border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none"
         />
 
         <input
           type="text"
-          placeholder="Remark/Message"
+          placeholder="Message / Memo (Optional)"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="border border-customPurple/30 p-2 rounded-md w-full bg-customInput text-cyan-50"
+          className="w-full p-3 rounded-md bg-gray-900/50 text-white border border-gray-700 focus:ring-2 focus:ring-primary focus:border-primary outline-none"
         />
 
-<LoaderButton
-  onClick={sendFunds}
-  loading={loading}
-  text="Send Funds"
-  color="customPurple"
-/>
-
+        <LoaderButton
+          onClick={sendFunds}
+          loading={loading}
+          text="Send"
+          color="blue"
+        />
 
         <ClaimButton claimFunds={claimFunds} />
       </div>

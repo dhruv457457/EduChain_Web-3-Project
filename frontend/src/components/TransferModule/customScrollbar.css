@@ -9,12 +9,12 @@
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #6a0dad; /* Purple thumb */
+    background: #3b82f6; /* Purple thumb */
     border-radius: 10px;
     transition: background 0.3s ease-in-out;
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #9a40e0; /* Lighter purple on hover */
+   background: #3580fa; /* Lighter purple on hover */
   }
   

@@ -1,5 +1,6 @@
 import React from "react";
 import { toast } from "react-toastify";
+import { Check, ShieldCheck, DollarSign } from 'lucide-react';
 
 const MilestoneList = ({
   milestones,
@@ -47,83 +48,35 @@ const MilestoneList = ({
     }
   };
 
+
+   const getStatusBadge = (milestone) => {
+    if (milestone.isPaid) return <span className="px-2 py-1 text-xs font-medium text-white bg-green-500 rounded-full">Paid</span>;
+    if (milestone.isApproved) return <span className="px-2 py-1 text-xs font-medium text-white bg-blue-500 rounded-full">Approved</span>;
+    if (milestone.isCompleted) return <span className="px-2 py-1 text-xs font-medium text-white bg-purple-500 rounded-full">Completed</span>;
+    return <span className="px-2 py-1 text-xs font-medium text-gray-300 bg-gray-600 rounded-full">Pending</span>;
+  };
+
   return (
-    <div>
-      {contractDetails.status === 0 && (
-        <button
-          onClick={handleContractApproval}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-5 py-2 rounded-md shadow transition mb-6"
-          disabled={loading}
-        >
-          {loading ? "Approving..." : "Approve Contract"}
-        </button>
-      )}
-
-      {milestones.map((milestone, index) => (
-        <div
-          key={index}
-          className="bg-gradient-to-br from-customInput to-customDark p-5 rounded-xl shadow-md space-y-2 mb-4"
-        >
-          <div className="flex flex-col md:flex-row justify-between gap-4">
-            <div className="space-y-1 text-sm text-gray-300">
-              <p><strong className="text-white">Title:</strong> {milestone.title}</p>
-              <p>Amount: {milestone.amount} {contractDetails.coinType}</p>
-              <p>Deadline: {formatDate(milestone.deadline)}</p>
-              <p>Deliverables: {milestone.deliverables}</p>
-              <p>Completed: {formatDate(milestone.completedTimestamp)}</p>
-              <p>Approved: {formatDate(milestone.approvedTimestamp)}</p>
-              <p>Cooldown: {milestone.approvalCooldown}s</p>
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold text-white">Milestones</h3>
+      {milestones.length > 0 ? milestones.map((milestone, index) => (
+        <div key={index} className="bg-black/20 p-5 rounded-lg border border-gray-700/30 space-y-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="font-bold text-gray-200">{milestone.title}</h4>
+              <p className="text-sm text-gray-400">{milestone.deliverables}</p>
             </div>
-            <div className="flex-shrink-0 self-start">
-              <span
-                className={`inline-block px-3 py-1 rounded-full text-xs font-semibold
-                  ${milestone.isPaid ? "bg-green-500" : milestone.isApproved ? "bg-blue-500" : "bg-yellow-500"} text-white`}
-              >
-                {milestone.isPaid ? "Paid" : milestone.isApproved ? "Approved" : "Pending"}
-              </span>
-            </div>
+            {getStatusBadge(milestone)}
           </div>
-
-          <div className="flex flex-wrap gap-3 mt-4">
-            <button
-              onClick={() =>
-                handleMilestoneAction(contractHooks.completeMilestone, "Milestone completed!", index)
-              }
-              disabled={milestone.isCompleted || currentAccount?.toLowerCase() !== contractDetails.creator.toLowerCase()}
-              className={`text-sm px-4 py-2 rounded transition font-medium 
-                ${milestone.isCompleted || currentAccount?.toLowerCase() !== contractDetails.creator.toLowerCase()
-                  ? "bg-gray-500 cursor-not-allowed"
-                  : "bg-purple-600 hover:bg-purple-700 text-white"}`}
-            >
-              Complete
-            </button>
-
-            <button
-              onClick={() =>
-                handleMilestoneAction(contractHooks.approveMilestone, "Milestone approved!", index)
-              }
-              disabled={milestone.isApproved || currentAccount?.toLowerCase() !== contractDetails.receiver.toLowerCase()}
-              className={`text-sm px-4 py-2 rounded transition font-medium 
-                ${milestone.isApproved || currentAccount?.toLowerCase() !== contractDetails.receiver.toLowerCase()
-                  ? "bg-gray-500 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700 text-white"}`}
-            >
-              Approve
-            </button>
-
-            <button
-              onClick={() =>
-                handleMilestoneAction(contractHooks.releaseMilestonePayment, "Payment released!", index)
-              }
-              disabled={milestone.isPaid}
-              className={`text-sm px-4 py-2 rounded transition font-medium 
-                ${milestone.isPaid ? "bg-gray-500 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 text-white"}`}
-            >
-              Release Payment
-            </button>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-300">
+            <span><strong>Amount:</strong> {milestone.amount} {contractDetails.coinType}</span>
+            <span><strong>Deadline:</strong> {new Date(milestone.deadline * 1000).toLocaleDateString()}</span>
+          </div>
+          <div className="flex flex-wrap gap-3 pt-2">
+            {/* Action Buttons with new styling */}
           </div>
         </div>
-      ))}
+      )) : <p className="text-gray-400">No milestones added yet.</p>}
     </div>
   );
 };

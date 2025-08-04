@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import useUsernameRegistry from "../../hooks/useUsernameRegistry";
-import LoaderButton from "../Global/LoaderButton"; // Updated import
+import LoaderButton from "../Global/LoaderButton";
+import { CheckCircle } from "lucide-react";
 
 const RegisterName = ({ setGlobalRegisteredName, provider }) => {
-  const { username, isRegistered, registerUsername, isLoading } = useUsernameRegistry(provider);
+  const { username, isRegistered, registerUsername, isLoading, userAddress } =
+    useUsernameRegistry(provider);
   const [name, setName] = useState("");
 
   const handleRegisterName = async () => {
@@ -18,34 +20,44 @@ const RegisterName = ({ setGlobalRegisteredName, provider }) => {
     }
   };
 
-  if (isLoading) return (
-    <div className="flex justify-center items-center h-32">
-      <LoaderButton loading={true} text="Loading" />
-    </div>
-  );
-
   return (
-    <div className="rounded-md px-6 py-8 bg-customSemiPurple/60 backdrop-blur-lg border border-customPurple/30 shadow-custom-purple text-white">
-      <h2 className="text-xl font-semibold">User Name</h2>
-      {isRegistered ? (
-        <p className="mt-3 text-green-400">✅ Registered Name: {username}</p>
-      ) : (
-        <>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
-            className="border border-gray-600 p-2 rounded-md w-full bg-gray-800 text-white mt-2 mb-5"
-          />
-          <LoaderButton
-            onClick={handleRegisterName}
-            loading={isLoading}
-            text="Register"
-            color="purple"
-          />
-        </>
-      )}
+    <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50 text-white">
+      <h2 className="text-xl font-bold mb-4">User Profile</h2>
+      <div className="space-y-4">
+        <div>
+          <p className="text-gray-400 text-sm font-medium">Wallet Address</p>
+          <p className="text-gray-200 text-sm break-all">
+            {userAddress || "..."}
+          </p>
+        </div>
+        <div>
+          <p className="text-gray-400 text-sm font-medium">Username</p>
+          {isRegistered ? (
+            <p className="mt-1 text-green-400 text-lg font-semibold flex items-center gap-2">
+              <CheckCircle size={18} />
+              {username}
+            </p>
+          ) : (
+            <>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Choose a username"
+                className="border border-gray-600 p-3 mt-2 rounded-md w-full bg-gray-900/50 text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+              />
+              <div className="mt-4">
+                <LoaderButton
+                  onClick={handleRegisterName}
+                  loading={isLoading}
+                  text="Register Username"
+                  color="blue"
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -6,7 +6,7 @@ const LoaderButton = ({ onClick, loading, text, color = "purple" }) => {
     purple: "bg-purple-600 hover:bg-purple-700",
     red: "bg-red-600 hover:bg-red-700",
     green: "bg-green-600 hover:bg-green-700",
-    blue: "bg-blue-600 hover:bg-blue-700",
+    blue: "bg-[#3b82f6] hover:bg-blue-700",
     gray: "bg-gray-600 hover:bg-gray-700",
   };
 

@@ -1,25 +1,29 @@
 import React, { useState } from "react";
-import { Wallet } from "lucide-react";
-import { ExternalLink } from "lucide-react";
+import {
+  Wallet,
+  ExternalLink,
+  Download,
+  CheckCircle,
+  ArrowRight,
+  UserPlus,
+  BookOpen,
+  HelpCircle,
+} from "lucide-react";
 
-function Docs() {
+const Docs = () => {
   const [activeSection, setActiveSection] = useState("Installing MetaMask");
 
-  // Function to handle adding chain to MetaMask
   const addChainToMetaMask = async () => {
+    // Logic for adding chain remains unchanged
     if (typeof window.ethereum !== "undefined") {
       try {
         await window.ethereum.request({
           method: "wallet_addEthereumChain",
           params: [
             {
-              chainId: "0xa045c", // Chain ID in hex format
+              chainId: "0xa045c",
               chainName: "OpenCampus Codex Sepolia",
-              nativeCurrency: {
-                name: "EDU",
-                symbol: "EDU",
-                decimals: 18,
-              },
+              nativeCurrency: { name: "EDU", symbol: "EDU", decimals: 18 },
               rpcUrls: ["https://open-campus-codex-sepolia.drpc.org"],
               blockExplorerUrls: ["https://opencampus-codex.blockscout.com"],
             },
@@ -27,341 +31,260 @@ function Docs() {
         });
       } catch (error) {
         console.error(error);
-        alert(
-          "Failed to add network to MetaMask. Please try again or add it manually."
-        );
+        alert("Failed to add network to MetaMask. Please add it manually.");
       }
     } else {
-      alert("MetaMask is not installed. Please install MetaMask first.");
+      alert("MetaMask is not installed. Please install it first.");
     }
   };
 
-  const renderContent = () => {
-    switch (activeSection) {
-      case "Installing MetaMask":
-        return (
-          <>
-            <h1 className="text-2xl md:text-3xl font-bold mb-4">
-              Installing MetaMask
-            </h1>
-            <p className="text-gray-300 mb-8">
-              MetaMask is a crypto wallet & gateway to blockchain apps. Here's
-              how to install it:
-            </p>
-            <div className="border border-purple-500 rounded-lg p-4 md:p-6 mb-6 bg-purple-900 bg-opacity-30 w-full">
-              <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
-                Step 1: Install Browser Extension
-              </h2>
-              <p className="text-gray-300 mb-4">
+  const docsSections = [
+    {
+      title: "Installing MetaMask",
+      icon: <Download size={18} />,
+      content: (
+        <>
+          <p className="text-gray-400 mb-6">
+            MetaMask is a crypto wallet and gateway to blockchain apps. Follow
+            these steps to install it.
+          </p>
+          <div className="space-y-6">
+            <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+              <h3 className="font-semibold text-lg mb-2 text-primary">
+                1. Install Browser Extension
+              </h3>
+              <p className="text-gray-300 mb-3">
                 Visit the official MetaMask website and download the extension
-                for your browser.
+                for your browser (Chrome, Firefox, etc.).
               </p>
               <a
                 href="https://metamask.io/download/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:underline flex items-center gap-1"
+                className="text-blue-400 hover:underline flex items-center gap-1 text-sm font-semibold"
               >
                 Download MetaMask <ExternalLink size={16} />
               </a>
             </div>
-            <div className="border border-purple-500 rounded-lg p-4 md:p-6 bg-purple-900 bg-opacity-30 w-full">
-              <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
-                Step 2: Create a Wallet
-              </h2>
+            <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+              <h3 className="font-semibold text-lg mb-2 text-primary">
+                2. Create a Wallet
+              </h3>
               <p className="text-gray-300 mb-3">
-                Follow the setup process to create your new wallet. Make sure
-                to:
+                Once installed, follow the on-screen instructions to create your
+                new wallet. Remember to:
               </p>
-              <ul className="list-disc pl-5 text-gray-300 space-y-1">
-                <li>Save your Secret Recovery Phrase securely</li>
-                <li>Create a strong password</li>
-                <li>Never share your recovery phrase with anyone</li>
+              <ul className="list-disc list-inside text-gray-300 space-y-1 text-sm">
+                <li>Securely save your Secret Recovery Phrase.</li>
+                <li>Create a strong, unique password.</li>
+                <li>Never share your recovery phrase with anyone.</li>
               </ul>
             </div>
-          </>
-        );
-
-        return (
-          <>
-            <h1 className="text-2xl md:text-3xl font-bold mb-4">
-              Adding Chain
-            </h1>
-            <p className="text-gray-300 mb-8">
-              To add OpenCampus Codex Sepolia Testnet to your MetaMask wallet,
-              follow these steps:
+          </div>
+        </>
+      ),
+    },
+    {
+      title: "Getting Test Tokens",
+      icon: <Wallet size={18} />,
+      content: (
+        <>
+          <p className="text-gray-400 mb-6">
+            You'll need test tokens (faucet) to interact with the test network.
+          </p>
+          <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+            <h3 className="font-semibold text-lg mb-2 text-primary">
+              Use a Faucet
+            </h3>
+            <p className="text-gray-300 mb-3">
+              Visit a public faucet for the Sepolia test network. You will need
+              to enter your wallet address to receive free test ETH.
             </p>
-            <div className="border border-purple-500 rounded-lg p-4 md:p-6 mb-6 bg-purple-900 bg-opacity-30 w-full">
-              <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
-                Automatic Method
-              </h2>
-              <p className="text-gray-300 mb-4">
-                The easiest way to add the OpenCampus Codex Sepolia Testnet is
-                by clicking the button below:
-              </p>
-              <button
-                onClick={addChainToMetaMask}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-semibold transition-colors duration-200 flex items-center gap-2"
-              >
-                <Wallet size={18} />
-                Add Chain to Your Wallet
-              </button>
-            </div>
-            <div className="border border-purple-500 rounded-lg p-4 md:p-6 bg-purple-900 bg-opacity-30 w-full">
-              <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
-                Manual Method
-              </h2>
-              <p className="text-gray-300 mb-4">
-                If the automatic method doesn't work, you can manually add the
-                network with these details:
-              </p>
-              <ul className="list-disc pl-5 text-gray-300 space-y-1">
-                <li>Network Name: OpenCampus Codex Sepolia</li>
-                <li>New RPC URL: https://open-campus-codex-sepolia.drpc.org</li>
-                <li>Chain ID: 656476 </li>
-                <li>Currency Symbol: EDU</li>
+            <a
+              href="https://www.alchemy.com/faucets/ethereum-sepolia"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline flex items-center gap-1 text-sm font-semibold"
+            >
+              Go to Sepolia Faucet <ExternalLink size={16} />
+            </a>
+          </div>
+        </>
+      ),
+    },
+    {
+      title: "Making Transactions",
+      icon: <ArrowRight size={18} />,
+      content: (
+        <>
+          <p className="text-gray-400 mb-6">
+            Cryptify makes sending crypto easy and secure.
+          </p>
+          <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+            <h3 className="font-semibold text-lg mb-2 text-primary">
+              Username or Address
+            </h3>
+            <p className="text-gray-300 mb-3">
+              You can send funds using either a traditional wallet address or a
+              registered Cryptify username.
+            </p>
+            <ul className="list-disc list-inside text-gray-300 space-y-2 text-sm">
+              <li>Navigate to the "Transfer" page.</li>
+              <li>
+                Select whether you're sending to a username or an address.
+              </li>
+              <li>Enter the recipient, amount, and an optional message.</li>
+              <li>Confirm the transaction in your MetaMask wallet.</li>
+            </ul>
+          </div>
+        </>
+      ),
+    },
+    {
+      title: "Register as User",
+      icon: <UserPlus size={18} />,
+      content: (
+        <>
+          <p className="text-gray-400 mb-6">
+            Register a unique username to make transactions simpler for others.
+          </p>
+          <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+            <h3 className="font-semibold text-lg mb-2 text-primary">
+              How to Register
+            </h3>
+            <ul className="list-disc list-inside text-gray-300 space-y-2 text-sm">
+              <li>Go to your "Profile" page from the navigation bar.</li>
+              <li>You will see a "User Profile" section.</li>
+              <li>Enter your desired username and click "Register".</li>
+              <li>Confirm the transaction in MetaMask.</li>
+              <li>
+                Once confirmed, your username is linked to your wallet address.
+              </li>
+            </ul>
+          </div>
+        </>
+      ),
+    },
+    {
+      title: "Understanding Contracts",
+      icon: <BookOpen size={18} />,
+      content: (
+        <>
+          <p className="text-gray-400 mb-6">
+            Our Smart Work Commitment (SWC) system ensures trust and security
+            for agreements on the blockchain.
+          </p>
+          <div className="space-y-6">
+            <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+              <h3 className="font-semibold text-lg mb-2 text-primary">
+                Key Features
+              </h3>
+              <ul className="list-disc list-inside text-gray-300 space-y-2 text-sm">
                 <li>
-                  Block Explorer URL: https://opencampus-codex.blockscout.com
+                  Funds are held in escrow and released upon milestone approval.
                 </li>
+                <li>Both parties must approve actions, ensuring fairness.</li>
+                <li>Completed contracts positively impact your reputation.</li>
               </ul>
             </div>
-          </>
-        );
-      case "Getting Test Tokens":
-        return (
-          <>
-            <h1 className="text-2xl md:text-3xl font-bold mb-4">
-              Getting Test Tokens
-            </h1>
-            <p className="text-gray-300 mb-8">
-              Instructions for obtaining test tokens are as follows:
-            </p>
-            <div className="border border-purple-500 rounded-lg p-4 md:p-6 mb-6 bg-purple-900 bg-opacity-30 w-full">
-              <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
-                Step 1: Go To HACKQUEST Website
-              </h2>
-              <p className="text-gray-300 mb-4">
-                Visit the official HACKQUEST website and Choose a Faucet.
+            <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+              <h3 className="font-semibold text-lg mb-2 text-primary">
+                Reputation Score
+              </h3>
+              <p className="text-gray-300 text-sm">
+                Your score reflects your reliability. Successfully completing
+                contracts boosts your score, making you a more trusted partner
+                in the ecosystem.
               </p>
-              <a
-                href="https://www.hackquest.io/faucets"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:underline flex items-center gap-1"
-              >
-                Faucet Section of HACKQUEST <ExternalLink size={16} />
-              </a>
             </div>
-
-            <div className="border border-purple-500 rounded-lg p-6 bg-purple-900 bg-opacity-30 w-full">
-              <h2 className="text-xl font-semibold text-purple-400 mb-2">
-                Step 2: Choose a Faucet and Click on that
-              </h2>
-              <p className="text-gray-300 mb-3">
-                Follow the steps to get Free Testnet Faucet. Make sure to:
-              </p>
-              <ul className="list-disc pl-5 text-gray-300 space-y-1">
-                <li>Enter your ETH Address (wallet Address)</li>
-                <li>Click on Request Button</li>
-                <li>It can only be collected once every 24 hours!</li>
-              </ul>
-            </div>
-          </>
-        );
-
-      case "Making Transactions":
-        return (
-          <>
-            <h1 className="text-2xl md:text-3xl font-bold mb-4">
-              Making Transactions
-            </h1>
-            <p className="text-gray-300 mb-8">
-              With Cryptify, you can make secure and seamless transactions using
-              different methods.
-            </p>
-            <div className="border border-purple-500 rounded-lg p-4 md:p-6 mb-6 bg-purple-900 bg-opacity-30 w-full">
-              <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
-                Transaction via Wallet Address or Username
-              </h2>
-              <p className="text-gray-300 mb-4">
-                Send crypto using the recipient's wallet address or Username:
-              </p>
-              <ul className="list-disc pl-5 text-gray-300 space-y-1">
-                <li>Open the transfer section in Cryptify.</li>
-                <li>
-                  Enter the recipient's wallet address or Username carefully.
-                </li>
-                <li>Specify the amount you want to transfer.</li>
-                <li>Include remarks for transaction reference.</li>
-                <li>Confirm details and complete the transaction securely.</li>
-              </ul>
-            </div>
-          </>
-        );
-      case "Register as User":
-        return (
-          <>
-            <h1 className="text-2xl md:text-3xl font-bold mb-4">
-              Register as User
-            </h1>
-            <p className="text-gray-300 mb-8">
-              You can register your self in Cryptify as a User by following
-              these steps.
-            </p>
-            <div className="border border-purple-500 rounded-lg p-4 md:p-6 mb-6 bg-purple-900 bg-opacity-30 w-full">
-              <h2 className="text-lg md:text-xl font-semibold text-purple-400 mb-2">
-                Register as User
-              </h2>
-              <p className="text-gray-300 mb-4">
-                Go to the profile section in the Cryptify
-              </p>
-              <ul className="list-disc pl-5 text-gray-300 space-y-1">
-                <li>Connect MetaMask</li>
-                <li>Enter your username.</li>
-                <li>Click on the register button.</li>
-                <li>Congratulations you are registered as user.</li>
-              </ul>
-            </div>
-          </>
-        );
-      case "Understanding Contracts":
-        return (
-          <>
-            <h1 className="text-2xl md:text-3xl font-bold mb-4">
-              Understanding Smart Work Commitment (SWC)
-            </h1>
-            <p className="text-gray-300 mb-4">
-              Smart Work Commitment (SWC) is a blockchain-based contract system
-              that ensures trust and security between two parties. It automates
-              payments, milestones, and contract approvals without
-              intermediaries.
-            </p>
-            <p className="text-gray-300 mb-4">
-              In Cryptify, SWC allows users to create contracts, set milestones,
-              and release payments only when both parties approve the progress.
-            </p>
-            <h2 className="text-xl md:text-2xl font-semibold mb-3">
-              Key Features:
-            </h2>
-            <ul className="list-disc pl-5 text-gray-300 space-y-2">
+          </div>
+        </>
+      ),
+    },
+    {
+      title: "How Cryptify Works",
+      icon: <HelpCircle size={18} />,
+      content: (
+        <>
+          <p className="text-gray-400 mb-6">
+            Cryptify is a decentralized application that leverages blockchain
+            for secure, transparent, and user-friendly financial interactions.
+          </p>
+          <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+            <h3 className="font-semibold text-lg mb-2 text-primary">
+              Core Concepts
+            </h3>
+            <ul className="list-disc list-inside text-gray-300 space-y-2 text-sm">
               <li>
-                Contracts are self-executing and stored on the blockchain.
+                <strong>Wallet Connection:</strong> Securely connect with
+                MetaMask.
               </li>
               <li>
-                Funds are securely locked in escrow until both parties approve.
+                <strong>Usernames:</strong> Simplify transactions with
+                easy-to-remember names.
               </li>
               <li>
-                Supports milestone-based payments for structured work delivery.
+                <strong>Smart Contracts:</strong> Automate agreements and
+                payments with our SWC system.
               </li>
               <li>
-                Ensures transparency and eliminates the need for intermediaries.
+                <strong>Reputation:</strong> Build on-chain credibility with
+                every successful interaction.
               </li>
             </ul>
-            <h2 className="text-xl md:text-2xl font-semibold mt-6 mb-3">
-              Reputation Score in SWC
-            </h2>
-            <p className="text-gray-300 mb-4">
-              The Reputation Score is a key component in Smart Work Commitment
-              (SWC) that reflects a user’s trustworthiness and history of
-              commitments. It's visible to other users and helps them evaluate
-              potential collaborators before initiating contracts.
-            </p>
-            <ul className="list-disc pl-5 text-gray-300 space-y-2">
-              <li>
-                Scores are calculated based on contract completions, approval
-                ratings, and timely releases of funds.
-              </li>
-              <li>
-                Users with higher scores are more trusted within the Cryptify
-                ecosystem.
-              </li>
-              <li>
-                You can check another user's Reputation Score by searching their
-                username.
-              </li>
-              <li>
-                Helps promote accountability and reliability in Web3 freelancing
-                and agreements.
-              </li>
-            </ul>
-          </>
-        );
+          </div>
+        </>
+      ),
+    },
+  ];
 
-      case "How Cryptify Works":
-        return (
-          <>
-            <h1 className="text-2xl md:text-3xl font-bold mb-4">
-              How Cryptify Works
-            </h1>
-            <p className="text-gray-300 mb-8">
-              Cryptify allows users to transfer crypto, register usernames, and
-              interact securely using blockchain technology.
-            </p>
-            <ul className="list-disc pl-5 text-gray-300 space-y-1">
-              <li>Connect your wallet to Cryptify.</li>
-              <li>Use your username instead of wallet addresses.</li>
-              <li>Make payments with transaction remarks.</li>
-              <li>Utilize Smart Work Commitments for secure deals.</li>
-            </ul>
-          </>
-        );
-
-      default:
-        return null;
-    }
-  };
+  const currentContent =
+    docsSections.find((s) => s.title === activeSection)?.content || null;
 
   return (
-    <>
-      <div className="flex flex-col lg:flex-row bg-customDarkpurple mt-20 border-t-2 border-customPurple border-opacity-25 min-h-screen">
-        {/* Sidebar */}
-        <div
-          className="bg-customDarkpurple w-full lg:w-80 border-b-2 lg:border-b-0 lg:border-r-2 border-customPurple border-opacity-25 
-  flex flex-col lg:h-screen  top-0 left-0 z-10"
-        >
-          <div className="flex items-center justify-between lg:justify-start gap-2 p-4 border-b border-purple-800">
-            <div className="flex items-center gap-2">
-              <Wallet
-                size={30}
-                className="text-purple-500 p-1 rounded-md border-b-2 border-purple-500"
-              />
-              <h1 className="font-bold text-lg lg:text-xl text-white">
-                Cryptify Docs
-              </h1>
-            </div>
-          </div>
+    <div className="bg-[#0B0E1F] min-h-screen text-white pt-20">
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.08),transparent_50%)]" />
+      {/* Subtle Grid Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:80px_80px] [mask-image:radial-gradient(ellipse_at_center,black_70%,transparent_100%)]" />
 
-          <div className="flex overflow-x-auto lg:overflow-y-auto lg:flex-col flex-row lg:flex-grow gap-2 px-4 py-3 text-white">
-            {[
-              "Installing MetaMask",
-              "Getting Test Tokens",
-              "Making Transactions",
-              "Register as User",
-              "Understanding Contracts",
-              "How Cryptify Works",
-            ].map((section) => (
+      
+      <div className=" mx-auto flex flex-col lg:flex-row gap-8 px-4 sm:px-6 lg:px-8 py-10">
+        {/* Sidebar */}
+        <aside className="lg:w-52 lg:sticky top-24 self-start">
+          <h2 className="text-lg font-bold mb-4 pl-3">Documentation</h2>
+          <nav className="flex flex-col gap-1">
+            {docsSections.map((section) => (
               <button
-                key={section}
-                onClick={() => setActiveSection(section)}
-                className={`${
-                  activeSection === section
-                    ? "bg-purple-700 bg-opacity-70"
-                    : "hover:bg-purple-700 hover:bg-opacity-30"
-                } px-3 py-2 rounded-md whitespace-nowrap text-left font-semibold text-sm md:text-base`}
+                key={section.title}
+                onClick={() => setActiveSection(section.title)}
+                className={`flex items-center gap-3 text-left px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                  activeSection === section.title
+                    ? "bg-primary/80 text-white"
+                    : "text-gray-300 hover:bg-gray-700/50"
+                }`}
               >
-                {section}
+                {section.icon}
+                {section.title}
               </button>
             ))}
-          </div>
-        </div>
+          </nav>
+        </aside>
 
         {/* Main Content */}
-        <div className="flex flex-col w-full px-5 md:px-10 py-6 text-white">
-          {renderContent()}
-        </div>
+        <main className="flex-1">
+          <div className="p-6 sm:p-8 rounded-lg">
+            <h1 className="text-3xl sm:text-4xl font-extrabold mb-4">
+              {activeSection}
+            </h1>
+            {currentContent}
+          </div>
+        </main>
       </div>
-    </>
+    </div>
   );
-}
+};
 
 export default Docs;
