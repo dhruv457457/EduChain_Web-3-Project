@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import ContractCreatedModal from "./ContractCreatedModal";
 import LoaderButton from "../Global/LoaderButton";
+import { useWallet } from "../Global/WalletContext";
+import useUsernameRegistry from "../../hooks/useUsernameRegistry";
 
-const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
+const CreateContractForm = ({ contractHooks, loading, setLoading, prefillData }) => {
   const [formData, setFormData] = useState({
     receiverUsername: "",
     title: "",
@@ -16,6 +18,38 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
   const [createdContractId, setCreatedContractId] = useState(null);
 
   const coinTypes = ["EDU", "ETH", "USDT"];
+  const { walletData } = useWallet();
+  const usernameRegistry = useUsernameRegistry(walletData?.provider);
+
+  // Pre-fill form data if provided
+  useEffect(() => {
+    const prefillFormData = async () => {
+      if (prefillData) {
+        let receiverUsername = "";
+        
+        // Try to get username from freelancer's wallet address
+        if (prefillData.freelancer && usernameRegistry.getUsernameFromAddress) {
+          try {
+            receiverUsername = await usernameRegistry.getUsernameFromAddress(prefillData.freelancer);
+          } catch (error) {
+            console.log("Could not get username for address:", prefillData.freelancer);
+            // If no username found, show the wallet address
+            receiverUsername = prefillData.freelancer;
+          }
+        }
+
+        setFormData(prev => ({
+          ...prev,
+          title: prefillData.title || "",
+          description: prefillData.description || "",
+          amount: prefillData.amount?.toString() || "",
+          receiverUsername: receiverUsername || "",
+        }));
+      }
+    };
+
+    prefillFormData();
+  }, [prefillData, usernameRegistry]);
 
   // Handle text/number input changes
   const handleChange = (e) => {
@@ -136,6 +170,13 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
         <h2 className="text-2xl font-bold mb-6 text-white text-center">
           Create New Contract
         </h2>
+        {prefillData && (
+          <div className="mb-6 p-4 bg-green-600/20 border border-green-500/30 rounded-lg">
+            <p className="text-green-300 text-sm">
+              📋 Form pre-filled from accepted proposal. You can edit any field before creating the contract.
+            </p>
+          </div>
+        )}
         <form
           onSubmit={handleCreateContract}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -205,6 +246,22 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
             )}
           </div>
           <div>
+            <label className="block text-sm font-medium text-gray-400 mb-2">Coin Type</label>
+            <select
+              name="coinType"
+              value={formData.coinType}
+              onChange={handleChange}
+              className={inputClass(false)}
+              required
+            >
+              {coinTypes.map((coin) => (
+                <option key={coin} value={coin}>
+                  {coin}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
             <label className="block text-sm font-medium text-gray-400 mb-2">Deadline</label>
             <input
               type="text"
@@ -221,7 +278,7 @@ const CreateContractForm = ({ contractHooks, loading, setLoading }) => {
           </div>
           <div className="md:col-span-2 mt-4">
             <LoaderButton
-              onClick={handleCreateContract}
+              type="submit"
               loading={loading}
               text="Create Contract"
               color="purple"

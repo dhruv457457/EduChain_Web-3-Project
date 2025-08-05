@@ -9,7 +9,7 @@ import ReputationFetcher from "../components/ContractModule/ReputationFetcher";
 import { useWallet } from "../components/Global/WalletContext";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Contract = () => {
@@ -22,6 +22,7 @@ const Contract = () => {
   const [activeView, setActiveView] = useState(null); // 'create', 'fetch', 'reputation'
   const location = useLocation();
   const tourStarted = useRef(false);
+  const [searchParams] = useSearchParams();
 
   // Logic for fetching contract details remains unchanged
   const handleGetContractDetails = async () => {
@@ -53,6 +54,14 @@ const Contract = () => {
   const startTour = () => {
     // ... tour logic ...
   };
+
+  useEffect(() => {
+    // Check if we should show create form (from proposal acceptance)
+    const shouldCreate = searchParams.get('create');
+    if (shouldCreate === 'true' && location.state?.fromProposal) {
+      setActiveView('create');
+    }
+  }, [searchParams, location.state]);
 
   useEffect(() => {
     // ... tour useEffects ...
@@ -92,6 +101,7 @@ const Contract = () => {
                 contractHooks={contractHooks}
                 loading={loading}
                 setLoading={setLoading}
+                prefillData={location.state?.prefillData}
               />
             </motion.div>
           )}

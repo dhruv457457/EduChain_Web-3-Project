@@ -37,6 +37,8 @@ const Home = lazy(() => import("./pages/Home"));
 const User = lazy(() => import("./pages/User"));
 const Contract = lazy(() => import("./pages/Contract"));
 const Docs = lazy(() => import("./pages/Docs"));
+const Jobs = lazy(() => import("./pages/Jobs"));
+const Proposals = lazy(() => import("./pages/Proposals"));
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -50,6 +52,8 @@ function AnimatedRoutes() {
           <Route path="/docs" element={<Docs />} />
           <Route path="/user" element={<User />} />
           <Route path="/contract" element={<Contract />} />
+          <Route path="/jobs" element={<Jobs />} />
+          <Route path="/proposals" element={<Proposals />} />
         </Routes>
       </Suspense>
     </AnimatePresence>

@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ethers } from "ethers";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../../lib/firebase"; // adjust path if needed
+
 import MetaMaskSDK from "@metamask/sdk";
 import {
   FaBars,
@@ -17,7 +20,7 @@ import { useWallet } from "./WalletContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
-  const { walletData, setWalletData } = useWallet();
+  const { walletData, setWalletData, MMSDK } = useWallet();
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState(null);
@@ -26,14 +29,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const profileRef = useRef(null);
 
-  const MMSDK = useRef(
-    new MetaMaskSDK({
-      dappMetadata: { name: "Dkarma" },
-      logging: { developerMode: true },
-    })
-  ).current;
-
-  // Effect to handle clicking outside of the dropdown to close it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -50,43 +45,7 @@ const Navbar = () => {
     };
   }, [showProfileDropdown]);
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const provider = MMSDK.getProvider();
-        if (!provider) throw new Error("MetaMask SDK not ready");
-        const ethProvider = new ethers.BrowserProvider(provider);
-        const accounts = await ethProvider.send("eth_accounts", []);
-        if (accounts.length > 0) {
-          setWalletData({ address: accounts[0], provider: ethProvider });
-        } else {
-          setWalletData({ address: null, provider: null });
-        }
 
-        provider.on("accountsChanged", (accounts) => {
-          if (accounts.length === 0) {
-            setWalletData({ address: null, provider: null });
-          } else {
-            const updatedProvider = new ethers.BrowserProvider(provider);
-            setWalletData({ address: accounts[0], provider: updatedProvider });
-          }
-        });
-
-        provider.on("chainChanged", () => window.location.reload());
-      } catch (err) {
-        setError("MetaMask initialization failed");
-      }
-    };
-    init();
-
-    return () => {
-      const provider = MMSDK.getProvider();
-      if (provider?.removeListener) {
-        provider.removeListener("accountsChanged", () => {});
-        provider.removeListener("chainChanged", () => {});
-      }
-    };
-  }, [setWalletData]);
 
   useEffect(() => {
     if (error) {
@@ -110,22 +69,44 @@ const Navbar = () => {
       ? "text-customPurple relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[2px] after:bg-customPurple"
       : "relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 hover:after:w-full after:bg-customPurple after:transition-all after:duration-300 hover:text-customPurple";
 
-  const connectWallet = async () => {
-    try {
-      const accounts = await MMSDK.connect();
-      const provider = MMSDK.getProvider();
-      if (!provider || !accounts?.length) throw new Error("Connection failed");
-      const ethProvider = new ethers.BrowserProvider(provider);
-      setWalletData({ address: accounts[0], provider: ethProvider });
-      toast.success("Wallet Connected!");
-    } catch (err) {
-      toast.error("Wallet connection failed");
-    }
-  };
+      const connectWallet = async () => {
+        try {
+          const accounts = await MMSDK.connect();
+          const provider = MMSDK.getProvider();
+          if (!provider || !accounts?.length) throw new Error("Connection failed");
+      
+          const ethProvider = new ethers.BrowserProvider(provider);
+          const walletAddress = accounts[0];
+      
+          // Set wallet context
+          setWalletData({ address: walletAddress, provider: ethProvider });
+      
+          // ✅ Check if user exists in Firestore and create if not
+          const userRef = doc(db, "users", walletAddress);
+          const userSnap = await getDoc(userRef);
+      
+          if (!userSnap.exists()) {
+            await setDoc(userRef, {
+              walletAddress,
+              createdAt: new Date(),
+              role: "freelancer", // or "client", customize as needed
+              name: "",           // placeholder
+              bio: "",            // placeholder
+              avatar: "",         // placeholder
+            });
+            toast.success("Welcome! New user created 🎉");
+          }
+      
+          toast.success("Wallet Connected!");
+        } catch (err) {
+          console.error(err);
+          toast.error("Wallet connection failed");
+        }
+      };
+      
 
   const disconnectWallet = () => {
     setWalletData({ address: null, provider: null });
-    MMSDK.terminate();
     setShowProfileDropdown(false);
     navigate("/");
     toast.info("Wallet Disconnected");
@@ -142,6 +123,8 @@ const Navbar = () => {
 
   const navLinks = [
     { path: "/", label: "Home" },
+    { path: "/jobs", label: "Jobs" },
+    { path: "/proposals", label: "Proposals" },
     { path: "/docs", label: "Docs" },
     { path: "/user#transfer", label: "Transfer" },
   ];
@@ -161,7 +144,6 @@ const Navbar = () => {
       transition: { duration: 0.15, ease: "easeIn" },
     },
   };
-
   return (
     <nav className="fixed top-0 w-full h-16 z-50 backdrop-blur-md px-4 py-3 flex justify-between items-center">
       <motion.h1
