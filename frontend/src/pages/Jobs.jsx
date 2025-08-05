@@ -4,6 +4,15 @@ import { db } from "../lib/firebase";
 import PostJobs from "../components/JobsModule/PostJobs";
 import JobDetails from "../components/JobsModule/JobDetails";
 import { toast } from "react-toastify";
+import {
+  Briefcase,
+  Clock,
+  Tag,
+  Calendar,
+  Users,
+  AlertCircle,
+} from "lucide-react";
+import Loader from "../components/Global/Loader";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -50,85 +59,127 @@ const Jobs = () => {
     return date.toLocaleDateString();
   };
 
-  const getStatusColor = (status) => {
+  const getStatusPill = (status) => {
     switch (status) {
       case "open":
-        return "bg-green-500";
+        return (
+          <span className="px-2 py-1 text-xs font-semibold text-green-300 bg-green-500/20 rounded-full">
+            Open
+          </span>
+        );
       case "in-progress":
-        return "bg-yellow-500";
+        return (
+          <span className="px-2 py-1 text-xs font-semibold text-yellow-300 bg-yellow-500/20 rounded-full">
+            In Progress
+          </span>
+        );
       case "completed":
-        return "bg-blue-500";
+        return (
+          <span className="px-2 py-1 text-xs font-semibold text-blue-300 bg-blue-500/20 rounded-full">
+            Completed
+          </span>
+        );
       default:
-        return "bg-gray-500";
+        return (
+          <span className="px-2 py-1 text-xs font-semibold text-gray-300 bg-gray-500/20 rounded-full">
+            {status}
+          </span>
+        );
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading jobs...</div>
+      <div className="mt-40">
+        <Loader />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header with Post Jobs Button */}
-        <div className="flex justify-between items-center mb-8">
+    <div className="min-h-screen">
+      <div className="container mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Explore Jobs</h1>
-            <p className="text-gray-400">Find the perfect blockchain project to work on</p>
+            <p className="text-gray-400 mt-1">
+              Find your next opportunity or post a job for the community.
+            </p>
           </div>
-          <PostJobs onJobPosted={handleJobPosted} />
+          <div className="mt-4 sm:mt-0">
+            <PostJobs onJobPosted={handleJobPosted} />
+          </div>
         </div>
 
         {/* Jobs Grid */}
         {jobs.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-400 text-xl mb-4">No jobs available</div>
-            <p className="text-gray-500">Be the first to post a job!</p>
+          <div className="text-center py-20 bg-[#16192E] rounded-lg border border-gray-700/50">
+            <AlertCircle className="mx-auto text-gray-500 w-12 h-12 mb-4" />
+            <h2 className="text-xl font-semibold text-gray-300">
+              No jobs available
+            </h2>
+            <p className="text-gray-500 mt-2">
+              Be the first to post a job and attract talent!
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job) => (
               <div
                 key={job.id}
-                className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-lg"
+                className="bg-[#16192E] rounded-lg p-6 border border-gray-700/50 hover:bg-[#5a67d81f] transition-all duration-300 flex flex-col justify-between"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    {job.title}
-                  </h3>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium text-white ${getStatusColor(
-                      job.status
-                    )}`}
-                  >
-                    {job.status}
-                  </span>
-                </div>
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-xl font-semibold text-white">
+                      {job.title}
+                    </h3>
+                    {getStatusPill(job.status)}
+                  </div>
 
-                <p className="text-gray-300 mb-4 line-clamp-3">
-                  {job.description}
-                </p>
+                  <p className="text-gray-400 mb-6 line-clamp-3 text-sm">
+                    {job.description}
+                  </p>
 
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400 text-sm">Budget:</span>
-                    <span className="text-white font-semibold">
-                      {job.budget} ETH
-                    </span>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center gap-3 text-gray-300">
+                      <Tag size={16} className="text-primary" />
+                      <span>
+                        Budget:{" "}
+                        <span className="font-semibold text-white">
+                          {job.budget} ETH
+                        </span>
+                      </span>
+                    </div>
+                    {job.deadline && (
+                      <div className="flex items-center gap-3 text-gray-300">
+                        <Calendar size={16} className="text-primary" />
+                        <span>
+                          Deadline:{" "}
+                          <span className="font-semibold text-white">
+                            {formatDate(job.deadline)}
+                          </span>
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-3 text-gray-300">
+                      <Users size={16} className="text-primary" />
+                      <span>
+                        Applicants:{" "}
+                        <span className="font-semibold text-white">
+                          {job.applicants?.length || 0}
+                        </span>
+                      </span>
+                    </div>
                   </div>
 
                   {job.skills && (
-                    <div>
-                      <span className="text-gray-400 text-sm">Skills:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                    <div className="mt-4">
+                      <div className="flex flex-wrap gap-2">
                         {job.skills.split(",").map((skill, index) => (
                           <span
                             key={index}
-                            className="px-2 py-1 bg-purple-600/20 text-purple-300 text-xs rounded"
+                            className="px-2 py-1 bg-gray-700/80 text-gray-300 text-xs rounded"
                           >
                             {skill.trim()}
                           </span>
@@ -136,37 +187,14 @@ const Jobs = () => {
                       </div>
                     </div>
                   )}
-
-                  {job.deadline && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400 text-sm">Deadline:</span>
-                      <span className="text-white text-sm">
-                        {formatDate(job.deadline)}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-400">Posted:</span>
-                    <span className="text-white">
-                      {formatDate(job.createdAt)}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-400">Applicants:</span>
-                    <span className="text-white">
-                      {job.applicants?.length || 0}
-                    </span>
-                  </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-gray-700">
-                  <button 
+                <div className="mt-6">
+                  <button
                     onClick={() => handleApplyNow(job)}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium py-2 px-4 rounded-md transition-all duration-300"
+                    className="w-full bg-primary hover:bg-primary_hover1 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300"
                   >
-                    Apply Now
+                    View & Apply
                   </button>
                 </div>
               </div>
@@ -187,4 +215,4 @@ const Jobs = () => {
   );
 };
 
-export default Jobs; 
+export default Jobs;

@@ -4,11 +4,13 @@ import { ToastContainer, toast } from "react-toastify";
 import { useWallet } from "../components/Global/WalletContext";
 import useUsernameRegistry from "../hooks/useUsernameRegistry";
 import Loader from "../components/Global/Loader";
-import { LayoutDashboard, UserCircle, FileText, MonitorCheck } from "lucide-react";
+import { LayoutDashboard, UserCircle, FileText, MonitorCheck, ReceiptJapaneseYen, PoundSterlingIcon } from "lucide-react";
 import UserDashboard from "../components/UserModule/UserDashboard";
 import ProfileSettings from "../components/UserModule/ProfileSettings";
 import Contract from "./Contract";
 import Transfer from "./Transfer";
+import Jobs from "./Jobs";
+import Proposals from "../components/JobsModule/Proposals";
 
 const User = () => {
   const { walletData } = useWallet();
@@ -22,6 +24,8 @@ const User = () => {
     { title: "Dashboard", icon: <LayoutDashboard size={18} />, path: "dashboard" },
     { title: "Profile", icon: <UserCircle size={18} />, path: "profile" },
     { title: "Transfer", icon: <MonitorCheck size={18} />, path: "transfer" },
+    { title: "Tasks", icon: <ReceiptJapaneseYen size={18} />, path: "tasks" },
+    { title: "Proposals", icon: <PoundSterlingIcon size={18} />, path: "proposals" },
     { title: "Contracts", icon: <FileText size={18} />, path: "contracts" },
   ];
 
@@ -58,6 +62,10 @@ const User = () => {
         return <ProfileSettings />;
       case "Transfer":
         return <Transfer />;
+      case "Tasks":
+        return <Jobs/>;
+      case "Proposals":
+        return <Proposals/>;
       case "Contracts":
         return <Contract />;
       default:

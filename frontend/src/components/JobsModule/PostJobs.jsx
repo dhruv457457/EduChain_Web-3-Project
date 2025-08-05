@@ -68,7 +68,7 @@ const PostJobs = ({ onJobPosted }) => {
       {/* Post Job Button */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+        className="bg-primary hover:bg-primary_hover1 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
       >
         + Post Job
       </button>
@@ -98,7 +98,7 @@ const PostJobs = ({ onJobPosted }) => {
                   value={formData.title}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:border-primary"
                   placeholder="e.g., Smart Contract Developer"
                 />
               </div>
@@ -113,7 +113,7 @@ const PostJobs = ({ onJobPosted }) => {
                   onChange={handleInputChange}
                   required
                   rows="4"
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:border-primary"
                   placeholder="Describe the job requirements and responsibilities..."
                 />
               </div>
@@ -130,7 +130,7 @@ const PostJobs = ({ onJobPosted }) => {
                   required
                   min="0"
                   step="0.01"
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:border-primary"
                   placeholder="0.5"
                 />
               </div>
@@ -144,7 +144,7 @@ const PostJobs = ({ onJobPosted }) => {
                   name="skills"
                   value={formData.skills}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:border-primary"
                   placeholder="Solidity, React, Web3.js"
                 />
               </div>
@@ -158,7 +158,7 @@ const PostJobs = ({ onJobPosted }) => {
                   name="deadline"
                   value={formData.deadline}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:border-primary"
                 />
               </div>
 
@@ -173,7 +173,7 @@ const PostJobs = ({ onJobPosted }) => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex-1 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary_hover1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isSubmitting ? "Posting..." : "Post Job"}
                 </button>

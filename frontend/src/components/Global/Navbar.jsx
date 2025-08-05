@@ -123,8 +123,8 @@ const Navbar = () => {
 
   const navLinks = [
     { path: "/", label: "Home" },
-    { path: "/jobs", label: "Jobs" },
-    { path: "/proposals", label: "Proposals" },
+    { path: "/user#tasks", label: "Jobs" },
+    { path: "/user#proposals", label: "Proposals" },
     { path: "/docs", label: "Docs" },
     { path: "/user#transfer", label: "Transfer" },
   ];

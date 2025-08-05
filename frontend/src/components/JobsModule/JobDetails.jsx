@@ -99,7 +99,7 @@ const JobDetails = ({ job, onClose, onProposalSubmitted }) => {
                   {job.skills.split(",").map((skill, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-purple-600/20 text-purple-300 text-sm rounded-full"
+                      className="px-3 py-1 bg-primary/20 text-primary_hover text-sm rounded-full"
                     >
                       {skill.trim()}
                     </span>
@@ -139,7 +139,7 @@ const JobDetails = ({ job, onClose, onProposalSubmitted }) => {
                 onChange={(e) => setProposal({ ...proposal, message: e.target.value })}
                 required
                 rows="6"
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-purple-500"
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-primary"
                 placeholder="Explain why you're a great fit for this job, your relevant experience, and how you plan to approach this project..."
               />
             </div>
@@ -167,7 +167,7 @@ const JobDetails = ({ job, onClose, onProposalSubmitted }) => {
               <button
                 type="submit"
                 disabled={isSubmitting || !walletData?.address}
-                className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary_hover1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? "Submitting..." : "Submit Proposal"}
               </button>
