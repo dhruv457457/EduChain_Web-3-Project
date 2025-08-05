@@ -116,16 +116,7 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen text-white px-4 sm:px-6 lg:px-8 py-12 pt-28">
-      {/* Header */}
-      <header className="max-w-7xl mx-auto mb-10">
-        <h1 className="text-4xl font-extrabold">Dashboard</h1>
-        <p className="text-gray-400 mt-2">
-          Welcome back,{" "}
-          <span className="text-primary">{username || "User"}</span>. Here is
-          your overview.
-        </p>
-      </header>
+    <div className="min-h-screen text-white px-4 sm:px-6 lg:px-8 py-12">
 
       <main className="max-w-7xl mx-auto space-y-8">
         {/* KPI Cards Grid */}
