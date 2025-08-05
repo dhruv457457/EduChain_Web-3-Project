@@ -1,24 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useWallet } from "../components/Global/WalletContext";
 import useUsernameRegistry from "../hooks/useUsernameRegistry";
 import Loader from "../components/Global/Loader";
-import { LayoutDashboard, UserCircle, Bell, Shield, FileText } from "lucide-react";
-
-// Import the components for each section
+import { LayoutDashboard, UserCircle, FileText, MonitorCheck } from "lucide-react";
 import UserDashboard from "../components/UserModule/UserDashboard";
 import ProfileSettings from "../components/UserModule/ProfileSettings";
-import SecuritySettings from "../components/UserModule/SecuritySettings";
-import NotificationSettings from "../components/UserModule/NotificationSettings";
-import Contract from "./Contract"; // Import the Contract component
+import Contract from "./Contract";
+import Transfer from "./Transfer";
 
 const User = () => {
   const { walletData } = useWallet();
   const navigate = useNavigate();
+  const location = useLocation();
   const { username } = useUsernameRegistry(walletData?.provider);
   const [activeSection, setActiveSection] = useState("Dashboard");
   const [isLoading, setIsLoading] = useState(true);
+
+  const sidebarSections = [
+    { title: "Dashboard", icon: <LayoutDashboard size={18} />, path: "dashboard" },
+    { title: "Profile", icon: <UserCircle size={18} />, path: "profile" },
+    { title: "Transfer", icon: <MonitorCheck size={18} />, path: "transfer" },
+    { title: "Contracts", icon: <FileText size={18} />, path: "contracts" },
+  ];
 
   useEffect(() => {
     if (!walletData?.provider) {
@@ -29,14 +34,21 @@ const User = () => {
     }
   }, [walletData, navigate]);
 
-  const sidebarSections = [
-    { title: "Dashboard", icon: <LayoutDashboard size={18} /> },
-    { title: "Profile", icon: <UserCircle size={18} /> },
-    { title: "Contracts", icon: <FileText size={18} /> },
-    { title: "Security", icon: <Shield size={18} /> },
-    { title: "Notifications", icon: <Bell size={18} /> },
-    
-  ];
+  useEffect(() => {
+    const sectionFromUrl = location.hash.replace("#", "");
+    const currentSection = sidebarSections.find(s => s.path === sectionFromUrl);
+    if (currentSection) {
+      setActiveSection(currentSection.title);
+    } else {
+      // Default to dashboard if hash is invalid or not present
+      setActiveSection("Dashboard");
+    }
+  }, [location.hash]);
+
+  const handleSectionClick = (section) => {
+    setActiveSection(section.title);
+    navigate(`/user#${section.path}`);
+  };
 
   const renderContent = () => {
     switch (activeSection) {
@@ -44,12 +56,10 @@ const User = () => {
         return <UserDashboard />;
       case "Profile":
         return <ProfileSettings />;
-      case "Security":
-        return <SecuritySettings />;
-      case "Notifications":
-        return <NotificationSettings />;
+      case "Transfer":
+        return <Transfer />;
       case "Contracts":
-        return <Contract />; // Render the contract component
+        return <Contract />;
       default:
         return <UserDashboard />;
     }
@@ -64,14 +74,16 @@ const User = () => {
   }
 
   return (
-    // This new structure creates a full-screen layout where only the main content scrolls.
     <div className="bg-[#0B0E1F] text-white h-screen flex flex-col">
       <ToastContainer position="top-right" autoClose={5000} />
-
-      {/* This div is a placeholder to account for the fixed Navbar's height (h-20 ~ 5rem) */}
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.08),transparent_50%)]" />
+      {/* Subtle Grid Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:80px_80px] [mask-image:radial-gradient(ellipse_at_center,black_70%,transparent_100%)]" />
       <div className="h-20 flex-shrink-0"></div>
 
-      {/* This container holds the sidebar and main content, filling the remaining vertical space */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside className="w-64 flex-shrink-0 p-6">
@@ -83,7 +95,7 @@ const User = () => {
               {sidebarSections.map((section) => (
                 <button
                   key={section.title}
-                  onClick={() => setActiveSection(section.title)}
+                  onClick={() => handleSectionClick(section)}
                   className={`flex items-center gap-3 text-left px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
                     activeSection === section.title
                       ? "bg-primary text-white"
@@ -98,7 +110,7 @@ const User = () => {
           </div>
         </aside>
 
-        {/* Main Content - This area will scroll independently */}
+        {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-8 relative">
           {/* Background Elements */}
           <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-black/10 to-transparent" />

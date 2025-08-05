@@ -142,9 +142,8 @@ const Navbar = () => {
 
   const navLinks = [
     { path: "/", label: "Home" },
-    { path: "/contract", label: "Contract" },
     { path: "/docs", label: "Docs" },
-    { path: "/transfer", label: "Transfer" },
+    { path: "/user#transfer", label: "Transfer" },
   ];
 
   const dropdownVariants = {

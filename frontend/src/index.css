@@ -2,7 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-
 body {
-    @apply font-poppins bg-[#0B0E1F];
-  }
+  @apply font-poppins bg-[#0B0E1F];
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}

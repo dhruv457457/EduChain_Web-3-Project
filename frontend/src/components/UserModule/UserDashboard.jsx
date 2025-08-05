@@ -10,7 +10,7 @@ import useUsernameRegistry from "../../hooks/useUsernameRegistry";
 import LoaderButton from "../Global/Loader";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import { Wallet, Clock, Award, CheckCircle } from "lucide-react"; 
+import { Wallet, Clock, Award, CheckCircle, Activity, User, FileText } from "lucide-react";
 
 
 // Helper function to convert hex to rgba
@@ -18,12 +18,10 @@ const hexToRgba = (hex, opacity) => {
   let r = 0,
     g = 0,
     b = 0;
-  // 3 digits
   if (hex.length === 4) {
     r = "0x" + hex[1] + hex[1];
     g = "0x" + hex[2] + hex[2];
     b = "0x" + hex[3] + hex[3];
-    // 6 digits
   } else if (hex.length === 7) {
     r = "0x" + hex[1] + hex[2];
     g = "0x" + hex[3] + hex[4];
@@ -55,10 +53,7 @@ const UserDashboard = () => {
   const { walletData } = useWallet();
   const navigate = useNavigate();
 
-  // Hooks for metrics, previously in UserBalance
-  const { balance, pendingBalance, userAddress, userTransactions } = useContract(
-    walletData?.provider
-  );
+  const { balance, pendingBalance, userTransactions } = useContract(walletData?.provider);
   const swc = useContract2(walletData?.provider);
   const { username, isRegistered } = useUsernameRegistry(walletData?.provider);
 
@@ -66,6 +61,7 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const reputation = swc.reputation || "500";
+  const [activeTab, setActiveTab] = useState("Activity");
 
   const isHookInitialized = useMemo(() => swc?.contract && swc?.signer, [swc]);
 
@@ -87,12 +83,31 @@ const UserDashboard = () => {
   }, [isRegistered, username]);
 
   useEffect(() => {
-    // Tour logic remains unchanged
     const shouldStartTour = localStorage.getItem("startUserTour");
     if (shouldStartTour === "true") {
       // ... tour initialization code ...
     }
   }, [navigate]);
+
+  const tabs = [
+    { name: "Activity", icon: <Activity size={16} /> },
+    { name: "Profile", icon: <User size={16} /> },
+    { name: "Contracts", icon: <FileText size={16} /> },
+  ];
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "Activity":
+        return <UserTransactions provider={walletData?.provider} />;
+      case "Profile":
+        return <RegisterName setGlobalRegisteredName={setRegisteredName} provider={walletData?.provider} />;
+      case "Contracts":
+        return <UserContracts provider={walletData?.provider} />;
+      default:
+        return null;
+    }
+  };
+
 
   if (loading) {
     return (
@@ -103,7 +118,6 @@ const UserDashboard = () => {
   }
 
   if (error || !walletData?.provider) {
-    // Error handling remains unchanged
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
         <p className="text-lg font-semibold max-w-md text-red-400">
@@ -116,7 +130,7 @@ const UserDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen text-white px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen text-white">
 
       <main className="max-w-7xl mx-auto space-y-8">
         {/* KPI Cards Grid */}
@@ -150,26 +164,29 @@ const UserDashboard = () => {
           />
         </div>
 
-        {/* Main content grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <div data-driver="user-transactions">
-              <UserTransactions provider={walletData?.provider} />
-            </div>
-          </div>
-
-          <div className="space-y-8">
-            <div data-driver="register-name">
-              <RegisterName
-                setGlobalRegisteredName={setRegisteredName}
-                provider={walletData?.provider}
-              />
-            </div>
-            <div data-driver="user-contracts">
-              <UserContracts provider={walletData?.provider} />
-            </div>
-          </div>
+        {/* Tab Navigation */}
+        <div className="bg-[#16192E] p-1.5 rounded-lg border border-gray-700/50 inline-flex items-center gap-2">
+          {tabs.map((tab) => (
+            <button
+              key={tab.name}
+              onClick={() => setActiveTab(tab.name)}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-md transition-all duration-300 ${
+                activeTab === tab.name
+                  ? "bg-primary text-white"
+                  : "text-gray-300 hover:bg-gray-700/50"
+              }`}
+            >
+              {tab.icon}
+              {tab.name}
+            </button>
+          ))}
         </div>
+
+        {/* Tab Content */}
+        <div className="mt-4">
+          {renderContent()}
+        </div>
+
       </main>
     </div>
   );

@@ -70,7 +70,7 @@ const UserContracts = ({ provider }) => {
         ))}
       </div>
 
-      <div className="max-h-52 overflow-y-auto custom-scrollbar pr-2">
+      <div className="max-h-96 overflow-y-auto custom-scrollbar pr-2">
         {loading ? (
           <div className="h-32 flex justify-center items-center">
             <Loader />

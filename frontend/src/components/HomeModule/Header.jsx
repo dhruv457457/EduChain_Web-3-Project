@@ -67,7 +67,7 @@ const Header = () => {
             className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <button
-              onClick={() => navigate("/transfer")}
+              onClick={() => navigate("/user#transfer")}
               className="group relative w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-primary to-primary_hover1 text-white font-semibold rounded-lg shadow-lg transition-transform duration-300 hover:scale-105"
             >
               Get Started
