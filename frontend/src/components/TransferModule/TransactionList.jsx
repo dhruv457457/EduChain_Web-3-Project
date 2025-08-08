@@ -24,7 +24,7 @@ const TransactionList = ({ transactions = [], userAddress, loading }) => {
 
   return (
     <div
-      className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50 text-white h-full"
+      className="bg-black/20 p-6 rounded-lg border border-gray-700/50 text-white h-full"
       data-driver="transaction-list"
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">

@@ -44,34 +44,39 @@ function classNames(...classes) {
 export default function PricingTable() {
   return (
     <section className="relative py-24 overflow-hidden">
-     
-
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+        {/* Section Header - Updated to 2-column layout */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6">
-            <SparklesIcon className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-slate-300">
-              Pricing Plans
-            </span>
+          {/* Left Column */}
+          <div className="text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6">
+              <SparklesIcon className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-slate-300">
+                Pricing Plans
+              </span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+              Power up your
+              <br />
+              <span className="bg-gradient-to-r from-primary via-primary_hover to-primary bg-clip-text text-transparent">
+                freelance journey
+              </span>
+            </h2>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Power up your
-            <br />
-            <span className="bg-gradient-to-r from-primary via-primary_hover to-primary bg-clip-text text-transparent">
-              freelance journey
-            </span>
-          </h2>
-          <p className="max-w-2xl mx-auto text-lg text-slate-300 leading-relaxed">
-            Get access to more features and tune up your next project with our
-            flexible pricing plans designed for every stage of your career.
-          </p>
+
+          {/* Right Column */}
+          <div className="text-left md:pl-8">
+            <p className="max-w-2xl text-lg text-slate-300 leading-relaxed">
+              Get access to more features and tune up your next project with our
+              flexible pricing plans designed for every stage of your career.
+            </p>
+          </div>
         </motion.div>
 
         {/* Pricing Cards */}

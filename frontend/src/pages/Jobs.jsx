@@ -113,7 +113,7 @@ const Jobs = () => {
 
         {/* Jobs Grid */}
         {jobs.length === 0 ? (
-          <div className="text-center py-20 bg-[#16192E] rounded-lg border border-gray-700/50">
+          <div className="text-center py-20 bg-black/20 rounded-lg border border-gray-700/50">
             <AlertCircle className="mx-auto text-gray-500 w-12 h-12 mb-4" />
             <h2 className="text-xl font-semibold text-gray-300">
               No jobs available
@@ -127,7 +127,7 @@ const Jobs = () => {
             {jobs.map((job) => (
               <div
                 key={job.id}
-                className="bg-[#16192E] rounded-lg p-6 border border-gray-700/50 hover:bg-[#5a67d81f] transition-all duration-300 flex flex-col justify-between"
+                className="bg-black/20 rounded-lg p-6 border border-gray-700/50 hover:scale-105 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex justify-between items-start mb-4">

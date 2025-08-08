@@ -165,7 +165,7 @@ const UserDashboard = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-[#16192E] p-1.5 rounded-lg border border-gray-700/50 inline-flex items-center gap-2">
+        <div className="bg-black/20 p-1.5 rounded-lg border border-gray-700/50 inline-flex items-center gap-2">
           {tabs.map((tab) => (
             <button
               key={tab.name}

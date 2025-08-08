@@ -35,7 +35,7 @@ const UserTransactions = ({ provider }) => {
     address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "N/A";
 
   return (
-    <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50 text-white h-full">
+    <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50 text-white h-full">
       <h2 className="text-xl font-bold mb-4">Activity Feed</h2>
 
       <div className="flex gap-2 mb-4">
@@ -70,7 +70,7 @@ const UserTransactions = ({ provider }) => {
             {filteredTransactions.map((tx, index) => (
               <li
                 key={index}
-                className="flex items-center justify-between p-3 rounded-md bg-black/20 hover:bg-black/40 transition-colors"
+                className="flex items-center justify-between p-3 rounded-md bg-black/15 hover:bg-black/20 transition-colors"
               >
                 <div className="flex items-center gap-4">
                   <div

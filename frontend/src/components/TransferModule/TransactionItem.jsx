@@ -32,7 +32,7 @@ const TransactionItem = ({ tx, userAddress }) => {
   const status = getStatus();
 
   return (
-    <li className="flex items-center justify-between p-3 rounded-md bg-black/20 hover:bg-black/40 transition-colors">
+    <li className="flex items-center justify-between p-3 rounded-md bg-black/15 hover:bg-black/20 transition-colors">
       <div className="flex items-center gap-4">
         <div
           className={`p-2 rounded-full ${

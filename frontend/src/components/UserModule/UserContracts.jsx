@@ -51,7 +51,7 @@ const UserContracts = ({ provider }) => {
   });
 
   return (
-    <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50 text-white h-full">
+    <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50 text-white h-full">
       <h2 className="text-xl font-bold mb-4">My Contracts</h2>
 
       <div className="flex gap-2 mb-4">
@@ -87,7 +87,7 @@ const UserContracts = ({ provider }) => {
                 <li
                   key={contract.contractId}
                   onClick={() => navigate(`/contract?id=${contract.contractId}`)}
-                  className="flex items-center justify-between p-3 rounded-md bg-black/20 cursor-pointer hover:bg-black/40 transition-colors"
+                  className="flex items-center justify-between p-3 rounded-md bg-black/15 cursor-pointer hover:bg-black/20 transition-colors"
                 >
                   <div>
                     <p className="font-semibold text-sm">{contract.title}</p>

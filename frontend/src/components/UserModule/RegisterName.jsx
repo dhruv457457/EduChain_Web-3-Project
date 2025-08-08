@@ -21,7 +21,7 @@ const RegisterName = ({ setGlobalRegisteredName, provider }) => {
   };
 
   return (
-    <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50 text-white">
+    <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50 text-white">
       <h2 className="text-xl font-bold mb-4">User Profile</h2>
       <div className="space-y-4">
         <div>

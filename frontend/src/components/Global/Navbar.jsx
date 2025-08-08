@@ -45,8 +45,6 @@ const Navbar = () => {
     };
   }, [showProfileDropdown]);
 
-
-
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -69,41 +67,40 @@ const Navbar = () => {
       ? "text-customPurple relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[2px] after:bg-customPurple"
       : "relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 hover:after:w-full after:bg-customPurple after:transition-all after:duration-300 hover:text-customPurple";
 
-      const connectWallet = async () => {
-        try {
-          const accounts = await MMSDK.connect();
-          const provider = MMSDK.getProvider();
-          if (!provider || !accounts?.length) throw new Error("Connection failed");
-      
-          const ethProvider = new ethers.BrowserProvider(provider);
-          const walletAddress = accounts[0];
-      
-          // Set wallet context
-          setWalletData({ address: walletAddress, provider: ethProvider });
-      
-          // ✅ Check if user exists in Firestore and create if not
-          const userRef = doc(db, "users", walletAddress);
-          const userSnap = await getDoc(userRef);
-      
-          if (!userSnap.exists()) {
-            await setDoc(userRef, {
-              walletAddress,
-              createdAt: new Date(),
-              role: "freelancer", // or "client", customize as needed
-              name: "",           // placeholder
-              bio: "",            // placeholder
-              avatar: "",         // placeholder
-            });
-            toast.success("Welcome! New user created 🎉");
-          }
-      
-          toast.success("Wallet Connected!");
-        } catch (err) {
-          console.error(err);
-          toast.error("Wallet connection failed");
-        }
-      };
-      
+  const connectWallet = async () => {
+    try {
+      const accounts = await MMSDK.connect();
+      const provider = MMSDK.getProvider();
+      if (!provider || !accounts?.length) throw new Error("Connection failed");
+
+      const ethProvider = new ethers.BrowserProvider(provider);
+      const walletAddress = accounts[0];
+
+      // Set wallet context
+      setWalletData({ address: walletAddress, provider: ethProvider });
+
+      // ✅ Check if user exists in Firestore and create if not
+      const userRef = doc(db, "users", walletAddress);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          walletAddress,
+          createdAt: new Date(),
+          role: "freelancer", // or "client", customize as needed
+          name: "", // placeholder
+          bio: "", // placeholder
+          avatar: "", // placeholder
+        });
+        toast.success("Welcome! New user created 🎉");
+      }
+
+      toast.success("Wallet Connected!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Wallet connection failed");
+    }
+  };
 
   const disconnectWallet = () => {
     setWalletData({ address: null, provider: null });
@@ -123,10 +120,7 @@ const Navbar = () => {
 
   const navLinks = [
     { path: "/", label: "Home" },
-    { path: "/user#tasks", label: "Jobs" },
-    { path: "/user#proposals", label: "Proposals" },
     { path: "/docs", label: "Docs" },
-    { path: "/user#transfer", label: "Transfer" },
   ];
 
   const dropdownVariants = {
@@ -145,7 +139,7 @@ const Navbar = () => {
     },
   };
   return (
-    <nav className="fixed top-0 w-full h-16 z-50 backdrop-blur-md px-4 py-3 flex justify-between items-center">
+    <nav className="fixed top-0 w-full h-16 z-50 backdrop-blur-md px-32 py-3 flex justify-between items-center">
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -168,7 +162,8 @@ const Navbar = () => {
             </Link>
           </motion.div>
         ))}
-
+      </div>
+      <div>
         {walletData.address ? (
           <div className="relative" ref={profileRef}>
             <button
@@ -268,12 +263,12 @@ const Navbar = () => {
               ))}
 
               {walletData.address && (
-                 <Link
-                    to="/user"
-                    onClick={() => setIsOpen(false)}
-                    className="w-full text-center py-2 hover:bg-customDark/50 rounded-md transition"
+                <Link
+                  to="/user"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full text-center py-2 hover:bg-customDark/50 rounded-md transition"
                 >
-                    Profile
+                  Profile
                 </Link>
               )}
 

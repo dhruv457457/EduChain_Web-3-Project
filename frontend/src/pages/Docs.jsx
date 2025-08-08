@@ -49,7 +49,7 @@ const Docs = () => {
             these steps to install it.
           </p>
           <div className="space-y-6">
-            <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+            <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50">
               <h3 className="font-semibold text-lg mb-2 text-primary">
                 1. Install Browser Extension
               </h3>
@@ -66,7 +66,7 @@ const Docs = () => {
                 Download MetaMask <ExternalLink size={16} />
               </a>
             </div>
-            <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+            <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50">
               <h3 className="font-semibold text-lg mb-2 text-primary">
                 2. Create a Wallet
               </h3>
@@ -92,7 +92,7 @@ const Docs = () => {
           <p className="text-gray-400 mb-6">
             You'll need test tokens (faucet) to interact with the test network.
           </p>
-          <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+          <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50">
             <h3 className="font-semibold text-lg mb-2 text-primary">
               Use a Faucet
             </h3>
@@ -120,7 +120,7 @@ const Docs = () => {
           <p className="text-gray-400 mb-6">
             Cryptify makes sending crypto easy and secure.
           </p>
-          <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+          <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50">
             <h3 className="font-semibold text-lg mb-2 text-primary">
               Username or Address
             </h3>
@@ -148,7 +148,7 @@ const Docs = () => {
           <p className="text-gray-400 mb-6">
             Register a unique username to make transactions simpler for others.
           </p>
-          <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+          <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50">
             <h3 className="font-semibold text-lg mb-2 text-primary">
               How to Register
             </h3>
@@ -175,7 +175,7 @@ const Docs = () => {
             for agreements on the blockchain.
           </p>
           <div className="space-y-6">
-            <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+            <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50">
               <h3 className="font-semibold text-lg mb-2 text-primary">
                 Key Features
               </h3>
@@ -187,7 +187,7 @@ const Docs = () => {
                 <li>Completed contracts positively impact your reputation.</li>
               </ul>
             </div>
-            <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+            <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50">
               <h3 className="font-semibold text-lg mb-2 text-primary">
                 Reputation Score
               </h3>
@@ -210,7 +210,7 @@ const Docs = () => {
             Cryptify is a decentralized application that leverages blockchain
             for secure, transparent, and user-friendly financial interactions.
           </p>
-          <div className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50">
+          <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50">
             <h3 className="font-semibold text-lg mb-2 text-primary">
               Core Concepts
             </h3>
@@ -242,14 +242,14 @@ const Docs = () => {
     docsSections.find((s) => s.title === activeSection)?.content || null;
 
   return (
-    <div className="bg-[#0B0E1F] min-h-screen text-white pt-20">
+    <div className="bg-[#0D0A2C] min-h-screen text-white pt-20">
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-transparent" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.08),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(43,48,136,0.15),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(43,48,136,0.15),transparent_50%)]" />
+
       {/* Subtle Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:80px_80px] [mask-image:radial-gradient(ellipse_at_center,black_70%,transparent_100%)]" />
-
       
       <div className=" mx-auto flex flex-col lg:flex-row gap-8 px-4 sm:px-6 lg:px-8 py-10">
         {/* Sidebar */}

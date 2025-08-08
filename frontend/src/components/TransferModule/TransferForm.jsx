@@ -17,7 +17,7 @@ const TransferForm = ({
 }) => {
   return (
     <div
-      className="bg-[#16192E] p-6 rounded-lg border border-gray-700/50 text-white h-full"
+      className="bg-black/20 p-6 rounded-lg border border-gray-700/50 text-white h-full"
       data-driver="transfer-form"
     >
       <h2 className="text-xl font-bold mb-6">Send Funds</h2>

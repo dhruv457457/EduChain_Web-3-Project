@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef } from "react";
 import { motion } from "framer-motion";
-import { cn } from "../../lib/utlis"; // Assuming this path is correct
-import {AnimatedBeam} from "./animated-beam"; // Assuming this path is correct
+import { cn } from "../../lib/utlis";
+import { AnimatedBeam } from "./animated-beam";
 import { SparklesIcon } from "@heroicons/react/24/solid";
 
 const Circle = forwardRef(({ className, children }, ref) => {
@@ -33,33 +33,39 @@ export function AnimatedBeamDemo() {
 
   return (
     <section className="relative py-24 overflow-hidden">
-     
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+        {/* Section Header - Updated to 2-column layout */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6">
-            <SparklesIcon className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-slate-300">
-              Platform Architecture
-            </span>
+          {/* Left Column */}
+          <div className="text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6">
+              <SparklesIcon className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-slate-300">
+                Platform Architecture
+              </span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+              How Cryptify Connects
+              <br />
+              <span className="bg-gradient-to-r from-primary via-primary_hover to-primary bg-clip-text text-transparent">
+                Freelancers & Clients
+              </span>
+            </h2>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            How Dkarma Connects
-            <br />
-            <span className="bg-gradient-to-r from-primary via-primary_hover to-primary bg-clip-text text-transparent">
-              Freelancers & Clients
-            </span>
-          </h2>
-          <p className="max-w-2xl mx-auto text-lg text-slate-300 leading-relaxed">
-            A visual journey of secure, decentralized collaboration on our
-            platform with trustless payments and global accessibility.
-          </p>
+
+          {/* Right Column */}
+          <div className="text-left md:pl-8">
+            <p className="text-lg text-slate-300 leading-relaxed">
+              A visual journey of secure, decentralized collaboration on our
+              platform with trustless payments and global accessibility.
+            </p>
+          </div>
         </motion.div>
 
         {/* Legend */}
@@ -100,7 +106,7 @@ export function AnimatedBeamDemo() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
-          className="relative flex h-[400px] w-full items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-surface to-black/20 border border-border backdrop-blur-sm shadow-2xl"
+          className="relative flex h-[400px] w-full items-center justify-center overflow-hidden rounded-2xl bg-black/20 border border-border backdrop-blur-sm "
           ref={containerRef}
         >
           <div className="flex size-full max-h-[350px] max-w-5xl flex-col items-stretch justify-between gap-8 p-8">
@@ -277,7 +283,7 @@ export function AnimatedBeamDemo() {
           viewport={{ once: true }}
           className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8"
         >
-          <div className="group bg-gradient-to-br from-surface to-black/20 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-white/20 transition-all duration-300">
+          <div className="group bg-black/20 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-white/20 transition-all duration-300">
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-success to-emerald-700 flex items-center justify-center mr-4 shadow-lg shadow-emerald-500/20">
                 <Icons.shield className="w-5 h-5 text-white" />
@@ -292,7 +298,7 @@ export function AnimatedBeamDemo() {
             </p>
           </div>
 
-          <div className="group bg-gradient-to-br from-surface to-black/20 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-white/20 transition-all duration-300">
+          <div className="group bg-black/20 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-white/20 transition-all duration-300">
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-cyan-700 flex items-center justify-center mr-4 shadow-lg shadow-blue-500/20">
                 <Icons.globe className="w-5 h-5 text-white" />
@@ -307,7 +313,7 @@ export function AnimatedBeamDemo() {
             </p>
           </div>
 
-          <div className="group bg-gradient-to-br from-surface to-black/20 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-white/20 transition-all duration-300">
+          <div className="group bg-black/20 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-white/20 transition-all duration-300">
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center mr-4 shadow-lg shadow-pink-500/20">
                 <Icons.users className="w-5 h-5 text-white" />
