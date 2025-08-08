@@ -50,7 +50,7 @@ function CommitmentStepsSection() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           A smarter way to collaborate and transact. Follow these four futuristic
-          steps to get started with Cryptify.
+          steps to get started with Dkarma.
         </motion.p>
       </div>
 

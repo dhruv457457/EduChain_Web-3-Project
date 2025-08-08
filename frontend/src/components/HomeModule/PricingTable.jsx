@@ -44,7 +44,7 @@ function classNames(...classes) {
 export default function PricingTable() {
   return (
     <section className="relative py-24 overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto ">
         {/* Section Header - Updated to 2-column layout */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -54,7 +54,7 @@ export default function PricingTable() {
           className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16"
         >
           {/* Left Column */}
-          <div className="text-left">
+       <div className="text-left border-r  border-white border-opacity-20">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6">
               <SparklesIcon className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-slate-300">

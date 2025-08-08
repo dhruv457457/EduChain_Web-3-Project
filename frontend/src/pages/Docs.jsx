@@ -118,7 +118,7 @@ const Docs = () => {
       content: (
         <>
           <p className="text-gray-400 mb-6">
-            Cryptify makes sending crypto easy and secure.
+            Dkarma makes sending crypto easy and secure.
           </p>
           <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50">
             <h3 className="font-semibold text-lg mb-2 text-primary">
@@ -126,7 +126,7 @@ const Docs = () => {
             </h3>
             <p className="text-gray-300 mb-3">
               You can send funds using either a traditional wallet address or a
-              registered Cryptify username.
+              registered Dkarma username.
             </p>
             <ul className="list-disc list-inside text-gray-300 space-y-2 text-sm">
               <li>Navigate to the "Transfer" page.</li>
@@ -202,12 +202,12 @@ const Docs = () => {
       ),
     },
     {
-      title: "How Cryptify Works",
+      title: "How Dkarma Works",
       icon: <HelpCircle size={18} />,
       content: (
         <>
           <p className="text-gray-400 mb-6">
-            Cryptify is a decentralized application that leverages blockchain
+            Dkarma is a decentralized application that leverages blockchain
             for secure, transparent, and user-friendly financial interactions.
           </p>
           <div className="bg-black/20 p-6 rounded-lg border border-gray-700/50">

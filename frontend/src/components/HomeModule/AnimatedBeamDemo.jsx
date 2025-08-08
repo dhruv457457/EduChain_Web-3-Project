@@ -33,7 +33,7 @@ export function AnimatedBeamDemo() {
 
   return (
     <section className="relative py-24 overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto ">
         {/* Section Header - Updated to 2-column layout */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -43,7 +43,7 @@ export function AnimatedBeamDemo() {
           className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16"
         >
           {/* Left Column */}
-          <div className="text-left">
+        <div className="text-left border-r  border-white border-opacity-20">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6">
               <SparklesIcon className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-slate-300">
@@ -51,7 +51,7 @@ export function AnimatedBeamDemo() {
               </span>
             </div>
             <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-              How Cryptify Connects
+              How Dkarma Connects
               <br />
               <span className="bg-gradient-to-r from-primary via-primary_hover to-primary bg-clip-text text-transparent">
                 Freelancers & Clients

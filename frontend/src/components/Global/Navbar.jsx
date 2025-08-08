@@ -181,22 +181,6 @@ const Navbar = () => {
                   exit="exit"
                   className="absolute right-0 mt-3 w-56 bg-[#16192E] border border-gray-700/50 rounded-xl shadow-lg z-50 text-sm overflow-hidden"
                 >
-                  <div className="p-3 border-b border-gray-700/50">
-                    <p className="text-xs text-gray-400">Connected as</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="font-mono text-white">
-                        {walletData.address.slice(0, 6)}...
-                        {walletData.address.slice(-4)}
-                      </span>
-                      <button onClick={copyAddress} title="Copy Address">
-                        {copied ? (
-                          <FaCheckCircle className="text-green-400" />
-                        ) : (
-                          <FaCopy className="text-gray-400 hover:text-white transition" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
                   <Link
                     to="/user"
                     className="flex items-center gap-3 w-full text-left px-4 py-3 hover:bg-purple-600/20 text-gray-200 transition-colors duration-200"
@@ -222,7 +206,7 @@ const Navbar = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
-            className="flex items-center gap-2 bg-customPurple hover:bg-customBlue text-white px-3 py-1.5 rounded-full shadow-md-purple transition text-sm"
+            className="flex items-center gap-2 bg-primary hover:bg-primary_hover1 text-white px-4 py-2 rounded-full transition text-sm"
           >
             <FaWallet /> Connect
           </motion.button>
