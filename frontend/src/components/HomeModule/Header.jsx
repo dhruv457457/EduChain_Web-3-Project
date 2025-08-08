@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowDown,
-  Briefcase,
   User,
   SparklesIcon as SolidSparkles,
 } from "lucide-react";
 
 const Header = () => {
   const navigate = useNavigate();
+  const targetRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end start"],
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 0.8], [1, 0.5]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8, 1], [1, 0, 0]);
+  const position = useTransform(scrollYProgress, (pos) =>
+    pos === 1 ? "relative" : "fixed"
+  );
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -29,7 +40,11 @@ const Header = () => {
   };
 
   return (
-    <header className="relative w-full h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8">
+    <section ref={targetRef} className="relative w-full h-[200vh]">
+       <motion.header
+        style={{ scale, opacity, position }}
+        className="top-0 left-0 right-0 h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 z-20"
+      >
       <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8">
         {/* Left Side */}
         <motion.div
@@ -130,7 +145,8 @@ const Header = () => {
         <span className="text-sm">Scroll to discover</span>
         <ArrowDown size={20} className="animate-bounce" />
       </div>
-    </header>
+      </motion.header>
+    </section>
   );
 };
 
