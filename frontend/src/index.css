@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   @apply font-poppins bg-[#0D0A2C];
   -ms-overflow-style: none; /* IE and Edge */

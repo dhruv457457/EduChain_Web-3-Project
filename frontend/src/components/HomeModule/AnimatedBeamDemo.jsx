@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { cn } from "../../lib/utlis";
 import { AnimatedBeam } from "./animated-beam";
 import { SparklesIcon } from "@heroicons/react/24/solid";
+import { Users, Shield, Globe } from "lucide-react";
 
 const Circle = forwardRef(({ className, children }, ref) => {
   return (
@@ -20,6 +21,21 @@ const Circle = forwardRef(({ className, children }, ref) => {
 
 Circle.displayName = "Circle";
 
+// Hex to RGBA utility
+const hexToRgba = (hex, opacity) => {
+  let r = 0, g = 0, b = 0;
+  if (hex.length === 4) {
+    r = "0x" + hex[1] + hex[1];
+    g = "0x" + hex[2] + hex[2];
+    b = "0x" + hex[3] + hex[3];
+  } else if (hex.length === 7) {
+    r = "0x" + hex[1] + hex[2];
+    g = "0x" + hex[3] + hex[4];
+    b = "0x" + hex[5] + hex[6];
+  }
+  return `rgba(${+r},${+g},${+b},${opacity})`;
+};
+
 export function AnimatedBeamDemo() {
   const containerRef = useRef(null);
   const freelancerRef = useRef(null);
@@ -30,6 +46,32 @@ export function AnimatedBeamDemo() {
   const ipfsRef = useRef(null);
   const walletRef = useRef(null);
   const daoRef = useRef(null);
+
+  const features = [
+    {
+      label: "Trustless Payments",
+      description:
+        "Escrow contracts ensure automatic payment release upon milestone completion, eliminating disputes and building trust.",
+      color: "#5A67D8",
+      icon: <Shield size={28} className="text-white" />,
+    },
+    {
+      label: "Global Access",
+      description:
+        "Borderless platform accessible to anyone with a crypto wallet, no traditional banking required for global collaboration.",
+      color: "#38A169",
+      icon: <Globe size={28} className="text-white" />,
+      featured: true,
+    },
+    {
+      label: "Community Governed",
+      description:
+        "DAO governance allows the community to vote on platform changes and dispute resolutions, ensuring transparency.",
+      color: "#6B46C1",
+      icon: <Users size={28} className="text-white" />,
+    },
+  ];
+
 
   return (
     <section className="relative py-24 overflow-hidden">
@@ -220,6 +262,8 @@ export function AnimatedBeamDemo() {
             endYOffset={-10}
             gradientStartColor="#10b981"
             gradientStopColor="#93c5fd"
+            delay={0}
+            duration={3}
           />
           <AnimatedBeam
             containerRef={containerRef}
@@ -229,6 +273,8 @@ export function AnimatedBeamDemo() {
             endYOffset={-10}
             gradientStartColor="#3b82f6"
             gradientStopColor="#93c5fd"
+            delay={0}
+            duration={3}
           />
           <AnimatedBeam
             containerRef={containerRef}
@@ -236,6 +282,8 @@ export function AnimatedBeamDemo() {
             toRef={smartContractRef}
             gradientStartColor="#f59e42"
             gradientStopColor="#93c5fd"
+            delay={2}
+            duration={3}
           />
           <AnimatedBeam
             containerRef={containerRef}
@@ -243,6 +291,8 @@ export function AnimatedBeamDemo() {
             toRef={smartContractRef}
             gradientStartColor="#93c5fd"
             gradientStopColor="#3b82f6"
+            delay={2}
+            duration={3}
           />
           <AnimatedBeam
             containerRef={containerRef}
@@ -253,6 +303,8 @@ export function AnimatedBeamDemo() {
             reverse
             gradientStartColor="#93c5fd"
             gradientStopColor="#fde047"
+            delay={4}
+            duration={3}
           />
           <AnimatedBeam
             containerRef={containerRef}
@@ -262,6 +314,8 @@ export function AnimatedBeamDemo() {
             reverse
             gradientStartColor="#93c5fd"
             gradientStopColor="#fb7185"
+            delay={4}
+            duration={3}
           />
           <AnimatedBeam
             containerRef={containerRef}
@@ -272,62 +326,43 @@ export function AnimatedBeamDemo() {
             reverse
             gradientStartColor="#93c5fd"
             gradientStopColor="#2dd4bf"
+            delay={4}
+            duration={3}
           />
         </motion.div>
 
-        {/* Features Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          viewport={{ once: true }}
-          className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8"
-        >
-          <div className="group bg-black/20 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-white/20 transition-all duration-300">
-            <div className="flex items-center mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-success to-emerald-700 flex items-center justify-center mr-4 shadow-lg shadow-emerald-500/20">
-                <Icons.shield className="w-5 h-5 text-white" />
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className={`relative overflow-hidden rounded-2xl p-6 border shadow-lg transition-all duration-300 hover:scale-105 ${
+                feature.featured ? "md:scale-105 z-10" : ""
+              }`}
+              style={{
+                backgroundColor: hexToRgba(feature.color, 0.08),
+                borderColor: hexToRgba(feature.color, 0.3),
+              }}
+            >
+              <div className="flex flex-col justify-between h-full">
+                <div className="mb-4">
+                  <div className="text-lg font-medium text-white/90 mb-3">
+                    {feature.label}
+                  </div>
+                  <p className="text-white/80 text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+                <div
+                  className="self-end p-2 rounded-full"
+                  style={{ backgroundColor: feature.color }}
+                >
+                  {feature.icon}
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-foreground font-display">
-                Trustless Payments
-              </h3>
             </div>
-            <p className="text-muted leading-relaxed">
-              Escrow contracts ensure automatic payment release upon milestone
-              completion, eliminating disputes and building trust.
-            </p>
-          </div>
-
-          <div className="group bg-black/20 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-white/20 transition-all duration-300">
-            <div className="flex items-center mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-cyan-700 flex items-center justify-center mr-4 shadow-lg shadow-blue-500/20">
-                <Icons.globe className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground font-display">
-                Global Access
-              </h3>
-            </div>
-            <p className="text-muted leading-relaxed">
-              Borderless platform accessible to anyone with a crypto wallet, no
-              traditional banking required for global collaboration.
-            </p>
-          </div>
-
-          <div className="group bg-black/20 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-white/20 transition-all duration-300">
-            <div className="flex items-center mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center mr-4 shadow-lg shadow-pink-500/20">
-                <Icons.users className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold text-foreground font-display">
-                Community Governed
-              </h3>
-            </div>
-            <p className="text-muted leading-relaxed">
-              DAO governance allows the community to vote on platform changes
-              and dispute resolutions, ensuring transparency.
-            </p>
-          </div>
-        </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
