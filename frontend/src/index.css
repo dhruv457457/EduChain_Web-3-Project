@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  @apply font-poppins bg-[#0D0A2C];
+  @apply font-poppins bg-[#0B0E1F];
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
